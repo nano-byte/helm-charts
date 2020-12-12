@@ -1,0 +1,40 @@
+{{- if and (and .Values.ingress.enabled .Values.ingress.domains) (not .Values.ingress.istio.enabled) }}
+
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ include "generic-service.fullname" . }}
+  labels: {{ include "generic-service.default-labels" . | nindent 4 }}
+  annotations:
+    {{- if .Values.ingress.class }}
+    kubernetes.io/ingress.class: {{ .Values.ingress.class }}
+    {{- end }}
+  {{- range $key, $value := .Values.ingress.annotations }}
+    {{ $key }}: {{ $value | quote }}
+  {{- end }}
+
+spec:
+{{- if .Values.ingress.tls }}
+  tls: {{ toYaml .Values.ingress.tls | nindent 4 }}
+{{- end }}
+  rules:
+    {{- $root := . -}}
+    {{- range .Values.ingress.domains }}
+    - host: {{ . | quote }}
+      http:
+        paths:
+        {{- if $root.Values.ingress.paths }}
+          {{- range $root.Values.ingress.paths }}
+          - path: {{ . | quote }}
+            backend:
+              serviceName: {{ include "generic-service.fullname" $root }}
+              servicePort: {{ $root.Values.ingress.protocol }}-ingress
+          {{- end }}
+        {{- else }}
+          - backend:
+              serviceName: {{ include "generic-service.fullname" $root }}
+              servicePort: {{ $root.Values.ingress.protocol }}-ingress
+        {{- end }}
+      {{- end }}
+
+{{- end }}

@@ -1,0 +1,41 @@
+{{- if and .Values.ingress.enabled (and .Values.ingress.istio.enabled (not .Values.flagger.enabled)) }}
+
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: {{ include "generic-service.fullname" . }}
+  labels: {{ include "generic-service.default-labels" . | nindent 4 }}
+
+spec:
+{{ include "generic-service.istio" . | indent 2 }}
+  http:
+  {{- if .Values.ingress.paths }}
+    {{- $root := . -}}
+    {{- range .Values.ingress.paths }}
+    - match:
+        - uri:
+            prefix: {{ . | quote }}
+      route:
+        - destination:
+            host: {{ include "generic-service.fullname" $root }}
+            port:
+              number: 80
+      headers:
+        request:
+          set: {{ $root.Values.ingress.istio.httpHeaders | toYaml | nindent 12 }}
+      corsPolicy: {{ $root.Values.ingress.istio.corsPolicy | toYaml | nindent 8 }}
+      timeout: {{ $root.Values.ingress.istio.timeout }}
+      retries: {{ $root.Values.ingress.istio.retries | toYaml | nindent 8 }}
+    {{- end }}
+  {{- else }}
+    - route:
+        - destination:
+            host: {{ include "generic-service.fullname" . }}
+            port:
+              number: 80
+      corsPolicy: {{ .Values.ingress.istio.corsPolicy | toYaml | nindent 8 }}
+      timeout: {{ .Values.ingress.istio.timeout }}
+      retries: {{ .Values.ingress.istio.retries | toYaml | nindent 8 }}
+  {{- end }}
+
+{{- end }}

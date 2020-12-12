@@ -1,0 +1,25 @@
+{{- if or (and .Values.ingress.enabled (not .Values.flagger.enabled)) .Values.monitoring.enabled }}
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: '{{ include "generic-service.fullname" . }}{{ if .Values.flagger.enabled }}-monitoring{{ end }}'
+  labels: {{ include "generic-service.default-labels" . | nindent 4 }}
+
+spec:
+  selector: {{ include "generic-service.selector-labels" . | nindent 4 }}
+
+  ports:
+    {{- if and .Values.ingress.enabled (not .Values.flagger.enabled) }}
+    - name: '{{ .Values.ingress.protocol }}-ingress'
+      port: 80
+      targetPort: '{{ .Values.ingress.protocol }}-ingress'
+    {{- end }}
+
+    {{- if .Values.monitoring.enabled }}
+    - name: http-monitoring
+      port: 9100
+      targetPort: http-monitoring
+    {{- end }}
+
+{{- end }}

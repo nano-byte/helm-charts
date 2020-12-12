@@ -1,0 +1,11 @@
+digraph {
+    rankdir=LR;
+
+    ChartResource -> CreatedResource [label="templates" style=dashed];
+    ChartResource -> ExternalResource [label="selects"];
+
+    ChartResource [label="Created by Chart"];
+    CreatedResource [label="Created by Kubernetes" style=dashed];
+    ExternalResource [label="External Resource" style=dotted];
+
+}

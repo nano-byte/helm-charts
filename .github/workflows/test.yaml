@@ -1,0 +1,26 @@
+name: Test
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      # Prepare
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: azure/setup-helm@v1
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      - uses: helm/chart-testing-action@v2.0.1
+
+      # Lint
+      - name: Lint charts
+        run: ct lint --all --validate-maintainers=false
+
+      # Install
+      - name: Set up Kubernetes
+        uses: helm/kind-action@v1.0.0
+      - name: Install charts
+        run: ct install --all

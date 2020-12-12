@@ -1,0 +1,41 @@
+{{- $root := . -}}
+
+{{- range .Values.rbac.roles }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: '{{ . }}'
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: '{{ . }}'
+subjects:
+  - kind: ServiceAccount
+    name: '{{ include "generic-service.fullname" $root }}'
+---
+{{- end }}
+
+{{- range .Values.rbac.clusterRoles }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  # ClusterRoleBindings are cluster-scoped but we need them to be namespace-specific here, because we reference a single ServiceAccount in a specific namespace.
+  # To avoid collisions when deploying multiple instances of this chart we prepend the Release name to the name here.
+  name: '{{ include "generic-service.fullname" $root }}-{{ . }}'
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: '{{ . }}'
+subjects:
+  - kind: ServiceAccount
+    name: '{{ include "generic-service.fullname" $root }}'
+    namespace: '{{ $root.Release.Namespace }}'
+---
+{{- end }}
+
+{{- if or .Values.rbac.roles .Values.rbac.clusterRoles }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: '{{ include "generic-service.fullname" . }}'
+{{- end }}

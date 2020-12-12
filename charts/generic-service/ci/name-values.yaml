@@ -1,0 +1,9 @@
+# Name override test
+
+name: test
+fullname: my-test
+
+image:
+  registry: docker.io
+  repository: jwilder/whoami
+  tag: latest

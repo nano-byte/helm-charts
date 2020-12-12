@@ -1,0 +1,103 @@
+{{- if and .Values.monitoring.enabled .Values.alerting.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: {{ include "generic-service.fullname" . }}
+  labels: {{ include "generic-service.default-labels" . | nindent 4 }}
+    prometheus: cluster
+    role: alert-rules
+
+spec:
+  groups:
+    - name: {{ include "generic-service.fullname" . }}.rules
+      rules:
+        - alert: SomeReplicasUnavailable
+          expr: kube_deployment_status_replicas_unavailable{deployment="{{ include "generic-service.fullname" . }}", namespace="{{ .Release.Namespace }}"} > 0
+          for: 10m
+          labels:
+            component: {{ include "generic-service.fullname" . }}
+            severity: warning
+{{- if .Values.alerting.labels }}
+{{ toYaml .Values.alerting.labels | indent 12 }}
+{{- end }}
+          annotations:
+            summary: Some {{ include "generic-service.fullname" . }} pods are unavailable
+            description: Some of the {{ include "generic-service.fullname" . }} pods were unavailable for the last 10 minutes
+
+        - alert: AllReplicasUnavailable
+          expr: kube_deployment_status_replicas_available{deployment="{{ include "generic-service.fullname" . }}", namespace="{{ .Release.Namespace }}"} == 0
+          for: 1m
+          labels:
+            component: {{ include "generic-service.fullname" . }}
+            severity: criticial
+{{- if .Values.alerting.labels }}
+{{ toYaml .Values.alerting.labels | indent 12 }}
+{{- end }}
+          annotations:
+            summary: All {{ include "generic-service.fullname" . }} pods are unavailable
+            description: All of the {{ include "generic-service.fullname" . }} pods were unavailable for the last 1 minute
+
+        - alert: HighMemoryUsage
+          expr: >
+            max(container_memory_working_set_bytes{container_name="{{ include "generic-service.fullname" . }}", namespace="{{ .Release.Namespace }}"}) /
+            min(kube_pod_container_resource_limits_memory_bytes{container="{{ include "generic-service.fullname" . }}", namespace="{{ .Release.Namespace }}"}) >
+            {{ .Values.alerting.memoryUsage.thresholdFactor }}
+          for: 5m
+          labels:
+            component: {{ include "generic-service.fullname" . }}
+            severity: warning
+{{- if .Values.alerting.labels }}
+{{ toYaml .Values.alerting.labels | indent 12 }}
+{{- end }}
+          annotations:
+            summary: {{ include "generic-service.fullname" . }} memory usage is high
+            description: {{ include "generic-service.fullname" . }} is using more than {{ .Values.alerting.memoryUsage.thresholdFactor }} of its available memory
+
+{{ if .Values.ingress.istio.enabled }}
+        - alert: Http5xxOccurred
+          expr: >
+            sum(increase(istio_requests_total{ {{ include "generic-service.istio-filter" . }}, response_code=~"5.." }[1m])) > 0
+          labels:
+            component: {{ include "generic-service.fullname" . }}
+            severity: warning
+{{- if .Values.alerting.labels }}
+{{ toYaml .Values.alerting.labels | indent 12 }}
+{{- end }}
+          annotations:
+            summary: {{ include "generic-service.fullname" . }} HTTP 5xx responses occurred
+            description: {{ include "generic-service.fullname" . }} HTTP 5xx responses occurred in the last minute
+
+        - alert: HighHttp4xxRatio
+          expr: >
+            sum(rate(istio_requests_total{ {{ include "generic-service.istio-filter" . }} }[{{ .Values.alerting.http4xxRatio.sampleInterval }}])) > 0 and
+            (sum(rate(istio_requests_total{ {{ include "generic-service.istio-filter" . }}, response_code=~"4.." }[{{ .Values.alerting.http4xxRatio.sampleInterval }}])) / sum(rate(istio_requests_total{ {{ include "generic-service.istio-filter" . }} }[{{ .Values.alerting.http4xxRatio.sampleInterval }}]))) /
+            (sum(rate(istio_requests_total{ {{ include "generic-service.istio-filter" . }}, response_code=~"4.." }[{{ .Values.alerting.http4xxRatio.referenceInterval }}])) / sum(rate(istio_requests_total{ {{ include "generic-service.istio-filter" . }} }[{{ .Values.alerting.http4xxRatio.referenceInterval }}]))) >
+            {{ .Values.alerting.http4xxRatio.thresholdFactor }}
+          labels:
+            component: {{ include "generic-service.fullname" . }}
+            severity: info
+{{- if .Values.alerting.labels }}
+{{ toYaml .Values.alerting.labels | indent 12 }}
+{{- end }}
+          annotations:
+            summary: Ratio of {{ include "generic-service.fullname" . }} HTTP 4xx responses is high
+            description: Ratio of {{ include "generic-service.fullname" . }} HTTP responses with 4xx status codes in the last {{ .Values.alerting.http4xxRatio.sampleInterval }} is higher than in the last {{ .Values.alerting.http4xxRatio.referenceInterval }}
+
+        - alert: SlowResponseTime
+          expr: >
+            sum(increase(istio_requests_total{ {{ include "generic-service.istio-filter" . }} }[{{ .Values.alerting.responseTime.sampleInterval }}])) > 0 and
+            (sum(increase(istio_request_duration_seconds_sum{ {{ include "generic-service.istio-filter" . }} }[{{ .Values.alerting.responseTime.sampleInterval }}])) / sum(increase(istio_requests_total{ {{ include "generic-service.istio-filter" . }} }[{{ .Values.alerting.responseTime.sampleInterval }}]))) /
+            (sum(increase(istio_request_duration_seconds_sum{ {{ include "generic-service.istio-filter" . }} }[{{ .Values.alerting.responseTime.referenceInterval }}])) / sum(increase(istio_requests_total{ {{ include "generic-service.istio-filter" . }} }[{{ .Values.alerting.responseTime.referenceInterval }}]))) >
+            {{ .Values.alerting.responseTime.thresholdFactor }}
+          labels:
+            component: {{ include "generic-service.fullname" . }}
+            severity: info
+{{- if .Values.alerting.labels }}
+{{ toYaml .Values.alerting.labels | indent 12 }}
+{{- end }}
+          annotations:
+            summary: Slow {{ include "generic-service.fullname" . }} HTTP repsonses
+            description: {{ include "generic-service.fullname" . }} HTTP responses in the last {{ .Values.alerting.responseTime.sampleInterval }} were slower than in the last {{ .Values.alerting.responseTime.referenceInterval }}
+{{- end }}
+
+{{- end }}

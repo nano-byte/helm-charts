@@ -1,0 +1,47 @@
+{{- if and .Values.flagger.enabled .Values.ingress.enabled }}
+
+apiVersion: flagger.app/v1alpha3
+kind: Canary
+metadata:
+  name: {{ include "generic-service.fullname" . }}
+  labels: {{ include "generic-service.default-labels" . | nindent 4 }}
+
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "generic-service.fullname" . }}
+
+  {{- if .Values.autoscaling.enabled }}
+  autoscalerRef:
+    apiVersion: autoscaling/v2beta1
+    kind: HorizontalPodAutoscaler
+    name: {{ include "generic-service.fullname" . }}
+  {{- end }}
+
+  {{- if and (and .Values.ingress.enabled .Values.ingress.domains) (not .Values.ingress.istio.enabled) }}
+  ingressRef:
+    apiVersion: extensions/v1beta1
+    kind: Ingress
+    name: {{ include "generic-service.fullname" . }}
+  {{- end }}
+
+  service:
+    port: {{ .Values.ingress.port }}
+    targetPort: 'ingress-{{ .Values.ingress.protocol }}'
+    {{- if .Values.ingress.istio.enabled }}
+{{ include "generic-service.istio" . | indent 4 }}
+    match:
+      {{- range .Values.ingress.paths }}
+      - uri:
+          prefix: {{ . | quote }}
+      {{- end }}
+    {{- end }}
+    corsPolicy: {{ .Values.ingress.istio.corsPolicy | toYaml | nindent 6 }}
+    retries: {{ .Values.ingress.istio.retries | toYaml | nindent 6 }}
+    {{- if .Values.ingress.paths }}
+    {{- end }}
+
+  canaryAnalysis: {{ toYaml .Values.flagger.canaryAnalysis | nindent 4 }}
+
+{{- end }}

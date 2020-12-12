@@ -1,0 +1,12 @@
+# Config and environment variable test
+
+image:
+  registry: docker.io
+  repository: jwilder/whoami
+  tag: latest
+
+env:
+  SOME_KEY: some-value
+
+config:
+  some-key: some-value

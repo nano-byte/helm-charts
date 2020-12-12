@@ -1,0 +1,15 @@
+{{- if gt .Values.replicas 1.0 }}  # At least 2 replicas are required to avoid outage during disruptions
+
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "generic-service.fullname" . }}
+  labels: {{ include "generic-service.default-labels" . | nindent 4 }}
+
+spec:
+  minAvailable: 1
+
+  selector:
+    matchLabels: {{ include "generic-service.selector-labels" . | nindent 6 }}
+
+{{- end }}

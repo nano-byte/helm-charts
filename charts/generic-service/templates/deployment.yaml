@@ -1,0 +1,192 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "generic-service.fullname" . }}
+  labels: {{ include "generic-service.default-labels" . | nindent 4 }}
+{{- if .Values.tracing.enabled }}
+  annotations:
+    sidecar.jaegertracing.io/inject: 'true'
+{{- end }}
+
+spec:
+  replicas: {{ .Values.replicas }}
+
+  selector:
+    matchLabels: {{ include "generic-service.selector-labels" . | nindent 6 }}
+
+  {{- if not .Values.rollingUpdate }}
+  strategy:
+    type: Recreate
+  {{- end}}
+
+  template:
+    metadata:
+      labels: {{ include "generic-service.default-labels" . | nindent 8 }}
+      annotations:
+        traffic.sidecar.istio.io/includeInboundPorts: '{{ if .Values.ingress.enabled }}{{ .Values.ingress.port }}{{ end }}'
+{{- if .Values.tracing.enabled }}
+        traffic.sidecar.istio.io/excludeOutboundPorts: '5778,9411,14268,14250'  # Jaeger ports
+{{- end }}
+        checksum/config: {{ .Values.config | toJson | sha256sum }}
+{{- if .Values.secrets }}
+        checksum/secrets: {{ .Values.secrets | toJson | sha256sum }}
+{{- end }}
+{{- if .Values.annotations }}
+{{ .Values.annotations | toYaml | indent 8 }}
+{{- end }}
+
+    spec:
+      volumes:
+        {{- if .Values.persistence.enabled }}
+        - name: persistence
+          persistentVolumeClaim:
+            claimName: {{ include "generic-service.fullname" . }}
+        {{- end }}
+        - name: config
+          configMap:
+            name: {{ include "generic-service.fullname" . }}
+        {{- range .Values.additionalConfigs }}
+        - name: config-{{ . }}
+          configMap:
+            name: {{ . }}
+        {{- end }}
+        {{- range .Values.secrets }}
+        - name: {{ .name }}
+          secret:
+            secretName: {{ .name }}
+        {{- end }}
+
+      imagePullSecrets:
+        - name: '{{ .Values.image.registry }}'
+
+      {{- if or .Values.rbac.roles .Values.rbac.clusterRoles }}
+      serviceAccountName: {{ include "generic-service.fullname" . }}
+      {{- end }}
+
+
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            # Never schedule multiple replicas on the same node
+            - topologyKey: kubernetes.io/hostname
+              labelSelector:
+                matchLabels: {{ include "generic-service.selector-labels" . | nindent 18 }}
+          preferredDuringSchedulingIgnoredDuringExecution:
+            # Try to avoid scheduling multiple replicas in the same zone
+            - weight: 100
+              podAffinityTerm:
+                topologyKey: failure-domain.beta.kubernetes.io/zone
+                labelSelector:
+                  matchLabels: {{ include "generic-service.selector-labels" . | nindent 20 }}
+
+      {{- if .Values.nodeSelector }}
+      nodeSelector: {{ toYaml .Values.nodeSelector | nindent 8 }}
+      tolerations:
+        {{- range $key, $val := .Values.nodeSelector }}
+        - key: {{ $key | quote }}
+          operator: Equal
+          value: {{ $val | quote }}
+        {{- end }}
+      {{- end }}
+
+      containers:
+        - name: {{ include "generic-service.fullname" . }}
+          image: '{{ required "Set image.registry" .Values.image.registry }}/{{ required "Set image.repository" .Values.image.repository }}:{{ required "Set image.tag" .Values.image.tag }}'
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+
+          {{- if .Values.args }}
+          args: {{ toYaml .Values.args | nindent 12 }}
+          {{- end }}
+
+          volumeMounts:
+            {{- if .Values.persistence.enabled }}
+            - name: persistence
+              mountPath: {{ required "Set persistence.mountPath" .Values.persistence.mountPath }}
+            {{- end }}
+            - name: config
+              mountPath: /config
+            {{- range .Values.additionalConfigs }}
+            - name: config-{{ . }}
+              mountPath: /additional-configs/{{ . }}
+            {{- end }}
+            {{- range .Values.secrets }}
+            - name: {{ required "Set secrets[].name" .name }}
+              mountPath: {{ required "Set secrets[].mountPath" .mountPath }}
+              {{- if .subPath }}
+              subPath: {{ .subPath }}
+              {{- end }}
+            {{- end }}
+
+          ports:
+            {{- if .Values.ingress.enabled }}
+            - name: '{{ .Values.ingress.protocol }}-ingress'
+              containerPort: {{ .Values.ingress.port }}
+
+            {{- end }}
+
+            {{- if .Values.monitoring.enabled }}
+            - name: http-monitoring
+              containerPort: {{ .Values.monitoring.port }}
+            {{- end }}
+
+          {{- if .Values.livenessProbe }}
+          livenessProbe: {{ toYaml .Values.livenessProbe | nindent 12 }}
+          {{- end }}
+
+          {{- if .Values.readinessProbe }}
+          readinessProbe: {{ toYaml .Values.readinessProbe | nindent 12 }}
+          {{- end }}
+
+          resources: {{ toYaml .Values.resources | nindent 12 }}
+
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            {{- if .Values.monitoring.enabled }}
+            - name: METRICS_PORT
+              value: {{ .Values.monitoring.port | quote }}
+            - name: METRICS__PORT
+              value: {{ .Values.monitoring.port | quote }}
+            {{- end }}
+            {{- if .Values.tracing.enabled }}
+            - name: JAEGER_SERVICE_NAME
+              value: '{{ include "generic-service.name" . }}.{{ .Release.Namespace }}'  # Match naming scheme of Istio
+            - name: JAEGER_SAMPLER_TYPE
+              value: probabilistic
+            - name: JAEGER_SAMPLER_PARAM
+              value: {{ .Values.tracing.probability | quote }}
+            - name: JAEGER_PROPAGATION
+              value: b3  # Use B3 propagation for Istio compatibility
+            {{- end }}
+            - name: CONFIG_FILE
+              value: /config/data.yaml{{ range .Values.additionalConfigs }}:/additional-configs/{{ . }}/data.yaml{{ end }}
+            {{- range $key, $val := .Values.env }}
+            - name: {{ $key | quote }}
+              value: {{ $val | quote }}
+            {{- end }}
+
+          {{- if .Values.ingress.enabled }}
+          # Delay shutdown to give ingress controller time to reroute traffic
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sleep", "5"]
+          {{- end }}
+
+        {{- if .Values.sidecars }}
+{{ toYaml .Values.sidecars | indent 8 }}
+        {{- end }}

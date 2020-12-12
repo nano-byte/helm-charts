@@ -1,0 +1,118 @@
+name: ''
+fullname: ''
+
+image:
+  registry:  # required
+  repository:  # required
+  tag:  # required (e.g., 1.0.0)
+  pullPolicy: IfNotPresent
+
+args: []
+
+env: {}
+
+config: {}
+
+additionalConfigs: []
+
+labels: {}
+
+annotations: {}
+
+resources:
+  requests:
+    memory: 64M
+  limits:
+    memory: 128M
+
+replicas: 1
+
+autoscaling:
+  enabled: false
+  maxReplicas: 3
+  targetCpu: 80
+
+rollingUpdate: true
+
+nodeSelector: {}
+
+persistence:
+  enabled: false
+  storageClass:
+  size: 1G
+  mountPath:  # required if enabled
+
+secrets: []
+
+ingress:
+  enabled: false
+  port: 80
+  protocol: http
+  domains: []
+  paths: []
+  class:
+  annotations: {}
+  tls: []
+  istio:
+    enabled: false
+    gateways: []
+    httpHeaders: {}
+    corsPolicy: {}
+    timeout: 15s
+    retries: {}
+
+flagger:
+  enabled: false
+  canaryAnalysis:
+    threshold: 5
+    maxWeight: 50
+    stepWeight: 10
+    metrics:
+      - name: request-success-rate
+        threshold: 99
+        interval: 1m
+      - name: request-duration
+        threshold: 500
+        interval: 30s
+
+# livenessProbe:
+#   initialDelaySeconds: 10  # Allow for long startup
+#   httpGet:
+#     port: http-ingress
+#     path: /
+
+# readinessProbe:
+#   initialDelaySeconds: 2  # Accept traffic quickly
+#   httpGet:
+#     port: http-ingress
+#     path: /
+
+tracing:
+  enabled: false
+  probability: 1
+
+monitoring:
+  enabled: false
+  port: 9100
+  path: /metrics
+  interval: 1m
+
+alerting:
+  enabled: true
+  labels: {}
+  memoryUsage:
+    thresholdFactor: 0.9
+  http4xxRatio:
+    sampleInterval: 5m
+    referenceInterval: 1d
+    thresholdFactor: 1.5
+  responseTime:
+    sampleInterval: 1h
+    referenceInterval: 1d
+    thresholdFactor: 1.5
+
+sidecars: []
+
+rbac:
+  roles: []
+  clusterRoles: []

@@ -1,0 +1,13 @@
+digraph {
+    HorizontalPodAutoscaler -> Deployment;
+    Deployment -> Pod [style=dashed];
+    PodDisruptionBudget -> Pod;
+    {Ingress ServiceMonitor} -> Service -> Pod;
+    Pod -> {ConfigMap PersistentVolumeClaim ServiceAccount};
+    RoleBinding -> {ServiceAccount Role};
+    ClusterRoleBinding -> {ServiceAccount ClusterRole};
+
+    Pod [style=dashed];
+    Role [style=dotted];
+    ClusterRole [style=dotted];
+}

@@ -1,0 +1,13 @@
+# Persistence test
+
+image:
+  registry: docker.io
+  repository: jwilder/whoami
+  tag: latest
+
+rollingUpdate: false
+
+persistence:
+  enabled: true
+  size: 1M
+  mountPath: /data
