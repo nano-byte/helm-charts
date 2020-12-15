@@ -156,6 +156,10 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
+            {{- if .Values.ingress.enabled }}
+            - name: PORT
+              value: {{ .Values.ingress.port | quote }}
+            {{- end }}
             {{- if .Values.monitoring.enabled }}
             - name: METRICS_PORT
               value: {{ .Values.monitoring.port | quote }}
