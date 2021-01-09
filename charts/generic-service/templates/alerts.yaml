@@ -29,7 +29,7 @@ spec:
           for: 1m
           labels:
             component: {{ include "generic-service.fullname" . }}
-            severity: criticial
+            severity: critical
 {{- if .Values.alerting.labels }}
 {{ toYaml .Values.alerting.labels | indent 12 }}
 {{- end }}
