@@ -21,9 +21,9 @@ release: {{ include "generic-service.fullname" . }}
 {{ define "generic-service.default-labels" -}}
 
 {{ include "generic-service.selector-labels" . }}
-version: {{ required "Set image.tag" .Values.image.tag }}
+version: {{ .Values.image.tag }}
 app.kubernetes.io/name: {{ include "generic-service.name" . }}
-app.kubernetes.io/version: {{ required "Set image.tag" .Values.image.tag }}
+app.kubernetes.io/version: {{ .Values.image.tag }}
 app.kubernetes.io/instance: {{ include "generic-service.fullname" . }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 helm.sh/chart: '{{ .Chart.Name }}-{{ .Chart.Version }}'

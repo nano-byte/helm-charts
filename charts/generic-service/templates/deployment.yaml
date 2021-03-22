@@ -91,7 +91,7 @@ spec:
 
       containers:
         - name: {{ include "generic-service.fullname" . }}
-          image: '{{ required "Set image.registry" .Values.image.registry }}/{{ required "Set image.repository" .Values.image.repository }}:{{ required "Set image.tag" .Values.image.tag }}'
+          image: '{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}'
           imagePullPolicy: {{ .Values.image.pullPolicy }}
 
           {{- if .Values.args }}
@@ -101,7 +101,7 @@ spec:
           volumeMounts:
             {{- if .Values.persistence.enabled }}
             - name: persistence
-              mountPath: {{ required "Set persistence.mountPath" .Values.persistence.mountPath }}
+              mountPath: {{ required "Must specify persistence.mountPath when persistence.enabled" .Values.persistence.mountPath }}
             {{- end }}
             - name: config
               mountPath: /config
@@ -110,8 +110,8 @@ spec:
               mountPath: /additional-configs/{{ . }}
             {{- end }}
             {{- range .Values.secrets }}
-            - name: {{ required "Set secrets[].name" .name }}
-              mountPath: {{ required "Set secrets[].mountPath" .mountPath }}
+            - name: {{ .name }}
+              mountPath: {{ .mountPath }}
               {{- if .subPath }}
               subPath: {{ .subPath }}
               {{- end }}

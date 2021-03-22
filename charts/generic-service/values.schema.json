@@ -1,0 +1,382 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "The name of the service (used for `app.kubernetes.io/name` label)"
+    },
+    "fullname": {
+      "type": "string",
+      "description": "The name of the service instance (used for resource names and `app.kubernetes.io/instance` label)"
+    },
+    "image": {
+      "type": "object",
+      "properties": {
+        "registry": {
+          "type": "string",
+          "description": "The Registry containing the Docker Image to run (also used as the name of an optional Image Pull Secret)"
+        },
+        "repository": {
+          "type": "string",
+          "description": "The name of the Docker Image image to run (without the Registry)"
+        },
+        "tag": {
+          "type": "string",
+          "description": "The tag of the Docker Image to run (also used for `app.kubernetes.io/version` label)"
+        },
+        "pullPolicy": {
+          "type": "string",
+          "enum": ["Never", "IfNotPresent", "Alawys"],
+          "description": "Set to `Always` to try to pull new versions of the Docker Image"
+        }
+      },
+      "required": [
+        "registry",
+        "repository",
+        "tag"
+      ]
+    },
+    "args": {
+      "type": "array",
+      "items": [{"type": "string"}],
+      "description": "The command-line arguments passed to the service"
+    },
+    "env": {
+      "type": "object",
+      "additionalProperties": {"type": "string"},
+      "description": "The environment variables passed to the service"
+    },
+    "config": {
+      "type": "object",
+      "description": "YAML configuration to be mounted as a file in the container at $CONFIG_FILE"
+    },
+    "additionalConfigs": {
+      "type": "array",
+      "items": [{"type": "string"}],
+      "description": "Additional ConfigMaps (with key named data.yaml) to be mounted and appended to $CONFIG_FILE"
+    },
+    "livenessProbe": {
+      "type": "object",
+      "description": "Probe that causes the service to be restarted when failing"
+    },
+    "readinessProbe": {
+      "type": "object",
+      "description": "Probe that prevents the service from receiving traffic when failing"
+    },
+    "labels": {
+      "type": "object",
+      "additionalProperties": {"type": "string"},
+      "description": "Additional labels to set on all generated resources"
+    },
+    "annotations": {
+      "type": "object",
+      "additionalProperties": {"type": "string"},
+      "description": "Additional annotations to set on the Pods"
+    },
+    "resources": {
+      "type": "object",
+      "properties": {
+        "requests": {
+          "type": "object",
+          "properties": {
+            "memory": {"type": "string"},
+            "cpu": {"type": "string"}
+          },
+          "description": "The minimum resources requested/reserved for the service"
+        },
+        "limits": {
+          "type": "object",
+          "properties": {
+            "properties": {
+              "memory": {"type": "string"},
+              "cpu": {"type": "string"}
+            }
+          },
+          "description": "The maximum resources the service can use"
+        }
+      }
+    },
+    "replicas": {
+      "type": "integer",
+      "description": "The number of instances of the service to run (set at least 2 for Pod Disruption Budget)"
+    },
+    "autoscaling": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enables automatic starting of additional instances based on CPU load"
+        },
+        "maxReplicas": {
+          "type": "integer",
+          "description": "The maximum number of instances to run (must be larger than replicas)"
+        },
+        "targetCpu": {
+          "type": "integer",
+          "description": "The desired average CPU load in percent"
+        }
+      }
+    },
+    "rollingUpdate": {
+      "type": "boolean",
+      "description": "Controls whether to wait for new versions to be up and running before shutting down old version"
+    },
+    "nodeSelector": {
+      "type": "object",
+      "additionalProperties": {"type": "string"},
+      "description": "Node labels required for scheduling this service, also used as tolerations"
+    },
+    "persistence": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enables persistent storage for the service"
+        },
+        "storageClass": {
+          "type": "string",
+          "description": "The type of disk to use for storage instead of the cluster default"
+        },
+        "size": {
+          "type": "string",
+          "description": "The size of the persistent volume to create for the service"
+        },
+        "mountPath": {
+          "type": "string",
+          "description": "The mount path for the storage inside the container"
+        }
+      }
+    },
+    "secrets": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "The name of the Kubernetes Secret"
+            },
+            "mountPath": {
+              "type": "string",
+              "description": "The mount path for the Secret inside the container"
+            },
+            "subPath": {
+              "type": "string",
+              "description": "The path of a single file in the Secret relative to the given mountPath"
+            },
+            "files": {
+              "type": "object",
+              "additionalProperties": {"type": "string"},
+              "description": "Map of file names to base64-encoded content; leave empty to reference existing Secret"
+            }
+          },
+          "required": [
+            "name",
+            "mountPath"
+          ]
+        }
+      ]
+    },
+    "ingress": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enables ingress into the service (either cluster-internal or public)"
+        },
+        "port": {
+          "type": "integer",
+          "description": "The container port ingress traffic is routed to"
+        },
+        "protocol": {
+          "type": "string",
+          "description": "The protocol used for ingress (e.g., http or grpc)"
+        },
+        "domains": {
+          "type": "array",
+          "items": [{"type": "string"}],
+          "description": "The public domain names under which the service is exposed (leave empty for cluster-internal only)"
+        },
+        "paths": {
+          "type": "array",
+          "items": [{"type": "string"}],
+          "description": "HTTP path prefixes to accept ingress traffic for (leave empty to accept traffic for any path)"
+        },
+        "class": {
+          "type": "string",
+          "description": "The ingress controller to use (if ingress.domains is set and ingress.istio.enabled is false)"
+        },
+        "annotations": {
+          "type": "object",
+          "additionalProperties": {"type": "string"},
+          "description": "Annotations for Ingress resource (if ingress.domains is set and ingress.istio.enabled is false)"
+        },
+        "tls": {
+          "type": "array",
+          "items": [{"type": "object"}],
+          "description": "TLS config for Ingress resource (if ingress.domains is set and ingress.istio.enabled is false)"
+        },
+        "istio": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Use Istio VirtualService instead of Kubernetes Ingress resource"
+            },
+            "gateways": {
+              "type": "array",
+              "items": [{"type": "string"}],
+              "description": "The names of the Istio Gateways to use"
+            },
+            "httpHeaders": {
+              "type": "object",
+              "additionalProperties": {"type": "string"},
+              "description": "Custom HTTP response headers"
+            },
+            "corsPolicy": {
+              "type": "object",
+              "description": "Istio CORS policy (see https://istio.io/docs/reference/config/networking/virtual-service/#CorsPolicy)"
+            },
+            "timeout": {
+              "type": "string",
+              "description": "Istio timeout (see https://istio.io/docs/tasks/traffic-management/request-timeouts/)"
+            },
+            "retries": {
+              "type": "object",
+              "description": "Istio retry policy (see https://istio.io/docs/reference/config/networking/virtual-service/#HTTPRetry)"
+            }
+          }
+        }
+      }
+    },
+    "flagger": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Use Flagger for canary rollouts"
+        },
+        "canaryAnalysis": {
+          "type": "object",
+          "description": "Configuration for canary analysis"
+        }
+      }
+    },
+    "tracing": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable tracing with Jaeger agent (injected as sidecar)"
+        },
+        "probability": {
+          "type": "integer",
+          "description": "Probability of any single trace being sampled; can be overridden for incoming requests e.g. via Istio"
+        }
+      }
+    },
+    "monitoring": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Use Prometheus for monitoring / metrics scraping"
+        },
+        "port": {
+          "type": "integer",
+          "description": "The port to be scraped for monitoring data"
+        },
+        "path": {
+          "type": "string",
+          "description": "The path to be scraped for monitoring data"
+        },
+        "interval": {
+          "type": "string",
+          "description": "The interval at which monitoring data is scraped"
+        }
+      }
+    },
+    "alerting": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": "Applies default alert rules like unavailable pods or RAM usage (if monitoring.enabled is true)"
+        },
+        "labels": {
+          "type": "object",
+          "additionalProperties": {"type": "string"},
+          "description": "Labels to apply to generic alert rules in addition to component and severity"
+        },
+        "memoryUsage": {
+          "type": "object",
+          "properties": {
+            "thresholdFactor": {
+              "type": "number",
+              "description": "The maximum factor (between 0 and 1) of memory usage allowed before alerting"
+            }
+          }
+        },
+        "http4xxRatio": {
+          "type": "object",
+          "properties": {
+            "sampleInterval": {
+              "type": "string",
+              "description": "The time interval in which to measure ratio of HTTP 4xx responses for the current state"
+            },
+            "referenceInterval": {
+              "type": "string",
+              "description": "The time interval in which to measure ratio of HTTP 4xx responses as a reference for the normal state"
+            },
+            "thresholdFactor": {
+              "type": "number",
+              "description": "The maximum factor between the current state and the normal state of HTTP 4xx response ratio allowed"
+            }
+          }
+        },
+        "responseTime": {
+          "type": "object",
+          "properties": {
+            "sampleInterval": {
+              "type": "string",
+              "description": "The time interval in which to measure average HTTP response times for the current state"
+            },
+            "referenceInterval": {
+              "type": "string",
+              "description": "The time interval in which to measure average HTTP response times for the normal state"
+            },
+            "thresholdFactor": {
+              "type": "number",
+              "description": "The maximum factor between the current state and the normal state of HTTP response times allowed"
+            }
+          }
+        }
+      }
+    },
+    "sidecars": {
+      "type": "array",
+      "items": [{"type": "object"}],
+      "description": "Additional sidecar containers to be added to the Pod"
+    },
+    "rbac": {
+      "type": "object",
+      "properties": {
+        "roles": {
+          "type": "array",
+          "items": [{"type": "string"}],
+          "description": "Namespace-specific Kubernetes RBAC Roles to assign to the service"
+        },
+        "clusterRoles": {
+          "type": "array",
+          "items": [{"type": "string"}],
+          "description": "Cluster-wide Kubernetes RBAC Roles to assign to the service"
+        }
+      }
+    }
+  },
+  "required": [
+    "image"
+  ]
+}
