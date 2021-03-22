@@ -4,11 +4,11 @@
   "properties": {
     "name": {
       "type": "string",
-      "description": "The name of the service (used for `app.kubernetes.io/name` label)"
+      "description": "The name of the service (used for app.kubernetes.io/name label)"
     },
     "fullname": {
       "type": "string",
-      "description": "The name of the service instance (used for resource names and `app.kubernetes.io/instance` label)"
+      "description": "The name of the service instance (used for resource names and app.kubernetes.io/instance label)"
     },
     "image": {
       "type": "object",
@@ -23,12 +23,13 @@
         },
         "tag": {
           "type": "string",
-          "description": "The tag of the Docker Image to run (also used for `app.kubernetes.io/version` label)"
+          "description": "The tag of the Docker Image to run (also used for app.kubernetes.io/version label)"
         },
         "pullPolicy": {
           "type": "string",
-          "enum": ["Never", "IfNotPresent", "Alawys"],
-          "description": "Set to `Always` to try to pull new versions of the Docker Image"
+          "enum": ["Never", "IfNotPresent", "Always"],
+          "default": "IfNotPresent",
+          "description": "Set to Always to try to pull new versions of the Docker Image"
         }
       },
       "required": [
@@ -58,11 +59,51 @@
     },
     "livenessProbe": {
       "type": "object",
-      "description": "Probe that causes the service to be restarted when failing"
+      "description": "Probe that causes the service to be restarted when failing",
+      "properties": {
+        "initialDelaySeconds": {"type": "integer"},
+        "periodSeconds": {"type": "integer"},
+        "httpGet": {
+          "type": "object",
+          "properties": {
+            "port": {"type": "string"},
+            "path": {"type": "string"}
+          }
+        },
+        "exec": {
+          "type": "object",
+          "properties": {
+            "command": {
+              "type": "array",
+              "items": [{"type": "string"}]
+            }
+          }
+        }
+      }
     },
     "readinessProbe": {
       "type": "object",
-      "description": "Probe that prevents the service from receiving traffic when failing"
+      "description": "Probe that prevents the service from receiving traffic when failing",
+      "properties": {
+        "initialDelaySeconds": {"type": "integer"},
+        "periodSeconds": {"type": "integer"},
+        "httpGet": {
+          "type": "object",
+          "properties": {
+            "port": {"type": "string"},
+            "path": {"type": "string"}
+          }
+        },
+        "exec": {
+          "type": "object",
+          "properties": {
+            "command": {
+              "type": "array",
+              "items": [{"type": "string"}]
+            }
+          }
+        }
+      }
     },
     "labels": {
       "type": "object",
@@ -79,26 +120,35 @@
       "properties": {
         "requests": {
           "type": "object",
+          "description": "The minimum resources requested/reserved for the service",
           "properties": {
-            "memory": {"type": "string"},
-            "cpu": {"type": "string"}
-          },
-          "description": "The minimum resources requested/reserved for the service"
+            "memory": {
+              "type": "string",
+              "default": "64M"
+            },
+            "cpu": {
+              "type": "string"
+            }
+          }
         },
         "limits": {
           "type": "object",
+          "description": "The maximum resources the service can use",
           "properties": {
-            "properties": {
-              "memory": {"type": "string"},
-              "cpu": {"type": "string"}
+            "memory": {
+              "type": "string",
+              "default": "128M"
+            },
+            "cpu": {
+              "type": "string"
             }
-          },
-          "description": "The maximum resources the service can use"
+          }
         }
       }
     },
     "replicas": {
       "type": "integer",
+      "default": 1,
       "description": "The number of instances of the service to run (set at least 2 for Pod Disruption Budget)"
     },
     "autoscaling": {
@@ -106,20 +156,24 @@
       "properties": {
         "enabled": {
           "type": "boolean",
+          "default": false,
           "description": "Enables automatic starting of additional instances based on CPU load"
         },
         "maxReplicas": {
           "type": "integer",
+          "default": 3,
           "description": "The maximum number of instances to run (must be larger than replicas)"
         },
         "targetCpu": {
           "type": "integer",
+          "default": 80,
           "description": "The desired average CPU load in percent"
         }
       }
     },
     "rollingUpdate": {
       "type": "boolean",
+      "default": true,
       "description": "Controls whether to wait for new versions to be up and running before shutting down old version"
     },
     "nodeSelector": {
@@ -132,6 +186,7 @@
       "properties": {
         "enabled": {
           "type": "boolean",
+          "default": false,
           "description": "Enables persistent storage for the service"
         },
         "storageClass": {
@@ -140,6 +195,7 @@
         },
         "size": {
           "type": "string",
+          "default": "1G",
           "description": "The size of the persistent volume to create for the service"
         },
         "mountPath": {
@@ -184,14 +240,17 @@
       "properties": {
         "enabled": {
           "type": "boolean",
+          "default": false,
           "description": "Enables ingress into the service (either cluster-internal or public)"
         },
         "port": {
           "type": "integer",
+          "default": 80,
           "description": "The container port ingress traffic is routed to"
         },
         "protocol": {
           "type": "string",
+          "default": "http",
           "description": "The protocol used for ingress (e.g., http or grpc)"
         },
         "domains": {
@@ -223,6 +282,7 @@
           "properties": {
             "enabled": {
               "type": "boolean",
+              "default": false,
               "description": "Use Istio VirtualService instead of Kubernetes Ingress resource"
             },
             "gateways": {
@@ -241,6 +301,7 @@
             },
             "timeout": {
               "type": "string",
+              "default": "15s",
               "description": "Istio timeout (see https://istio.io/docs/tasks/traffic-management/request-timeouts/)"
             },
             "retries": {
@@ -256,11 +317,39 @@
       "properties": {
         "enabled": {
           "type": "boolean",
+          "default": false,
           "description": "Use Flagger for canary rollouts"
         },
         "canaryAnalysis": {
           "type": "object",
-          "description": "Configuration for canary analysis"
+          "description": "Configuration for canary analysis",
+          "properties": {
+            "threshold": {
+              "type": "integer",
+              "default": 5
+            },
+            "maxWeight": {
+              "type": "integer",
+              "default": 50
+            },
+            "stepWeight": {
+              "type": "integer",
+              "default": 10
+            },
+            "metrics": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "name": {"type": "string"},
+                    "threshold": {"type": "integer"},
+                    "interval": {"type": "string"}
+                  }
+                }
+              ]
+            }
+          }
         }
       }
     },
@@ -269,10 +358,12 @@
       "properties": {
         "enabled": {
           "type": "boolean",
+          "default": false,
           "description": "Enable tracing with Jaeger agent (injected as sidecar)"
         },
         "probability": {
           "type": "integer",
+          "default": 1.0,
           "description": "Probability of any single trace being sampled; can be overridden for incoming requests e.g. via Istio"
         }
       }
@@ -282,18 +373,22 @@
       "properties": {
         "enabled": {
           "type": "boolean",
+          "default": false,
           "description": "Use Prometheus for monitoring / metrics scraping"
         },
         "port": {
           "type": "integer",
+          "default": 9100,
           "description": "The port to be scraped for monitoring data"
         },
         "path": {
           "type": "string",
+          "default": "/metrics",
           "description": "The path to be scraped for monitoring data"
         },
         "interval": {
           "type": "string",
+          "default": "1m",
           "description": "The interval at which monitoring data is scraped"
         }
       }
@@ -303,7 +398,8 @@
       "properties": {
         "enabled": {
           "type": "boolean",
-          "default": "Applies default alert rules like unavailable pods or RAM usage (if monitoring.enabled is true)"
+          "default": true,
+          "description": "Applies default alert rules like unavailable pods or RAM usage (if monitoring.enabled is true)"
         },
         "labels": {
           "type": "object",
@@ -315,6 +411,7 @@
           "properties": {
             "thresholdFactor": {
               "type": "number",
+              "default": "0.9",
               "description": "The maximum factor (between 0 and 1) of memory usage allowed before alerting"
             }
           }
@@ -324,14 +421,17 @@
           "properties": {
             "sampleInterval": {
               "type": "string",
+              "default": "5m",
               "description": "The time interval in which to measure ratio of HTTP 4xx responses for the current state"
             },
             "referenceInterval": {
               "type": "string",
+              "default": "1d",
               "description": "The time interval in which to measure ratio of HTTP 4xx responses as a reference for the normal state"
             },
             "thresholdFactor": {
               "type": "number",
+              "default": "1.5",
               "description": "The maximum factor between the current state and the normal state of HTTP 4xx response ratio allowed"
             }
           }
@@ -341,14 +441,17 @@
           "properties": {
             "sampleInterval": {
               "type": "string",
+              "default": "1h",
               "description": "The time interval in which to measure average HTTP response times for the current state"
             },
             "referenceInterval": {
               "type": "string",
+              "default": "1d",
               "description": "The time interval in which to measure average HTTP response times for the normal state"
             },
             "thresholdFactor": {
               "type": "number",
+              "default": "1.5",
               "description": "The maximum factor between the current state and the normal state of HTTP response times allowed"
             }
           }
