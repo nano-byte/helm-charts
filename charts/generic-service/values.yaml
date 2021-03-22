@@ -2,7 +2,7 @@ name: ''
 fullname: ''
 
 image:
-  # registry: required
+  registry: docker.io
   # repository: required
   # tag: latest
   pullPolicy: IfNotPresent

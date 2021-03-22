@@ -24,7 +24,6 @@ You can then add static configuration to your `values.yaml` like this:
 ```yaml
 app:
   image:
-    registry: docker.io
     repository: myservice
     tag: 1.2.3
 ```
@@ -35,7 +34,7 @@ app:
 | ----------------------------------------- | -------------------------- | -------------------------------------------------------------------------------------------------------- |
 | `name`                                    | Release Name               | The name of the service (used for `app.kubernetes.io/name` label)                                        |
 | `fullname`                                | Release Name (+ `name`)    | The name of the service instance (used for resource names and `app.kubernetes.io/instance` label)        |
-| `image.registry`                          | __required__               | The Registry containing the Docker Image to run (also used as the name of an optional Image Pull Secret) |
+| `image.registry`                          | `docker.io`                | The Registry containing the Docker Image to run (also used as the name of an optional Image Pull Secret) |
 | `image.repository`                        | __required__               | The name of the Docker Image image to run (without the Registry)                                         |
 | `image.tag`                               | __required__               | The tag of the Docker Image to run (also used for `app.kubernetes.io/version` label)                     |
 | `image.pullPolicy`                        | `IfNotPresent`             | Set to `Always` to try to pull new versions of the Docker Image                                          |

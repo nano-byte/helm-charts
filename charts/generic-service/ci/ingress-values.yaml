@@ -1,7 +1,6 @@
 # Ingress test
 
 image:
-  registry: docker.io
   repository: jwilder/whoami
   tag: latest
 

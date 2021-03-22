@@ -15,6 +15,7 @@
       "properties": {
         "registry": {
           "type": "string",
+          "default": "docker.io",
           "description": "The Registry containing the Docker Image to run (also used as the name of an optional Image Pull Secret)"
         },
         "repository": {
@@ -33,7 +34,6 @@
         }
       },
       "required": [
-        "registry",
         "repository",
         "tag"
       ]
