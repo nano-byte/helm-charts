@@ -11,7 +11,7 @@ spec:
   groups:
     - name: {{ include "generic-service.fullname" . }}.rules
       rules:
-        - alert: SomeReplicasUnavailable
+        - alert: ReplicasUnavailable
           expr: kube_deployment_status_replicas_unavailable{deployment="{{ include "generic-service.fullname" . }}", namespace="{{ .Release.Namespace }}"} > 0
           for: 10m
           labels:
@@ -22,9 +22,10 @@ spec:
 {{- end }}
           annotations:
             summary: Some {{ include "generic-service.fullname" . }} pods are unavailable
-            description: Some of the {{ include "generic-service.fullname" . }} pods were unavailable for the last 10 minutes
+            description: Some {{ include "generic-service.fullname" . }} pods were unavailable for the last 10 minutes
 
-        - alert: AllReplicasUnavailable
+        {{- if .Values.ingress.enabled }}
+        - alert: ServiceUnavailable
           expr: kube_deployment_status_replicas_available{deployment="{{ include "generic-service.fullname" . }}", namespace="{{ .Release.Namespace }}"} == 0
           for: 1m
           labels:
@@ -34,8 +35,9 @@ spec:
 {{ toYaml .Values.alerting.labels | indent 12 }}
 {{- end }}
           annotations:
-            summary: All {{ include "generic-service.fullname" . }} pods are unavailable
-            description: All of the {{ include "generic-service.fullname" . }} pods were unavailable for the last 1 minute
+            summary: Service {{ include "generic-service.fullname" . }} unavailable
+            description: The service {{ include "generic-service.fullname" . }} was unavailable for the last 1 minute
+        {{- end }}
 
         - alert: HighMemoryUsage
           expr: >
