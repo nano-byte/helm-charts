@@ -38,6 +38,11 @@
         "tag"
       ]
     },
+    "command": {
+      "type": "array",
+      "items": [{"type": "string"}],
+      "description": "Overrides the command to launch in the Docker Image"
+    },
     "args": {
       "type": "array",
       "items": [{"type": "string"}],

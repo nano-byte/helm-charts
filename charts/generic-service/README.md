@@ -38,6 +38,7 @@ app:
 | `image.repository`                        | __required__               | The name of the Docker Image image to run (without the Registry)                                         |
 | `image.tag`                               | __required__               | The tag of the Docker Image to run (also used for `app.kubernetes.io/version` label)                     |
 | `image.pullPolicy`                        | `IfNotPresent`             | Set to `Always` to try to pull new versions of the Docker Image                                          |
+| `command`                                 | `[]`                       | Overrides the command to launch in the Docker Image                                                      |
 | `args`                                    | `[]`                       | The command-line arguments passed to the service                                                         |
 | `env`                                     | `{}`                       | The environment variables passed to the service                                                          |
 | `config`                                  | `{}`                       | YAML configuration to be mounted as a file in the container at `$CONFIG_FILE`                            |
