@@ -21,6 +21,6 @@ jobs:
 
       # Install
       - name: Set up Kubernetes
-        uses: helm/kind-action@v1.1.0
+        uses: helm/kind-action@v1.2.0
       - name: Install charts
         run: ct install --all
