@@ -12,7 +12,7 @@ spec:
     - name: {{ include "generic-service.fullname" . }}.rules
       rules:
         - alert: ReplicasUnavailable
-          expr: kube_deployment_status_replicas_unavailable{deployment="{{ include "generic-service.fullname" . }}", namespace="{{ .Release.Namespace }}"} > 0
+          expr: kube_deployment_status_replicas_unavailable{namespace="{{ .Release.Namespace }}", deployment="{{ include "generic-service.fullname" . }}"} > 0
           for: 10m
           labels:
             component: {{ include "generic-service.fullname" . }}
@@ -26,7 +26,7 @@ spec:
 
         {{- if .Values.ingress.enabled }}
         - alert: ServiceUnavailable
-          expr: kube_deployment_status_replicas_available{deployment="{{ include "generic-service.fullname" . }}", namespace="{{ .Release.Namespace }}"} == 0
+          expr: kube_deployment_status_replicas_available{namespace="{{ .Release.Namespace }}", deployment="{{ include "generic-service.fullname" . }}"} == 0
           for: 1m
           labels:
             component: {{ include "generic-service.fullname" . }}
@@ -41,8 +41,8 @@ spec:
 
         - alert: HighMemoryUsage
           expr: >
-            max(container_memory_working_set_bytes{container_name="{{ include "generic-service.fullname" . }}", namespace="{{ .Release.Namespace }}"}) /
-            min(kube_pod_container_resource_limits_memory_bytes{container="{{ include "generic-service.fullname" . }}", namespace="{{ .Release.Namespace }}"}) >
+            max(container_memory_working_set_bytes{namespace="{{ .Release.Namespace }}", container_name="{{ include "generic-service.fullname" . }}"}) /
+            min(kube_pod_container_resource_limits_memory_bytes{namespace="{{ .Release.Namespace }}", container="{{ include "generic-service.fullname" . }}"}) >
             {{ .Values.alerting.memoryUsage.thresholdFactor }}
           for: 5m
           labels:
