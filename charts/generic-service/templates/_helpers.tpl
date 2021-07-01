@@ -52,5 +52,5 @@ hosts:
 
 
 {{ define "generic-service.istio-filter" -}}
-  destination_service_namespace="{{ .Release.Namespace }}", destination_service_name="{{ include "generic-service.fullname" . }}"
+  destination_service_namespace="{{ .Release.Namespace }}", destination_service_name="{{ include "generic-service.fullname" . }}", reporter="source"
 {{- end }}
