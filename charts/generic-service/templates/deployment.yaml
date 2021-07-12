@@ -171,6 +171,7 @@ spec:
               value: {{ .Values.monitoring.port | quote }}
             {{- end }}
             {{- if .Values.tracing.enabled }}
+            # Jaeger client configuration
             - name: JAEGER_SERVICE_NAME
               value: '{{ include "generic-service.name" . }}.{{ .Release.Namespace }}'  # Match naming scheme of Istio
             - name: JAEGER_SAMPLER_TYPE
@@ -178,7 +179,20 @@ spec:
             - name: JAEGER_SAMPLER_PARAM
               value: {{ .Values.tracing.probability | quote }}
             - name: JAEGER_PROPAGATION
-              value: b3  # Use B3 propagation for Istio compatibility
+              value: b3  # Use B3 multi-header propagation for Istio compatibility
+            # OpenTelemetry client configuration
+            - name: OTEL_SERVICE_NAME
+              value: '{{ include "generic-service.name" . }}.{{ .Release.Namespace }}'  # Match naming scheme of Istio
+            - name: OTEL_TRACES_SAMPLER
+              value: parentbased_traceidratio
+            - name: OTEL_TRACES_SAMPLER_ARG
+              value: {{ .Values.tracing.probability | quote }}
+            - name: OTEL_PROPAGATORS
+              value: b3multi  # Use B3 multi-header propagation for Istio compatibility
+            - name: OTEL_EXPORTER_JAEGER_AGENT_HOST
+              value: localhost  # Sidecar injected by Jaeger Operator
+            - name: OTEL_EXPORTER_JAEGER_AGENT_PORT
+              value: "6831"
             {{- end }}
             - name: CONFIG_FILE
               value: /config/data.yaml{{ range .Values.additionalConfigs }}:/additional-configs/{{ . }}/data.yaml{{ end }}

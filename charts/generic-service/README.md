@@ -4,7 +4,7 @@ This Helm chart simplifies deploying a typical "80% case" service on Kubernetes.
 
 - [Istio](https://istio.io/) for routing
 - [Prometheus Operator](https://github.com/prometheus-operator/prometheus-operator) for monitoring
-- [Jaeger](https://www.jaegertracing.io/) for tracing
+- [Jaeger Operator](https://www.jaegertracing.io/docs/latest/operator/) for tracing
 - [Flagger](https://flagger.app/) for canary deployments
 
 ## Getting started
