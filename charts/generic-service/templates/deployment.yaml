@@ -167,7 +167,7 @@ spec:
             {{- if .Values.monitoring.enabled }}
             - name: METRICS_PORT
               value: {{ .Values.monitoring.port | quote }}
-            - name: METRICS__PORT
+            - name: METRICS__PORT  # .NET Core environment variable configuration syntax
               value: {{ .Values.monitoring.port | quote }}
             {{- end }}
             {{- if .Values.tracing.enabled }}

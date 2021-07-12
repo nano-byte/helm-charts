@@ -102,15 +102,17 @@ app:
 
 In addition to the environment variables specified via the `env` value, the following dynamic environment variables are automatically set:
 
-| Value           | Description                                               |
-| --------------- | --------------------------------------------------------- |
-| `POD_NAME`      | The name of the Kubernetes pod                            |
-| `POD_NAMESPACE` | The namespace of the Kubernetes pod                       |
-| `POD_IP`        | The cluster-internal IP of the Kubernetes pod             |
-| `NODE_NAME`     | The name of the Kubernetes node the pod is running on     |
-| `CONFIG_FILE`   | `:`-separated list of paths of mounted YAML config files  |
-| `PORT`          | The `ingress.port` (if `ingress.enabled` is `true`)       |
-| `METRICS_PORT`  | The `monitoring.port` (if `monitoring.enabled` is `true`) |
+| Value           | Description                                                                                                                                                                               |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `POD_NAME`      | The name of the Kubernetes pod                                                                                                                                                            |
+| `POD_NAMESPACE` | The namespace of the Kubernetes pod                                                                                                                                                       |
+| `POD_IP`        | The cluster-internal IP of the Kubernetes pod                                                                                                                                             |
+| `NODE_NAME`     | The name of the Kubernetes node the pod is running on                                                                                                                                     |
+| `CONFIG_FILE`   | `:`-separated list of paths of mounted YAML config files                                                                                                                                  |
+| `PORT`          | The `ingress.port` (if `ingress.enabled` is `true`)                                                                                                                                       |
+| `METRICS_PORT`  | The `monitoring.port` (if `monitoring.enabled` is `true`)                                                                                                                                 |
+| `JAEGER_*`      | [Jaeger client configuration](https://www.jaegertracing.io/docs/latest/client-features/) (if `tracing.enabled` is `true`)                                                                 |
+| `OTEL_*`        | [OpenTelemetry client configuration](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/sdk-environment-variables.md) (if `tracing.enabled` is `true`) |
 
 ## Resources
 
