@@ -32,21 +32,21 @@ spec:
 {{- if .Values.alerting.labels }}{{ toYaml .Values.alerting.labels | nindent 12 }}{{ end }}
           annotations:
             summary: '{{ include "generic-service.fullname" . }} replicas are down.'
-            description: '{{"{{$value}}"}} replicas for {{ include "generic-service.fullname" . }} are down.'
+            description: '{{"{{ $value }}"}} replicas for {{ include "generic-service.fullname" . }} are down.'
 {{- end }}
 
         - alert: HighMemoryUsage
           expr: >
             max(container_memory_working_set_bytes{namespace="{{ .Release.Namespace }}", container="{{ include "generic-service.fullname" . }}"}) /
             min(kube_pod_container_resource_limits{namespace="{{ .Release.Namespace }}", container="{{ include "generic-service.fullname" . }}", resource="memory"})
-            * 100 > {{ .Values.alerting.memoryUsage.thresholdFactor }} * 100
+            > {{ .Values.alerting.memoryUsage.thresholdFactor }}
           labels:
             component: {{ include "generic-service.fullname" . }}
             severity: warning
 {{- if .Values.alerting.labels }}{{ toYaml .Values.alerting.labels | nindent 12 }}{{ end }}
           annotations:
             summary: '{{ include "generic-service.fullname" . }} memory usage is high.'
-            description: '{{ include "generic-service.fullname" . }} is using {{"{{$value}}"}}% of its available memory.'
+            description: '{{ include "generic-service.fullname" . }} is using {{"{{ $value | humanizePercentage }}"}} of its available memory.'
 
 {{ if .Values.ingress.istio.enabled }}
         - alert: Http5xxResponses
@@ -58,7 +58,7 @@ spec:
 {{- if .Values.alerting.labels }}{{ toYaml .Values.alerting.labels | nindent 12 }}{{ end }}
           annotations:
             summary: '{{ include "generic-service.fullname" . }} gave HTTP 5xx responses.'
-            description: '{{ include "generic-service.fullname" . }} gave {{"{{$value}}"}} HTTP 5xx responses in the last minute.'
+            description: '{{ include "generic-service.fullname" . }} gave {{"{{ $value }}"}} HTTP 5xx responses in the last minute.'
 
         - alert: HighHttp4xxRatio
           expr: >
