@@ -35,11 +35,11 @@ annotations: {}
 
 resources:
   requests:
-    memory: 64M
-    # cpu:
+    memory: 64Mi
+    cpu: 10m
   limits:
-    memory: 128M
-    # cpu:
+    memory: 96Mi
+    cpu: 2000m
 
 replicas: 1
 

@@ -47,8 +47,10 @@ app:
 | `readinessProbe`                          |                            | Probe that prevents the service from receiving traffic when failing                                      |
 | `labels`                                  | `{}`                       | Additional labels to set on all generated resources                                                      |
 | `annotations`                             | `{}`                       | Additional annotations to set on the `Pod`s                                                              |
-| `resources.requests`                      | `{memory: 64M}`            | The minimum resources requested/reserved for the service                                                 |
-| `resources.limits`                        | `{memory: 128M}`           | The maximum resources the service can use                                                                |
+| `resources.requests.memory`               | `64Mi`                     | The minimum amount of RAM requested/reserved for the service                                             |
+| `resources.requests.cpu`                  | `10m`                      | The minimum number of CPU cores requested/reserved for the service                                       |
+| `resources.limits.memory`                 | `96Mi`                     | The maximum amount of RAM the service can use                                                            |
+| `resources.limits.cpu`                    | `2000m`                    | The maximum number of CPU cores the service can use                                                      |
 | `replicas`                                | `1`                        | The number of instances of the service to run (set at least `2` for Pod Disruption Budget)               |
 | `autoscaling.enabled`                     | `false`                    | Enables automatic starting of additional instances based on CPU load                                     |
 | `autoscaling.maxReplicas`                 | `3`                        | The maximum number of instances to run (must be larger than `replicas`)                                  |
