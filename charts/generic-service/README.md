@@ -7,6 +7,8 @@ This Helm chart simplifies deploying a typical "80% case" service on Kubernetes.
 - [Jaeger Operator](https://www.jaegertracing.io/docs/latest/operator/) for tracing
 - [Flagger](https://flagger.app/) for canary deployments
 
+The [Generic Service Grafana Dashboard](https://grafana.com/grafana/dashboards/14759) is a useful companion to this chart.
+
 ## Getting started
 
 This chart is most commonly used as a dependency instead of installing it directly. You can reference it in your chart by adding this to your `Chart.yaml`:
@@ -120,10 +122,10 @@ In addition to the environment variables specified via the `env` value, the foll
 
 This Helm chart generates a number of Resources based on the specified [Values](#values). These resources reference each other:
 
-![Resources](docs/resources.svg)
+![Resources](https://raw.githubusercontent.com/nano-byte/helm-charts/master/charts/generic-service/docs/resources.svg)
 
 Legend:  
-![Legend](docs/legend.svg)
+![Legend](https://raw.githubusercontent.com/nano-byte/helm-charts/master/charts/generic-service/docs/legend.svg)
 
 **Deployment**  
 Instructs Kubernetes to create a certain number of `Pod`s (`replicas`) running a specific `image`.
