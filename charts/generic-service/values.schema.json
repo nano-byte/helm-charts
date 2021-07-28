@@ -125,27 +125,31 @@
       "properties": {
         "requests": {
           "type": "object",
-          "description": "The minimum resources requested/reserved for the service",
           "properties": {
             "memory": {
               "type": "string",
-              "default": "64M"
+              "default": "64M",
+              "description": "The amount of memory requested for the service (recommendation: slightly higher than average usage)"
             },
             "cpu": {
-              "type": "string"
+              "type": "string",
+              "default": "10m",
+              "description": "The number of CPU cores requested for the service"
             }
           }
         },
         "limits": {
           "type": "object",
-          "description": "The maximum resources the service can use",
           "properties": {
             "memory": {
               "type": "string",
-              "default": "128M"
+              "default": "96Mi",
+              "description": "The maximum amount of memory the service may use (recommendation: slightly higher than worst-case usage)"
             },
             "cpu": {
-              "type": "string"
+              "type": "string",
+              "default": "2000m",
+              "description": "The maximum number of CPU cores the service may use"
             }
           }
         }
