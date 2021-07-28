@@ -91,7 +91,7 @@ app:
 | `monitoring.interval`                     | `1m`                       | The interval at which monitoring data is scraped                                                         |
 | `alerting.enabled`                        | `true`                     | Applies default alert rules like unavailable pods or memory use (if `monitoring.enabled` is `true`)      |
 | `alerting.labels`                         | `{}`                       | Labels to apply to generic alert rules in addition to `component` and `severity`                         |
-| `alerting.memoryUsage.thresholdFactor`    | `0.9`                      | The maximum factor (between `0` and `1`) of memory usage allowed before alerting                         |
+| `alerting.memoryUsage.thresholdFactor`    | `0.9`                      | The maximum usage factor of `resources.limits.memory` allowed before alerting (between `0` and `1`)      |
 | `alerting.http4xxRatio.sampleInterval`    | `5m`                       | The time interval in which to measure ratio of HTTP 4xx responses for the current state                  |
 | `alerting.http4xxRatio.referenceInterval` | `1d`                       | The time interval in which to measure ratio of HTTP 4xx responses as a reference for the normal state    |
 | `alerting.http4xxRatio.thresholdFactor`   | `1.5`                      | The maximum factor between the current state and the normal state of HTTP 4xx response ratio allowed     |

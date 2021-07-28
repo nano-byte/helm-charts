@@ -421,7 +421,7 @@
             "thresholdFactor": {
               "type": "number",
               "default": "0.9",
-              "description": "The maximum factor (between 0 and 1) of memory usage allowed before alerting"
+              "description": "The maximum usage factor of resources.limits.memory allowed before alerting (between 0 and 1)"
             }
           }
         },
