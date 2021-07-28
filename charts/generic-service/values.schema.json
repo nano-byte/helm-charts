@@ -404,7 +404,7 @@
         "enabled": {
           "type": "boolean",
           "default": true,
-          "description": "Applies default alert rules like unavailable pods or RAM usage (if monitoring.enabled is true)"
+          "description": "Applies default alert rules like unavailable pods or memory use (if monitoring.enabled is true)"
         },
         "labels": {
           "type": "object",

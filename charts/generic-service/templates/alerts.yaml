@@ -50,8 +50,7 @@ spec:
 
 {{ if .Values.ingress.istio.enabled }}
         - alert: Http5xxResponses
-          expr: >
-            sum(increase(istio_requests_total{ {{ include "generic-service.istio-filter" . }}, response_code=~"5.." }[1m])) > 0
+          expr: ceil(sum(increase(istio_requests_total{ {{ include "generic-service.istio-filter" . }}, response_code=~"5.." }[1m]))) > 0
           labels:
             component: {{ include "generic-service.fullname" . }}
             severity: warning
@@ -61,7 +60,7 @@ spec:
             description: '{{ include "generic-service.fullname" . }} gave {{"{{ $value }}"}} HTTP 5xx responses in the last minute.'
 
         - alert: HighHttp4xxRatio
-          expr: >
+          expr: |
             sum(rate(istio_requests_total{ {{ include "generic-service.istio-filter" . }} }[{{ .Values.alerting.http4xxRatio.sampleInterval }}])) > 0 and
             (sum(rate(istio_requests_total{ {{ include "generic-service.istio-filter" . }}, response_code=~"4.." }[{{ .Values.alerting.http4xxRatio.sampleInterval }}])) / sum(rate(istio_requests_total{ {{ include "generic-service.istio-filter" . }} }[{{ .Values.alerting.http4xxRatio.sampleInterval }}]))) /
             (sum(rate(istio_requests_total{ {{ include "generic-service.istio-filter" . }}, response_code=~"4.." }[{{ .Values.alerting.http4xxRatio.referenceInterval }}])) / sum(rate(istio_requests_total{ {{ include "generic-service.istio-filter" . }} }[{{ .Values.alerting.http4xxRatio.referenceInterval }}]))) >
@@ -75,7 +74,7 @@ spec:
             description: '{{ include "generic-service.fullname" . }} gave {{"{{$value}}"}}x more HTTP 4xx responses in the last {{ .Values.alerting.http4xxRatio.sampleInterval }} than in the last {{ .Values.alerting.http4xxRatio.referenceInterval }}.'
 
         - alert: SlowResponseTime
-          expr: >
+          expr: |
             sum(increase(istio_requests_total{ {{ include "generic-service.istio-filter" . }} }[{{ .Values.alerting.responseTime.sampleInterval }}])) > 0 and
             (sum(increase(istio_request_duration_seconds_sum{ {{ include "generic-service.istio-filter" . }} }[{{ .Values.alerting.responseTime.sampleInterval }}])) / sum(increase(istio_requests_total{ {{ include "generic-service.istio-filter" . }} }[{{ .Values.alerting.responseTime.sampleInterval }}]))) /
             (sum(increase(istio_request_duration_seconds_sum{ {{ include "generic-service.istio-filter" . }} }[{{ .Values.alerting.responseTime.referenceInterval }}])) / sum(increase(istio_requests_total{ {{ include "generic-service.istio-filter" . }} }[{{ .Values.alerting.responseTime.referenceInterval }}]))) >

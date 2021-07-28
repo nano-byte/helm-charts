@@ -89,7 +89,7 @@ app:
 | `monitoring.port`                         | `9100`                     | The port to be scraped for monitoring data                                                               |
 | `monitoring.path`                         | `/metrics`                 | The path to be scraped for monitoring data                                                               |
 | `monitoring.interval`                     | `1m`                       | The interval at which monitoring data is scraped                                                         |
-| `alerting.enabled`                        | `true`                     | Applies default alert rules like unavailable pods or RAM usage (if `monitoring.enabled` is `true`)       |
+| `alerting.enabled`                        | `true`                     | Applies default alert rules like unavailable pods or memory use (if `monitoring.enabled` is `true`)      |
 | `alerting.labels`                         | `{}`                       | Labels to apply to generic alert rules in addition to `component` and `severity`                         |
 | `alerting.memoryUsage.thresholdFactor`    | `0.9`                      | The maximum factor (between `0` and `1`) of memory usage allowed before alerting                         |
 | `alerting.http4xxRatio.sampleInterval`    | `5m`                       | The time interval in which to measure ratio of HTTP 4xx responses for the current state                  |
