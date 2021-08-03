@@ -407,8 +407,8 @@
       "properties": {
         "enabled": {
           "type": "boolean",
-          "default": true,
-          "description": "Applies default alert rules like unavailable pods or memory use (if monitoring.enabled is true)"
+          "default": false,
+          "description": "Deploys Prometheus alert rule for issues like like unavailable pods or high memory use"
         },
         "labels": {
           "type": "object",

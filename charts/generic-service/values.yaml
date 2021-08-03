@@ -102,7 +102,7 @@ monitoring:
   interval: 1m
 
 alerting:
-  enabled: true
+  enabled: false
   labels: {}
   memoryUsage:
     thresholdFactor: 0.9
