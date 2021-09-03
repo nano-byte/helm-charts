@@ -321,7 +321,7 @@
         }
       }
     },
-    "flagger": {
+    "canary": {
       "type": "object",
       "properties": {
         "enabled": {
@@ -329,10 +329,14 @@
           "default": false,
           "description": "Use Flagger for canary rollouts"
         },
-        "canaryAnalysis": {
+        "analysis": {
           "type": "object",
           "description": "Configuration for canary analysis",
           "properties": {
+            "interval": {
+              "type": "string",
+              "default": "10s"
+            },
             "threshold": {
               "type": "integer",
               "default": 5

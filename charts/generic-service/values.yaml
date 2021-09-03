@@ -77,9 +77,10 @@ ingress:
     timeout: 15s
     retries: {}
 
-flagger:
+canary:
   enabled: false
-  canaryAnalysis:
+  analysis:
+    interval: 10s
     threshold: 5
     maxWeight: 50
     stepWeight: 10

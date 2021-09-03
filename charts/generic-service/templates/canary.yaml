@@ -1,6 +1,6 @@
-{{- if and .Values.flagger.enabled .Values.ingress.enabled }}
+{{- if and .Values.canary.enabled .Values.ingress.enabled }}
 
-apiVersion: flagger.app/v1alpha3
+apiVersion: flagger.app/v1beta1
 kind: Canary
 metadata:
   name: {{ include "generic-service.fullname" . }}
@@ -42,6 +42,6 @@ spec:
     {{- if .Values.ingress.paths }}
     {{- end }}
 
-  canaryAnalysis: {{ toYaml .Values.flagger.canaryAnalysis | nindent 4 }}
+  analysis: {{ toYaml .Values.canary.analysis | nindent 4 }}
 
 {{- end }}

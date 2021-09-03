@@ -81,8 +81,8 @@ app:
 | `ingress.istio.corsPolicy`                | `{}`                       | [Istio CORS policy](https://istio.io/docs/reference/config/networking/virtual-service/#CorsPolicy)       |
 | `ingress.istio.timeout`                   | `15s`                      | [Istio timeout](https://istio.io/docs/tasks/traffic-management/request-timeouts/)                        |
 | `ingress.istio.retries`                   | `{}`                       | [Istio retry policy](https://istio.io/docs/reference/config/networking/virtual-service/#HTTPRetry)       |
-| `flagger.enabled`                         | `false`                    | Use Flagger for canary rollouts                                                                          |
-| `flagger.canaryAnalysis`                  | success>99%, latency<500ms | Configuration for canary analysis                                                                        |
+| `canary.enabled`                          | `false`                    | Use Flagger for canary rollouts                                                                          |
+| `canary.analysis`                         | success>99%, latency<500ms | Configuration for canary analysis                                                                        |
 | `tracing.enabled`                         | `false`                    | Enable tracing with Jaeger agent (injected as sidecar)                                                   |
 | `tracing.probability`                     | `1`                        | Probability of any single trace being sampled; can be overridden for incoming requests e.g. via Istio    |
 | `monitoring.enabled`                      | `false`                    | Use Prometheus for monitoring / metrics scraping                                                         |
