@@ -24,7 +24,7 @@ spec:
         request:
           set: {{ $root.Values.ingress.istio.httpHeaders | toYaml | nindent 12 }}
         response:
-          remove: 
+          remove:
             - grpc-metadata-server
             - grpc-metadata-x-envoy-upstream-service-time
       corsPolicy: {{ $root.Values.ingress.istio.corsPolicy | toYaml | nindent 8 }}
