@@ -14,14 +14,14 @@ spec:
 
   {{- if .Values.autoscaling.enabled }}
   autoscalerRef:
-    apiVersion: autoscaling/v2beta1
+    apiVersion: autoscaling/v2beta2
     kind: HorizontalPodAutoscaler
     name: {{ include "generic-service.fullname" . }}
   {{- end }}
 
   {{- if and (and .Values.ingress.enabled .Values.ingress.domains) (not .Values.ingress.istio.enabled) }}
   ingressRef:
-    apiVersion: extensions/v1beta1
+    apiVersion: networking.k8s.io/v1
     kind: Ingress
     name: {{ include "generic-service.fullname" . }}
   {{- end }}

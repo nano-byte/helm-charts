@@ -1,6 +1,6 @@
 {{- if gt .Values.replicas 1.0 }}  # At least 2 replicas are required to avoid outage during disruptions
 
-apiVersion: policy/v1beta1
+apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: {{ include "generic-service.fullname" . }}

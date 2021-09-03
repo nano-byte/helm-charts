@@ -1,6 +1,6 @@
 {{- if and (and .Values.ingress.enabled .Values.ingress.domains) (not .Values.ingress.istio.enabled) }}
 
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ include "generic-service.fullname" . }}
