@@ -55,7 +55,7 @@
     },
     "config": {
       "type": "object",
-      "description": "YAML configuration to be mounted as a file in the container at $CONFIG_FILE"
+      "description": "YAML/JSON configuration to be mounted as a file in the container at $CONFIG_FILE"
     },
     "additionalConfigs": {
       "type": "array",

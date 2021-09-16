@@ -5,4 +5,4 @@ metadata:
   labels: {{ include "generic-service.default-labels" . | nindent 4 }}
 
 data:
-  data.yaml: {{ .Values.config | toYaml | quote }}
+  data.yaml: {{ .Values.config | toJson | quote }}

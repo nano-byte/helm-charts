@@ -43,7 +43,7 @@ app:
 | `command`                                 | `[]`                       | Overrides the command to launch in the Docker Image                                                      |
 | `args`                                    | `[]`                       | The command-line arguments passed to the service                                                         |
 | `env`                                     | `{}`                       | The environment variables passed to the service                                                          |
-| `config`                                  | `{}`                       | YAML configuration to be mounted as a file in the container at `$CONFIG_FILE`                            |
+| `config`                                  | `{}`                       | YAML/JSON configuration to be mounted as a file in the container at `$CONFIG_FILE`                       |
 | `additionalConfigs`                       | `[]`                       | Additional `ConfigMap`s (with key named `data.yaml`) to be mounted and appended to `$CONFIG_FILE`        |
 | `livenessProbe`                           |                            | Probe that causes the service to be restarted when failing                                               |
 | `readinessProbe`                          |                            | Probe that prevents the service from receiving traffic when failing                                      |
@@ -112,7 +112,7 @@ In addition to the environment variables specified via the `env` value, the foll
 | `POD_NAMESPACE` | The namespace of the Kubernetes pod                                                                                                                                                       |
 | `POD_IP`        | The cluster-internal IP of the Kubernetes pod                                                                                                                                             |
 | `NODE_NAME`     | The name of the Kubernetes node the pod is running on                                                                                                                                     |
-| `CONFIG_FILE`   | `:`-separated list of paths of mounted YAML config files                                                                                                                                  |
+| `CONFIG_FILE`   | `:`-separated list of paths of mounted YAML/JSON config files                                                                                                                             |
 | `PORT`          | The `ingress.port` (if `ingress.enabled` is `true`)                                                                                                                                       |
 | `METRICS_PORT`  | The `monitoring.port` (if `monitoring.enabled` is `true`)                                                                                                                                 |
 | `JAEGER_*`      | [Jaeger client configuration](https://www.jaegertracing.io/docs/latest/client-features/) (if `tracing.enabled` is `true`)                                                                 |
