@@ -3,10 +3,10 @@ kind: Deployment
 metadata:
   name: {{ include "generic-service.fullname" . }}
   labels: {{ include "generic-service.default-labels" . | nindent 4 }}
-{{- if .Values.tracing.enabled }}
+  {{- if .Values.tracing.enabled }}
   annotations:
     sidecar.jaegertracing.io/inject: 'true'
-{{- end }}
+  {{- end }}
 
 spec:
   replicas: {{ .Values.replicas }}
@@ -17,7 +17,7 @@ spec:
   {{- if not .Values.rollingUpdate }}
   strategy:
     type: Recreate
-  {{- end}}
+  {{- end }}
 
   template:
     metadata:
@@ -63,7 +63,6 @@ spec:
       {{- if or .Values.rbac.roles .Values.rbac.clusterRoles }}
       serviceAccountName: {{ include "generic-service.fullname" . }}
       {{- end }}
-
 
       affinity:
         podAntiAffinity:
