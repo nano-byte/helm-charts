@@ -57,7 +57,7 @@ app:
 | `autoscaling.enabled`                     | `false`                    | Enables automatic starting of additional instances based on CPU load                                     |
 | `autoscaling.maxReplicas`                 | `3`                        | The maximum number of instances to run (must be larger than `replicas`)                                  |
 | `autoscaling.targetCpu`                   | `50`                       | The desired average CPU load in percent                                                                  |
-| `rollingUpdate`                           | `true`                     | Controls whether to wait for new versions to be up and running before shutting down old version          |
+| `rollingUpdate`                           | `true`                     | Old and new versions may coexist (manual `Pod` deletion when `false` and `strategy` != `Deployment`)     |
 | `nodeSelector`                            | `{}`                       | Node labels required for scheduling this service, also used as tolerations                               |
 | `persistence.enabled`                     | `false`                    | Enables persistent storage for the service                                                               |
 | `persistence.storageClass`                |                            | The type of disk to use for storage instead of the cluster default                                       |

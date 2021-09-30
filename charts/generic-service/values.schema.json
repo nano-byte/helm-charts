@@ -183,7 +183,7 @@
     "rollingUpdate": {
       "type": "boolean",
       "default": true,
-      "description": "Controls whether to wait for new versions to be up and running before shutting down old version"
+      "description": "Old and new versions may coexist (manual Pod deletion when this is false and strategy is not Deployment)"
     },
     "nodeSelector": {
       "type": "object",
