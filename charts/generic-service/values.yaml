@@ -41,6 +41,7 @@ resources:
     memory: 96Mi
     cpu: 2000m
 
+controller: Deployment
 replicas: 1
 
 autoscaling:

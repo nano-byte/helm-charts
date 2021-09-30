@@ -1,0 +1,12 @@
+# StatefulSet strategy test
+
+image:
+  repository: jwilder/whoami
+  tag: latest
+
+controller: StatefulSet
+
+persistence:
+  enabled: true
+  size: 1M
+  mountPath: /data

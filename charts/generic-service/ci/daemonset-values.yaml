@@ -1,0 +1,7 @@
+# DaemonSet strategy test
+
+image:
+  repository: jwilder/whoami
+  tag: latest
+
+controller: DaemonSet

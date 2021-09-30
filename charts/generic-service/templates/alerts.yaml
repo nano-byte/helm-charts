@@ -12,7 +12,7 @@ spec:
     - name: {{ include "generic-service.fullname" . }}.rules
       rules:
         - alert: Down
-          expr: kube_deployment_status_replicas_ready{namespace="{{ .Release.Namespace }}", deployment="{{ include "generic-service.fullname" . }}"} == 0
+          expr: kube_{{ .Values.controller | lower }}_status_{{ if eq .Values.controller "DaemonSet" }}number{{ else }}replicas{{ end }}_ready{namespace="{{ .Release.Namespace }}", {{ .Values.controller | lower }}="{{ include "generic-service.fullname" . }}"} == 0
           for: '{{ if .Values.ingress.enabled }}1m{{ else }}5m{{ end }}'
           labels:
             component: {{ include "generic-service.fullname" . }}
@@ -22,9 +22,13 @@ spec:
             summary: '{{ include "generic-service.fullname" . }} is down.'
             description: 'All replicas for {{ include "generic-service.fullname" . }} are down.'
 
-{{- if gt .Values.replicas 1.0 }}
+{{- if or (gt .Values.replicas 1.0) (eq .Values.controller "DaemonSet") }}
         - alert: ReplicasDown
-          expr: kube_deployment_status_replicas_unavailable{namespace="{{ .Release.Namespace }}", deployment="{{ include "generic-service.fullname" . }}"} > 0
+{{- if eq .Values.controller "StatefulSet" }}
+          expr: kube_statefulset_status_replicas{namespace="{{ .Release.Namespace }}", statefulset="{{ include "generic-service.fullname" . }}"} - kube_statefulset_status_replicas_available{namespace="{{ .Release.Namespace }}", statefulset="{{ include "generic-service.fullname" . }}"} > 0
+{{- else }}
+          expr: kube_{{ .Values.controller | lower }}_status_{{ if eq .Values.controller "DaemonSet" }}number{{ else }}replicas{{ end }}_unavailable{namespace="{{ .Release.Namespace }}", {{ .Values.controller | lower }}="{{ include "generic-service.fullname" . }}"} > 0
+{{- end }}
           for: 10m
           labels:
             component: {{ include "generic-service.fullname" . }}

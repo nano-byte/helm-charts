@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: {{ .Values.controller }}
 metadata:
   name: {{ include "generic-service.fullname" . }}
   labels: {{ include "generic-service.default-labels" . | nindent 4 }}
@@ -9,14 +9,35 @@ metadata:
   {{- end }}
 
 spec:
+  {{- if ne .Values.controller "DaemonSet" }}
   replicas: {{ .Values.replicas }}
+  {{- end }}
 
   selector:
     matchLabels: {{ include "generic-service.selector-labels" . | nindent 6 }}
 
   {{- if not .Values.rollingUpdate }}
   strategy:
-    type: Recreate
+    type: {{ if eq .Values.controller "Deployment" }}Recreate{{ else }}OnDelete{{ end }}
+  {{- end }}
+
+  {{- if eq .Values.controller "StatefulSet" }}
+  serviceName: {{ include "generic-service.fullname" . }}
+
+  {{- if .Values.persistence.enabled }}
+  volumeClaimTemplates:
+    - metadata:
+        name: {{ include "generic-service.fullname" . }}
+      spec:
+        {{- if .Values.persistence.storageClass }}
+        storageClassName: '{{ .Values.persistence.storageClass }}'
+        {{- end }}
+        accessModes: [ReadWriteOnce]
+        resources:
+          requests:
+            storage: '{{ .Values.persistence.size }}'
+  {{- end }}
+
   {{- end }}
 
   template:
@@ -38,7 +59,7 @@ spec:
 
     spec:
       volumes:
-        {{- if .Values.persistence.enabled }}
+        {{- if and .Values.persistence.enabled (ne .Values.controller "StatefulSet") }}
         - name: persistence
           persistentVolumeClaim:
             claimName: {{ include "generic-service.fullname" . }}
@@ -104,7 +125,7 @@ spec:
 
           volumeMounts:
             {{- if .Values.persistence.enabled }}
-            - name: persistence
+            - name: {{ if eq .Values.controller "StatefulSet" }}{{ include "generic-service.fullname" . }}{{ else }}persistence{{ end }}
               mountPath: {{ required "Must specify persistence.mountPath when persistence.enabled" .Values.persistence.mountPath }}
             {{- end }}
             - name: config

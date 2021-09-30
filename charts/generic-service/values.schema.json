@@ -155,6 +155,12 @@
         }
       }
     },
+    "controller": {
+      "type": "string",
+      "enum": ["Deployment", "StatefulSet", "DaemonSet"],
+      "default": "Deployment",
+      "description": "The type of Pod controller to create"
+    },
     "replicas": {
       "type": "integer",
       "default": 1,

@@ -53,6 +53,7 @@ app:
 | `resources.requests.cpu`                  | `10m`                      | The number of CPU cores requested for the service                                                        |
 | `resources.limits.memory`                 | `96Mi`                     | The maximum amount of memory the service may use (recommendation: slightly higher than worst-case usage) |
 | `resources.limits.cpu`                    | `2000m`                    | The maximum number of CPU cores the service may use                                                      |
+| `controller`                              | `Deployment`               | The type of `Pod` controller to create (`Deployment`, `StatefulSet` or `DaemonSet`)                      |
 | `replicas`                                | `1`                        | The number of instances of the service to run (set at least `2` for Pod Disruption Budget)               |
 | `autoscaling.enabled`                     | `false`                    | Enables automatic starting of additional instances based on CPU load                                     |
 | `autoscaling.maxReplicas`                 | `3`                        | The maximum number of instances to run (must be larger than `replicas`)                                  |
