@@ -12,7 +12,7 @@ spec:
     - name: {{ include "generic-service.fullname" . }}.rules
       rules:
         - alert: Down
-          expr: kube_deployment_status_replicas_available{namespace="{{ .Release.Namespace }}", deployment="{{ include "generic-service.fullname" . }}"} == 0
+          expr: kube_deployment_status_replicas_ready{namespace="{{ .Release.Namespace }}", deployment="{{ include "generic-service.fullname" . }}"} == 0
           for: '{{ if .Values.ingress.enabled }}1m{{ else }}5m{{ end }}'
           labels:
             component: {{ include "generic-service.fullname" . }}
