@@ -58,6 +58,7 @@ spec:
 {{- end }}
 
     spec:
+      securityContext: {{ toYaml .Values.securityContext | nindent 8 }}
       volumes:
         {{- if and .Values.persistence.enabled (ne .Values.controller "StatefulSet") }}
         - name: persistence

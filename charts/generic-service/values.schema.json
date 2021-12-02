@@ -38,6 +38,15 @@
         "tag"
       ]
     },
+    "securityContext": {
+      "type": "object",
+      "description": "Security context to use for running containers",
+      "properties": {
+        "runAsUser": {"type": "integer"},
+        "runAsGroup": {"type": "integer"},
+        "fsGroup": {"type": "integer"}
+      }
+    },
     "command": {
       "type": "array",
       "items": [{"type": "string"}],
