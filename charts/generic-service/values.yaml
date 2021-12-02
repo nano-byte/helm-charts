@@ -78,6 +78,13 @@ ingress:
     timeout: 15s
     retries: {}
 
+netpol:
+  enabled: false
+  ingress:
+    # Allow from same namespace
+    - from: [podSelector: {}]
+  egress: []
+
 canary:
   enabled: false
   analysis:

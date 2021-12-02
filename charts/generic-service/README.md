@@ -82,6 +82,9 @@ app:
 | `ingress.istio.corsPolicy`                | `{}`                       | [Istio CORS policy](https://istio.io/docs/reference/config/networking/virtual-service/#CorsPolicy)       |
 | `ingress.istio.timeout`                   | `15s`                      | [Istio timeout](https://istio.io/docs/tasks/traffic-management/request-timeouts/)                        |
 | `ingress.istio.retries`                   | `{}`                       | [Istio retry policy](https://istio.io/docs/reference/config/networking/virtual-service/#HTTPRetry)       |
+| `netpol.enabled`                          | `false`                    | Apply network policies for the `Pod`s                                                                    |
+| `netpol.ingress`                          | Allow from same namespace  | Ingress network policy rules to apply                                                                    |
+| `netpol.egress`                           | `[]`                       | Egress network policy rules to apply                                                                     |
 | `canary.enabled`                          | `false`                    | Use Flagger for canary rollouts                                                                          |
 | `canary.analysis`                         | success>99%, latency<500ms | Configuration for canary analysis                                                                        |
 | `tracing.enabled`                         | `false`                    | Enable tracing with Jaeger agent (injected as sidecar)                                                   |

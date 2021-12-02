@@ -327,6 +327,26 @@
         }
       }
     },
+    "netpol": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Apply network policies for the Pods"
+        },
+        "ingress": {
+          "type": "array",
+          "items": [{"type": "object"}],
+          "description": "Ingress network policy rules to apply"
+        },
+        "egress": {
+          "type": "array",
+          "items": [{"type": "object"}],
+          "description": "Ingress network policy rules to apply"
+        }
+      }
+    },
     "canary": {
       "type": "object",
       "properties": {

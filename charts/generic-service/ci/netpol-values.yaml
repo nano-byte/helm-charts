@@ -1,0 +1,8 @@
+# Ingress test
+
+image:
+  repository: jwilder/whoami
+  tag: latest
+
+netpol:
+  enabled: true

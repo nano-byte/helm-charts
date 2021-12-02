@@ -1,0 +1,13 @@
+{{- if .Values.netpol.enabled }}
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: {{ include "generic-service.fullname" . }}
+  labels: {{ include "generic-service.default-labels" . | nindent 4 }}
+
+spec:
+  podSelector:
+    matchLabels: {{ include "generic-service.selector-labels" . | nindent 6 }}
+  ingress: {{ toYaml .Values.netpol.ingress | nindent 4 }}
+  egress: {{ toYaml .Values.netpol.egress | nindent 4 }}
+{{- end }}
