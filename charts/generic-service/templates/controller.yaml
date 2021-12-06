@@ -137,10 +137,10 @@ spec:
             {{- end }}
             {{- range .Values.secrets }}
             - name: {{ .name }}
-              mountPath: {{ .mountPath }}
               {{- if .subPath }}
               subPath: {{ .subPath }}
               {{- end }}
+              mountPath: {{ .mountPath }}
             {{- end }}
 
           ports:

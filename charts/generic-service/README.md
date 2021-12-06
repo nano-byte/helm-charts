@@ -66,8 +66,8 @@ app:
 | `persistence.size`                        | `1G`                       | The size of the persistent volume to create for the service                                              |
 | `persistence.mountPath`                   | __required if enabled__    | The mount path for the storage inside the container                                                      |
 | `secrets[].name`                          | __required if used__       | The name of the Kubernetes `Secret`                                                                      |
+| `secrets[].subPath`                       |                            | The path of a single file in the `Secret`                                                                |
 | `secrets[].mountPath`                     | __required if used__       | The mount path for the `Secret` inside the container                                                     |
-| `secrets[].subPath`                       |                            | The path of a single file in the `Secret` relative to the given `mountPath`                              |
 | `secrets[].files`                         |                            | Map of file names to base64-encoded content; leave empty to reference existing `Secret`                  |
 | `ingress.enabled`                         | `false`                    | Enables ingress into the service (either cluster-internal or public)                                     |
 | `ingress.port`                            | `80`                       | The container port ingress traffic is routed to                                                          |

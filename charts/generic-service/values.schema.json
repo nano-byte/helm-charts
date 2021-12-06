@@ -238,13 +238,13 @@
               "type": "string",
               "description": "The name of the Kubernetes Secret"
             },
+            "subPath": {
+              "type": "string",
+              "description": "The path of a single file in the Secret"
+            },
             "mountPath": {
               "type": "string",
               "description": "The mount path for the Secret inside the container"
-            },
-            "subPath": {
-              "type": "string",
-              "description": "The path of a single file in the Secret relative to the given mountPath"
             },
             "files": {
               "type": "object",
