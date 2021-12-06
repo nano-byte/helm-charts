@@ -75,9 +75,9 @@ app:
 | `ingress.protocol`                        | `http`                     | The protocol used for ingress (e.g., `http` or `grpc`)                                                   |
 | `ingress.domains`                         | `[]`                       | The public domain names under which the service is exposed (leave empty for cluster-internal only)       |
 | `ingress.paths`                           | `[]`                       | HTTP path prefixes to accept ingress traffic for (leave empty to accept traffic for any path)            |
-| `ingress.class`                           |                            | The ingress controller to use (if `ingress.domains` is set and `ingress.istio.enabled` is `false`)       |
-| `ingress.annotations`                     | `{}`                       | Annotations for `Ingress` resource (if `ingress.domains` is set and `ingress.istio.enabled` is `false`)  |
-| `ingress.tls`                             | `[]`                       | TLS config for `Ingress` resource (if `ingress.domains` is set and `ingress.istio.enabled` is `false`)   |
+| `ingress.class`                           |                            | The ingress controller to use (not applicable if `ingress.istio.enabled`)                                |
+| `ingress.annotations`                     | `{}`                       | Annotations for `Ingress` resource (not applicable if `ingress.istio.enabled`)                           |
+| `ingress.tls`                             | `[]`                       | TLS config for `Ingress` resource (not applicable if `ingress.istio.enabled`)                            |
 | `ingress.istio.enabled`                   | `false`                    | Use Istio `VirtualService` instead of Kubernetes `Ingress` resource                                      |
 | `ingress.istio.gateways`                  | `[]`                       | The names of the Istio `Gateway`s to use                                                                 |
 | `ingress.istio.httpHeaders`               | `{}`                       | Custom HTTP response headers                                                                             |
@@ -89,7 +89,7 @@ app:
 | `netpol.egress`                           | `[]`                       | Egress network policy rules to apply                                                                     |
 | `canary.enabled`                          | `false`                    | Use Flagger for canary rollouts                                                                          |
 | `canary.analysis`                         | success>99%, latency<500ms | Configuration for canary analysis                                                                        |
-| `tracing.enabled`                         | `false`                    | Enable tracing with Jaeger agent (injected as sidecar)                                                   |
+| `tracing.enabled`                         | `false`                    | Enables tracing with Jaeger agent (injected as sidecar)                                                  |
 | `tracing.probability`                     | `1`                        | Probability of any single trace being sampled; can be overridden for incoming requests e.g. via Istio    |
 | `monitoring.enabled`                      | `false`                    | Use Prometheus for monitoring / metrics scraping                                                         |
 | `monitoring.port`                         | `9100`                     | The port to be scraped for monitoring data                                                               |

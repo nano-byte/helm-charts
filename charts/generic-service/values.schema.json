@@ -294,17 +294,17 @@
         },
         "class": {
           "type": "string",
-          "description": "The ingress controller to use (if ingress.domains is set and ingress.istio.enabled is false)"
+          "description": "The ingress controller to use (not applicable if ingress.istio.enabled)"
         },
         "annotations": {
           "type": "object",
           "additionalProperties": {"type": "string"},
-          "description": "Annotations for Ingress resource (if ingress.domains is set and ingress.istio.enabled is false)"
+          "description": "Annotations for Ingress resource (not applicable if ingress.istio.enabled)"
         },
         "tls": {
           "type": "array",
           "items": [{"type": "object"}],
-          "description": "TLS config for Ingress resource (if ingress.domains is set and ingress.istio.enabled is false)"
+          "description": "TLS config for Ingress resource (not applicable if ingress.istio.enablede)"
         },
         "istio": {
           "type": "object",
@@ -412,7 +412,7 @@
         "enabled": {
           "type": "boolean",
           "default": false,
-          "description": "Enable tracing with Jaeger agent (injected as sidecar)"
+          "description": "Enables tracing with Jaeger agent (injected as sidecar)"
         },
         "probability": {
           "type": "integer",
