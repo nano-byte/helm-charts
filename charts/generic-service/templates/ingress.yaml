@@ -14,8 +14,10 @@ metadata:
   {{- end }}
 
 spec:
-{{- if .Values.ingress.tls }}
-  tls: {{ toYaml .Values.ingress.tls | nindent 4 }}
+{{- if .Values.ingress.tlsSecret }}
+  tls:
+    - secretName: {{ .Values.ingress.tlsSecret }}
+      hosts: {{ .Values.ingress.domains | toYaml | nindent 8 }}
 {{- end }}
   rules:
     {{- $root := . -}}

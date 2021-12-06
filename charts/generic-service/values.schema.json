@@ -301,10 +301,9 @@
           "additionalProperties": {"type": "string"},
           "description": "Annotations for Ingress resource (not applicable if ingress.istio.enabled)"
         },
-        "tls": {
-          "type": "array",
-          "items": [{"type": "object"}],
-          "description": "TLS config for Ingress resource (not applicable if ingress.istio.enablede)"
+        "tlsSecret": {
+          "type": "string",
+          "description": "The name of the Secret holding the TLS private key (not applicable if ingress.istio.enabled)"
         },
         "istio": {
           "type": "object",

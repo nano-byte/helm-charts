@@ -77,7 +77,7 @@ app:
 | `ingress.paths`                           | `[]`                       | HTTP path prefixes to accept ingress traffic for (leave empty to accept traffic for any path)            |
 | `ingress.class`                           |                            | The ingress controller to use (not applicable if `ingress.istio.enabled`)                                |
 | `ingress.annotations`                     | `{}`                       | Annotations for `Ingress` resource (not applicable if `ingress.istio.enabled`)                           |
-| `ingress.tls`                             | `[]`                       | TLS config for `Ingress` resource (not applicable if `ingress.istio.enabled`)                            |
+| `ingress.tlsSecret`                       |                            | The name of the `Secret` holding the TLS private key (not applicable if `ingress.istio.enabled`)         |
 | `ingress.istio.enabled`                   | `false`                    | Use Istio `VirtualService` instead of Kubernetes `Ingress` resource                                      |
 | `ingress.istio.gateways`                  | `[]`                       | The names of the Istio `Gateway`s to use                                                                 |
 | `ingress.istio.httpHeaders`               | `{}`                       | Custom HTTP response headers                                                                             |
