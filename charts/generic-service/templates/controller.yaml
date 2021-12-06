@@ -130,10 +130,12 @@ spec:
               mountPath: {{ required "Must specify persistence.mountPath when persistence.enabled" .Values.persistence.mountPath }}
             {{- end }}
             - name: config
-              mountPath: /config
+              subPath: data.yaml
+              mountPath: {{ .Values.configMountPath }}
             {{- range .Values.additionalConfigs }}
             - name: config-{{ . }}
-              mountPath: /additional-configs/{{ . }}
+              subPath: data.yaml
+              mountPath: /config/{{ . }}.yaml
             {{- end }}
             {{- range .Values.secrets }}
             - name: {{ .name }}
@@ -217,7 +219,7 @@ spec:
               value: "6831"
             {{- end }}
             - name: CONFIG_FILE
-              value: /config/data.yaml{{ range .Values.additionalConfigs }}:/additional-configs/{{ . }}/data.yaml{{ end }}
+              value: {{ .Values.configMountPath }}{{ range .Values.additionalConfigs }}:/additional-configs/{{ . }}/data.yaml{{ end }}
             {{- range $key, $val := .Values.env }}
             - name: {{ $key | quote }}
               value: {{ $val | quote }}

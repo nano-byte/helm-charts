@@ -16,7 +16,7 @@ args: []
 env: {}
 
 config: {}
-
+configMountPath: /config/config.yaml
 additionalConfigs: []
 
 # livenessProbe:

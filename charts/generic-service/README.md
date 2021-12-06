@@ -44,8 +44,9 @@ app:
 | `command`                                 | `[]`                       | Overrides the command to launch in the Docker Image                                                      |
 | `args`                                    | `[]`                       | The command-line arguments passed to the service                                                         |
 | `env`                                     | `{}`                       | The environment variables passed to the service                                                          |
-| `config`                                  | `{}`                       | YAML/JSON configuration to be mounted as a file in the container at `$CONFIG_FILE`                       |
-| `additionalConfigs`                       | `[]`                       | Additional `ConfigMap`s (with key named `data.yaml`) to be mounted and appended to `$CONFIG_FILE`        |
+| `config`                                  | `{}`                       | YAML/JSON configuration to be mounted as a file in the container                                         |
+| `configMountPath`                         | `/config/config.yaml`      | The file path in the container to mount the data from `config` into (exposed via `$CONFIG_FILE`)         |
+| `additionalConfigs`                       | `[]`                       | Additional `ConfigMap`s with key named `data.yaml` to be mounted (paths appended to `$CONFIG_FILE`)      |
 | `livenessProbe`                           |                            | Probe that causes the service to be restarted when failing                                               |
 | `readinessProbe`                          |                            | Probe that prevents the service from receiving traffic when failing                                      |
 | `labels`                                  | `{}`                       | Additional labels to set on all generated resources                                                      |
