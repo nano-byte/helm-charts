@@ -222,6 +222,12 @@
           "type": "string",
           "description": "The type of disk to use for storage instead of the cluster default"
         },
+        "accessModes": {
+          "type": "array",
+          "default": ["ReadWriteOnce"],
+          "items": [{"type": "string"}],
+          "description": "The support access modes the volume can be mounted with"
+        },
         "size": {
           "type": "string",
           "default": "1G",

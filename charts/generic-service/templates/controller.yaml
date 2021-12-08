@@ -32,7 +32,7 @@ spec:
         {{- if .Values.persistence.storageClass }}
         storageClassName: '{{ .Values.persistence.storageClass }}'
         {{- end }}
-        accessModes: [ReadWriteOnce]
+        accessModes: {{ .Values.persistence.accessModes | toYaml | nindent 10 }}
         resources:
           requests:
             storage: '{{ .Values.persistence.size }}'

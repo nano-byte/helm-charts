@@ -58,6 +58,7 @@ nodeSelector: {}
 persistence:
   enabled: false
   storageClass: ''
+  accessModes: [ReadWriteOnce]
   size: 1G
   mountPath: ''  # required if enabled
 

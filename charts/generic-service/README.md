@@ -64,6 +64,7 @@ app:
 | `nodeSelector`                            | `{}`                       | Node labels required for scheduling this service, also used as tolerations                               |
 | `persistence.enabled`                     | `false`                    | Enables persistent storage for the service                                                               |
 | `persistence.storageClass`                |                            | The type of disk to use for storage instead of the cluster default                                       |
+| `persistence.accessModes`                 | `[ReadWriteOnce]`          | The support access modes the volume can be mounted with                                                  |
 | `persistence.size`                        | `1G`                       | The size of the persistent volume to create for the service                                              |
 | `persistence.mountPath`                   | __required if enabled__    | The mount path for the storage inside the container                                                      |
 | `secrets[].name`                          | __required if used__       | The name of the Kubernetes `Secret`                                                                      |
