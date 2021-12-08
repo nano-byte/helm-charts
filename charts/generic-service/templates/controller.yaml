@@ -45,7 +45,9 @@ spec:
       labels: {{ include "generic-service.default-labels" . | nindent 8 }}
       annotations:
         kubectl.kubernetes.io/default-container: {{ include "generic-service.fullname" . }}
-        traffic.sidecar.istio.io/includeInboundPorts: '{{ if .Values.ingress.enabled }}{{ .Values.ingress.port }}{{ end }}'
+{{- if .Values.ingress.istio.enabled }}
+        traffic.sidecar.istio.io/includeInboundPorts: {{ .Values.ingress.port | quote }}
+{{- end }}
 {{- if .Values.tracing.enabled }}
         traffic.sidecar.istio.io/excludeOutboundPorts: '5778,9411,14268,14250'  # Jaeger ports
 {{- end }}
