@@ -31,6 +31,10 @@
           "enum": ["Never", "IfNotPresent", "Always"],
           "default": "IfNotPresent",
           "description": "Set to Always to try to pull new versions of the Docker Image"
+        },
+        "pullSecret": {
+          "type": "string",
+          "description": "Name of the Kubernetes Secret providing credentials for pulling the Image"
         }
       },
       "required": [

@@ -6,6 +6,7 @@ image:
   # repository: required
   # tag: latest
   pullPolicy: IfNotPresent
+  pullSecret: ""
 
 securityContext: {}
 

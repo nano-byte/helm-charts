@@ -86,7 +86,7 @@ spec:
         {{- end }}
 
       imagePullSecrets:
-        - name: '{{ .Values.image.registry }}'
+        - name: {{ .Values.image.pullSecret | default .Values.image.registry }}
 
       {{- if or .Values.rbac.roles .Values.rbac.clusterRoles }}
       serviceAccountName: {{ include "generic-service.fullname" . }}
