@@ -25,17 +25,14 @@ spec:
     - host: {{ . | quote }}
       http:
         paths:
-        {{- if $root.Values.ingress.paths }}
-          {{- range $root.Values.ingress.paths }}
-          - path: {{ . | quote }}
+        {{- range ($root.Values.ingress.paths | default (list "/")) }}
+          - pathType: Prefix
+            path: {{ . | quote }}
             backend:
-              serviceName: {{ include "generic-service.fullname" $root }}
-              servicePort: {{ $root.Values.ingress.protocol }}-ingress
-          {{- end }}
-        {{- else }}
-          - backend:
-              serviceName: {{ include "generic-service.fullname" $root }}
-              servicePort: {{ $root.Values.ingress.protocol }}-ingress
+              service:
+                name: {{ include "generic-service.fullname" $root }}
+                port:
+                  name: {{ $root.Values.ingress.protocol }}-ingress
         {{- end }}
       {{- end }}
 
