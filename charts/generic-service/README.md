@@ -75,6 +75,7 @@ app:
 | `ingress.enabled`                         | `false`                    | Enables ingress into the service (either cluster-internal or public)                                     |
 | `ingress.port`                            | `80`                       | The container port ingress traffic is routed to                                                          |
 | `ingress.protocol`                        | `http`                     | The protocol used for ingress (e.g., `http` or `grpc`)                                                   |
+| `ingress.headless`                        | `false`                    | Creates a headless `Service` to disable Kubernetes-based load balancing                                  |
 | `ingress.domains`                         | `[]`                       | The public domain names under which the service is exposed (leave empty for cluster-internal only)       |
 | `ingress.paths`                           | `[]`                       | HTTP path prefixes to accept ingress traffic for (leave empty to accept traffic for any path)            |
 | `ingress.class`                           |                            | The ingress controller to use (not applicable if `ingress.istio.enabled`)                                |

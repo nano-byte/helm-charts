@@ -9,6 +9,10 @@ metadata:
 spec:
   selector: {{ include "generic-service.selector-labels" . | nindent 4 }}
 
+  {{- if .Values.ingress.headless }}
+  clusterIP: None
+  {{- end }}
+
   ports:
     {{- if and .Values.ingress.enabled (not .Values.canary.enabled) }}
     - name: '{{ .Values.ingress.protocol }}-ingress'

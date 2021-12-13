@@ -292,6 +292,11 @@
           "default": "http",
           "description": "The protocol used for ingress (e.g., http or grpc)"
         },
+        "headless": {
+          "type": "boolean",
+          "default": false,
+          "description": "Creates a headless Service to disable Kubernetes-based load balancing"
+        },
         "domains": {
           "type": "array",
           "items": [{"type": "string"}],
