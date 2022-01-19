@@ -316,9 +316,19 @@
           "additionalProperties": {"type": "string"},
           "description": "Annotations for Ingress resource (not applicable if ingress.istio.enabled)"
         },
-        "tlsSecret": {
-          "type": "string",
-          "description": "The name of the Secret holding the TLS private key (not applicable if ingress.istio.enabled)"
+        "tls": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false,
+              "description": "Enables TLS termination at the ingress (not applicable if ingress.istio.enabled)"
+            },
+            "secret": {
+              "type": "string",
+              "description": "The name of the Secret holding the TLS private key (not applicable if ingress.istio.enabled)"
+            }
+          }
         },
         "istio": {
           "type": "object",

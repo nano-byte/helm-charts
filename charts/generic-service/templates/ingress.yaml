@@ -14,9 +14,9 @@ metadata:
   {{- end }}
 
 spec:
-{{- if .Values.ingress.tlsSecret }}
+{{- if .Values.ingress.tls.enabled }}
   tls:
-    - secretName: {{ .Values.ingress.tlsSecret }}
+    - secretName: {{ .Values.ingress.tls.secret | default (printf "%s-tls" .Release.Name) }}
       hosts: {{ .Values.ingress.domains | toYaml | nindent 8 }}
 {{- end }}
   rules:

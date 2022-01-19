@@ -74,7 +74,9 @@ ingress:
   paths: []
   class: ''
   annotations: {}
-  tlsSecret: ''
+  tls:
+    enabled: false
+    secret: ''
   istio:
     enabled: false
     gateways: []
