@@ -17,13 +17,13 @@ spec:
     {{- if and .Values.ingress.enabled (not .Values.canary.enabled) }}
     - name: '{{ .Values.ingress.protocol }}-ingress'
       port: 80
-      targetPort: '{{ .Values.ingress.protocol }}-ingress'
+      targetPort: {{ .Values.ingress.port }}
     {{- end }}
 
     {{- if .Values.monitoring.enabled }}
     - name: http-monitoring
       port: 9100
-      targetPort: http-monitoring
+      targetPort: {{ .Values.monitoring.port }}
     {{- end }}
 
 {{- end }}
