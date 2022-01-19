@@ -6,9 +6,12 @@ metadata:
   name: {{ include "generic-service.fullname" . }}
   labels: {{ include "generic-service.default-labels" . | nindent 4 }}
   annotations:
-    {{- if .Values.ingress.class }}
+  {{- if .Values.ingress.class }}
     kubernetes.io/ingress.class: {{ .Values.ingress.class }}
-    {{- end }}
+  {{- end }}
+  {{- if eq .Values.ingress.class "nginx" }}
+    nginx.ingress.kubernetes.io/backend-protocol: {{ .Values.ingress.protocol | upper }}
+  {{- end }}
   {{- range $key, $value := .Values.ingress.annotations }}
     {{ $key }}: {{ $value | quote }}
   {{- end }}
