@@ -122,6 +122,7 @@ In addition to the environment variables specified via the `env` value, the foll
 | `POD_NAMESPACE` | The namespace of the Kubernetes pod                                                                                                                                                       |
 | `POD_IP`        | The cluster-internal IP of the Kubernetes pod                                                                                                                                             |
 | `NODE_NAME`     | The name of the Kubernetes node the pod is running on                                                                                                                                     |
+| `REPLICAS`      | The desired number of instances of the service that should be running (unset if `autoscaling.enabled` is `true`)                                                                          |
 | `CONFIG_FILE`   | `:`-separated list of paths of mounted YAML/JSON config files                                                                                                                             |
 | `PORT`          | The `ingress.port` (if `ingress.enabled` is `true`)                                                                                                                                       |
 | `METRICS_PORT`  | The `monitoring.port` (if `monitoring.enabled` is `true`)                                                                                                                                 |

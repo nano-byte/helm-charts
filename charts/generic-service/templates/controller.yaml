@@ -190,6 +190,10 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
+            {{- if not .Values.autoscaling.enabled }}
+            - name: REPLICAS
+              value: {{ .Values.replicas | quote }}
+            {{- end }}
             {{- if .Values.ingress.enabled }}
             - name: PORT
               value: {{ .Values.ingress.port | quote }}
