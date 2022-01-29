@@ -158,7 +158,7 @@ spec:
             - name: '{{ .Values.ingress.protocol }}-ingress'
               containerPort: {{ .Values.ingress.port }}
             {{- end }}
-            {{- if (and .Values.monitoring.enabled (or (not .Values.ingress.enabled) (ne .Values.monitoring.port .Values.ingress.port))) }}
+            {{- if (and .Values.monitoring.enabled (or (not .Values.ingress.enabled) (ne (int .Values.monitoring.port) (int .Values.ingress.port)))) }}
             - name: http-monitoring
               containerPort: {{ .Values.monitoring.port }}
             {{- end }}
