@@ -44,11 +44,25 @@
     },
     "securityContext": {
       "type": "object",
-      "description": "Security context to use for running containers",
+      "description": "Security context",
       "properties": {
-        "runAsUser": {"type": "integer"},
-        "runAsGroup": {"type": "integer"},
-        "fsGroup": {"type": "integer"}
+        "pod": {
+          "type": "object",
+          "description": "Security context to use for the pod",
+          "properties": {
+            "runAsUser": {"type": "integer"},
+            "runAsGroup": {"type": "integer"},
+            "fsGroup": {"type": "integer"}
+          }
+        },
+        "container": {
+          "type": "object",
+          "description": "Security context to use for running containers",
+          "properties": {
+            "allowPrivilegeEscalation": {"type": "boolean"},
+            "readOnlyRootFilesystem": {"type": "boolean"}
+          }
+        }
       }
     },
     "command": {

@@ -1,0 +1,13 @@
+# SecurityContext test
+
+image:
+  repository: jwilder/whoami
+  tag: latest
+
+securityContext:
+  pod:
+    runAsUser: 1000
+    runAsGroup: 1000
+  container:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true

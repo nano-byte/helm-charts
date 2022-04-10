@@ -41,7 +41,8 @@ app:
 | `image.tag`                               | __required__               | The tag of the Docker Image to run (also used for `app.kubernetes.io/version` label)                     |
 | `image.pullPolicy`                        | `IfNotPresent`             | Set to `Always` to try to pull new versions of the Docker Image                                          |
 | `image.pullSecret`                        | same as `image.registry`   | Name of the Kubernetes Secret providing credentials for pulling the Image                                |
-| `securityContext`                         | `{}`                       | Security context to use for running containers                                                           |
+| `securityContext.pod`                     | `{}`                       | Security context to use for the pod                                                                      |
+| `securityContext.container`               | `{}`                       | Security context to use for the container                                                                |
 | `command`                                 | `[]`                       | Overrides the command to launch in the Docker Image                                                      |
 | `args`                                    | `[]`                       | The command-line arguments passed to the service                                                         |
 | `env`                                     | `{}`                       | The environment variables passed to the service                                                          |

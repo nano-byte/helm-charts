@@ -62,7 +62,7 @@ spec:
 {{- end }}
 
     spec:
-      securityContext: {{ toYaml .Values.securityContext | nindent 8 }}
+      securityContext: {{ toYaml .Values.securityContext.pod | nindent 8 }}
       volumes:
         {{- if and .Values.persistence.enabled (ne .Values.controller "StatefulSet") }}
         - name: persistence
@@ -129,6 +129,8 @@ spec:
           {{- if .Values.args }}
           args: {{ toYaml .Values.args | nindent 12 }}
           {{- end }}
+
+          securityContext: {{ toYaml .Values.securityContext.container | nindent 12 }}
 
           volumeMounts:
             {{- if .Values.persistence.enabled }}

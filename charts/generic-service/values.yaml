@@ -8,7 +8,9 @@ image:
   pullPolicy: IfNotPresent
   pullSecret: ""
 
-securityContext: {}
+securityContext:
+  pod: {}
+  container: {}
 
 command: []
 
