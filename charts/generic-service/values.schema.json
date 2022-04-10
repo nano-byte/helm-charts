@@ -455,7 +455,7 @@
         "enabled": {
           "type": "boolean",
           "default": false,
-          "description": "Enables tracing with Jaeger agent (injected as sidecar)"
+          "description": "Enables tracing with OpenTelemetry or Jaeger agent (injected as sidecar)"
         },
         "probability": {
           "type": "integer",

@@ -4,7 +4,7 @@ This Helm chart simplifies deploying a typical "80% case" service on Kubernetes.
 
 - [nginx Ingress Controller](https://kubernetes.github.io/ingress-nginx/) or [Istio](https://istio.io/) for routing
 - [Prometheus Operator](https://github.com/prometheus-operator/prometheus-operator) for monitoring
-- [Jaeger Operator](https://www.jaegertracing.io/docs/latest/operator/) for tracing
+- [OpenTelemetry Operator](https://github.com/open-telemetry/opentelemetry-operator) or [Jaeger Operator](https://www.jaegertracing.io/docs/latest/operator/) for tracing
 - [Flagger](https://flagger.app/) for canary deployments
 
 The [Generic Service Grafana Dashboard](https://grafana.com/grafana/dashboards/14759) is a useful companion to this chart.
@@ -95,7 +95,7 @@ app:
 | `netpol.egress`                           | `[]`                       | Egress network policy rules to apply                                                                     |
 | `canary.enabled`                          | `false`                    | Use Flagger for canary rollouts                                                                          |
 | `canary.analysis`                         | success>99%, latency<500ms | Configuration for canary analysis                                                                        |
-| `tracing.enabled`                         | `false`                    | Enables tracing with Jaeger agent (injected as sidecar)                                                  |
+| `tracing.enabled`                         | `false`                    | Enables tracing with OpenTelemetry or Jaeger agent (injected as sidecar)                                 |
 | `tracing.probability`                     | `1`                        | Probability of any single trace being sampled; can be overridden for incoming requests e.g. via Istio    |
 | `monitoring.enabled`                      | `false`                    | Use Prometheus for monitoring / metrics scraping                                                         |
 | `monitoring.port`                         | `9100`                     | The port to be scraped for monitoring data                                                               |
@@ -128,8 +128,8 @@ In addition to the environment variables specified via the `env` value, the foll
 | `CONFIG_FILE`   | `:`-separated list of paths of mounted YAML/JSON config files                                                                                                                             |
 | `PORT`          | The `ingress.port` (if `ingress.enabled` is `true`)                                                                                                                                       |
 | `METRICS_PORT`  | The `monitoring.port` (if `monitoring.enabled` is `true`)                                                                                                                                 |
-| `JAEGER_*`      | [Jaeger client configuration](https://www.jaegertracing.io/docs/latest/client-features/) (if `tracing.enabled` is `true`)                                                                 |
 | `OTEL_*`        | [OpenTelemetry client configuration](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/sdk-environment-variables.md) (if `tracing.enabled` is `true`) |
+| `JAEGER_*`      | [Jaeger client configuration](https://www.jaegertracing.io/docs/latest/client-features/) (if `tracing.enabled` is `true`)                                                                 |
 
 ## Resources
 

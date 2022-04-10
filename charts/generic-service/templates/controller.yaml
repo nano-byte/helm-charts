@@ -209,28 +209,27 @@ spec:
               value: {{ .Values.monitoring.port | quote }}
             {{- end }}
             {{- if .Values.tracing.enabled }}
-            # Jaeger client configuration
-            - name: JAEGER_SERVICE_NAME
-              value: '{{ include "generic-service.name" . }}.{{ .Release.Namespace }}'  # Match naming scheme of Istio
-            - name: JAEGER_SAMPLER_TYPE
-              value: probabilistic
-            - name: JAEGER_SAMPLER_PARAM
-              value: {{ .Values.tracing.probability | quote }}
-            - name: JAEGER_PROPAGATION
-              value: b3  # Use B3 multi-header propagation for Istio compatibility
-            # OpenTelemetry client configuration
+            # Tracing configuration
             - name: OTEL_SERVICE_NAME
-              value: '{{ include "generic-service.name" . }}.{{ .Release.Namespace }}'  # Match naming scheme of Istio
+              value: '{{ include "generic-service.name" . }}.{{ .Release.Namespace }}' # Match naming scheme used by Istio
+            - name: JAEGER_SERVICE_NAME
+              value: '{{ include "generic-service.name" . }}.{{ .Release.Namespace }}' # Match naming scheme used by Istio
+            {{- if ne .Values.tracing.probability 1 }}
             - name: OTEL_TRACES_SAMPLER
               value: parentbased_traceidratio
             - name: OTEL_TRACES_SAMPLER_ARG
               value: {{ .Values.tracing.probability | quote }}
+            - name: JAEGER_SAMPLER_TYPE
+              value: probabilistic
+            - name: JAEGER_SAMPLER_PARAM
+              value: {{ .Values.tracing.probability | quote }}
+            {{- end }}
+            {{- if .Values.ingress.istio.enabled }}
             - name: OTEL_PROPAGATORS
-              value: b3multi  # Use B3 multi-header propagation for Istio compatibility
-            - name: OTEL_EXPORTER_JAEGER_AGENT_HOST
-              value: localhost  # Sidecar injected by Jaeger Operator
-            - name: OTEL_EXPORTER_JAEGER_AGENT_PORT
-              value: "6831"
+              value: tracecontext,baggage,b3multi
+            - name: JAEGER_PROPAGATION
+              value: b3
+            {{- end }}
             {{- end }}
             - name: CONFIG_FILE
               value: '{{ if .Values.config }}{{ .Values.configMountPath }}{{ end }}{{ range .Values.additionalConfigs }}:/additional-configs/{{ . }}/data.yaml{{ end }}'
