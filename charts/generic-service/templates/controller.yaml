@@ -94,16 +94,18 @@ spec:
 
       affinity:
         podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            # Never schedule multiple replicas on the same node
-            - topologyKey: kubernetes.io/hostname
-              labelSelector:
-                matchLabels: {{ include "generic-service.selector-labels" . | nindent 18 }}
           preferredDuringSchedulingIgnoredDuringExecution:
             # Try to avoid scheduling multiple replicas in the same zone
-            - weight: 100
+            - weight: 50
               podAffinityTerm:
                 topologyKey: topology.kubernetes.io/zone
+                labelSelector:
+                  matchLabels: {{ include "generic-service.selector-labels" . | nindent 20 }}
+            # Try to avoid scheduling multiple replicas on the same node
+            # On restricted environments this might be unavoidable which is why this criterion is not required.
+            - weight: 100
+              podAffinityTerm:
+                topologyKey: kubernetes.io/hostname
                 labelSelector:
                   matchLabels: {{ include "generic-service.selector-labels" . | nindent 20 }}
 
