@@ -1,0 +1,11 @@
+# Monitoring test
+
+image:
+  repository: jwilder/whoami
+  tag: latest
+
+monitoring:
+  enabled: true
+
+alerting:
+  enabled: true

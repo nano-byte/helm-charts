@@ -1,0 +1,17 @@
+# Istio Ingress test
+
+image:
+  repository: jwilder/whoami
+  tag: latest
+
+ingress:
+  enabled: true
+  port: 8000
+  istio:
+    enabled: true
+
+monitoring:
+  enabled: true
+
+alerting:
+  enabled: true
