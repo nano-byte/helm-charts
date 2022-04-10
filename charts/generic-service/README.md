@@ -2,7 +2,7 @@
 
 This Helm chart simplifies deploying a typical "80% case" service on Kubernetes. It takes care of creating common [Resources](#resources) such as `Deployment`, `Service` and `Ingress`. It also provides optional support for:
 
-- [Istio](https://istio.io/) for routing
+- [nginx Ingress Controller](https://kubernetes.github.io/ingress-nginx/) or [Istio](https://istio.io/) for routing
 - [Prometheus Operator](https://github.com/prometheus-operator/prometheus-operator) for monitoring
 - [Jaeger Operator](https://www.jaegertracing.io/docs/latest/operator/) for tracing
 - [Flagger](https://flagger.app/) for canary deployments
