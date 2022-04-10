@@ -9,6 +9,7 @@ metadata:
 
 spec:
   groups:
+{{- if ne .Values.rollout.controller "ArgoRollout" }}
     - name: {{ include "generic-service.fullname" . }}.rules
       rules:
         - alert: Down
@@ -37,6 +38,7 @@ spec:
           annotations:
             summary: '{{ include "generic-service.fullname" . }} replicas are down.'
             description: '{{"{{ $value }}"}} replicas for {{ include "generic-service.fullname" . }} are down.'
+{{- end }}
 {{- end }}
 
         - alert: MemoryUsageAboveRequest

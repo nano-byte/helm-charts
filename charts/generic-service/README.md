@@ -5,7 +5,7 @@ This Helm chart simplifies deploying a typical "80% case" service on Kubernetes.
 - [nginx Ingress Controller](https://kubernetes.github.io/ingress-nginx/) or [Istio](https://istio.io/) for routing
 - [Prometheus Operator](https://github.com/prometheus-operator/prometheus-operator) for monitoring
 - [OpenTelemetry Operator](https://github.com/open-telemetry/opentelemetry-operator) or [Jaeger Operator](https://www.jaegertracing.io/docs/latest/operator/) for tracing
-- [Flagger](https://flagger.app/) for canary deployments
+- [Flagger](https://flagger.app/) and [Argo Rollouts](https://argoproj.github.io/argo-rollouts/) for canary and blue-green deployments
 
 The [Generic Service Grafana Dashboard](https://grafana.com/grafana/dashboards/14759) is a useful companion to this chart.
 
@@ -57,11 +57,11 @@ app:
 | `resources.requests.cpu`                  | `10m`                      | The number of CPU cores requested for the service                                                        |
 | `resources.limits.memory`                 | `96Mi`                     | The maximum amount of memory the service may use (recommendation: slightly higher than worst-case usage) |
 | `resources.limits.cpu`                    | `2000m`                    | The maximum number of CPU cores the service may use                                                      |
-| `rollout.controller`                      | `Deployment`               | The type of `Pod` controller to create (`Deployment`, `StatefulSet` or `DaemonSet`)                      |
+| `rollout.controller`                      | `Deployment`               | The type of `Pod` controller to create (`Deployment`, `StatefulSet`, `DaemonSet` or `ArgoRollout`)       |
 | `rollout.strategy`                        | `RollingUpdate`            | The rollout strategy (`RollingUpdate`, `Recreate`, `OnDelete`, `Canary` or `BlueGreen`)                  |
 | `rollout.autoPromotion`                   | `true`                     | Automatically promote rollouts (if `rollout.strategy` is `BlueGreen` and `rollout.flagger` if `false`)   |
 | `rollout.flagger`                         | `false`                    | Use Flagger to control rollouts (`rollout.controller` must be `Deployment` or `StatefulSet`)             |
-| `rollout.analysis`                        | req. for Canary or Flagger | Flagger analysis for automatic `Canary` or `BlueGreen` promotion                                         |
+| `rollout.analysis`                        | req. for Canary or Flagger | Flagger or Argo Rollouts analysis for automatic `Canary` or `BlueGreen` promotion                        |
 | `replicas`                                | `1`                        | The number of instances of the service to run (set at least `2` for Pod Disruption Budget)               |
 | `autoscaling.enabled`                     | `false`                    | Enables automatic starting of additional instances based on CPU load                                     |
 | `autoscaling.maxReplicas`                 | `3`                        | The maximum number of instances to run (must be larger than `replicas`)                                  |

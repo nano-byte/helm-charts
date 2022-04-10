@@ -21,4 +21,28 @@ spec:
       port: 80
       targetPort: {{ .Values.ingress.port }}
 
+{{- if eq .Values.rollout.controller "ArgoRollout" }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: '{{ include "generic-service.fullname" . }}-preview'
+  labels: {{ include "generic-service.default-labels" . | nindent 4 }}
+
+spec:
+  selector: {{ include "generic-service.selector-labels" . | nindent 4 }}
+  {{- if .Values.ingress.additionalSelectors }}
+  {{- .Values.ingress.additionalSelectors | toYaml | nindent 4 }}
+  {{- end }}
+
+  {{- if .Values.ingress.headless }}
+  clusterIP: None
+  {{- end }}
+
+  ports:
+    - name: '{{ .Values.ingress.protocol }}-ingress'
+      port: 80
+      targetPort: {{ .Values.ingress.port }}
+{{- end }}
+
 {{- end }}

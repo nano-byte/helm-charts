@@ -19,6 +19,9 @@ spec:
   targetLabels:
     - app
     - release
+    {{- if eq .Values.rollout.controller "ArgoRollout" }}
+    - role
+    {{- end }}
 ---
 apiVersion: v1
 kind: Service

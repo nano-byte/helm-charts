@@ -192,7 +192,7 @@
       "properties": {
         "controller": {
           "type": "string",
-          "enum": ["Deployment", "StatefulSet", "DaemonSet"],
+          "enum": ["Deployment", "StatefulSet", "DaemonSet", "ArgoRollout"],
           "default": "Deployment",
           "description": "The type of Pod controller to create"
         },
@@ -213,7 +213,7 @@
           "description": "Use Flagger to control rollouts (rollout.controller must be Deployment or StatefulSet)"
         },
         "analysis": {
-          "description": "Flagger analysis for automatic Canary or BlueGreen promotion"
+          "description": "Flagger or Argo Rollouts analysis for automatic Canary or BlueGreen promotion"
         }
       }
     },

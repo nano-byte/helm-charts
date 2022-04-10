@@ -1,5 +1,11 @@
+{{- if eq .Values.rollout.controller "ArgoRollout" }}
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+{{- else }}
 apiVersion: apps/v1
 kind: {{ .Values.rollout.controller }}
+{{- end }}
+
 metadata:
   name: {{ include "generic-service.fullname" . }}
   labels: {{ include "generic-service.default-labels" . | nindent 4 }}
@@ -18,9 +24,15 @@ spec:
 
   strategy:
   {{- if eq .Values.rollout.strategy "RollingUpdate" }}
+    {{- if eq .Values.rollout.controller "ArgoRollout" }}
+      {{ fail "rollout.strategy cannot be StatefulSet if rollout.controller is ArgoRollout, must be Canary or BlueGreen" }}
+    {{- end }}
   {{- else if eq .Values.rollout.strategy "Recreate" }}
     {{- if or (eq .Values.rollout.controller "StatefulSet") (eq .Values.rollout.controller "DaemonSet") }}
       {{ fail "rollout.strategy cannot be Recreate if rollout.controller is StatefulSet or DaemonSet, use OnDelete instead" }}
+    {{- end }}
+    {{- if eq .Values.rollout.controller "ArgoRollout" }}
+      {{ fail "rollout.strategy cannot be Recreate if rollout.controller is ArgoRollout, must be Canary or BlueGreen" }}
     {{- end }}
     type: Recreate
   {{- else if eq .Values.rollout.strategy "OnDelete" }}
@@ -35,15 +47,51 @@ spec:
     {{- if not .Values.ingress.domains }}
       {{ fail "ingress.domains must not be empty if rollout.strategy is Canary" }}
     {{- end }}
-    {{- if not .Values.rollout.flagger }}
-      {{ fail "rollout.flagger must be true if rollout.strategy is Canary" }}
+    {{- if eq .Values.rollout.controller "ArgoRollout" }}
+    canary:
+      stableService: {{ include "generic-service.fullname" . }}
+      stableMetadata:
+        labels:
+          role: stable
+      canaryService: {{ include "generic-service.fullname" . }}-preview
+      canaryMetadata:
+        labels:
+          role: preview
+      analysis: {{ toYaml (.Values.rollout.analysis | required "rollout.analysis is required if rollout.strategy is Canary") | nindent 8 }}
+      trafficRouting:
+        {{- if .Values.ingress.istio.enabled }}
+        istio:
+          virtualService:
+            name: {{ include "generic-service.fullname" . }}
+        {{- else if eq .Values.ingress.class "nginx" }}
+        nginx:
+          stableIngress: {{ include "generic-service.fullname" . }}
+        {{- else }}
+          {{ fail "Ingress must use Istio or nginx if rollout.strategy is Canary" }}
+        {{- end }}
+    {{- else if not .Values.rollout.flagger }}
+      {{ fail "rollout.flagger must be true or rollout.controller must be ArgoRollout if rollout.strategy is Canary" }}
     {{- end }}
   {{- else if eq .Values.rollout.strategy "BlueGreen" }}
     {{- if not .Values.ingress.enabled }}
       {{ fail "ingress.enabled must be true if rollout.strategy is BlueGreen" }}
     {{- end }}
-    {{- if not .Values.rollout.flagger }}
-      {{ fail "rollout.flagger must be true if rollout.strategy is BlueGreen" }}
+    {{- if eq .Values.rollout.controller "ArgoRollout" }}
+    blueGreen:
+      activeService: {{ include "generic-service.fullname" . }}
+      activeMetadata:
+        labels:
+          role: stable
+      previewService: {{ include "generic-service.fullname" . }}-preview
+      previewMetadata:
+        labels:
+          role: preview
+      autoPromotionEnabled: {{ .Values.rollout.autoPromotion }}
+      {{- if .Values.rollout.analysis }}
+      prePromotionAnalysis: {{ toYaml .Values.rollout.analysis | nindent 8 }}
+      {{- end }}
+    {{- else if not .Values.rollout.flagger }}
+      {{ fail "rollout.flagger must be true or rollout.controller must be ArgoRollout if rollout.strategy is BlueGreen" }}
     {{- end }}
   {{ else }}
     {{ fail "Unknown rollout.strategy" }}

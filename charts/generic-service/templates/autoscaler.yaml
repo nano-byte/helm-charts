@@ -8,8 +8,13 @@ metadata:
 
 spec:
   scaleTargetRef:
+    {{- if eq .Values.rollout.controller "ArgoRollout" }}
+    apiVersion: argoproj.io/v1alpha1
+    kind: Rollout
+    {{- else }}
     apiVersion: apps/v1
     kind: {{ .Values.rollout.controller }}
+    {{- end }}
     name: {{ include "generic-service.fullname" . }}
   minReplicas: {{ .Values.replicas }}
   maxReplicas: {{ .Values.autoscaling.maxReplicas }}
