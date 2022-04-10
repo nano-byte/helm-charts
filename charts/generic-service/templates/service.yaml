@@ -1,9 +1,9 @@
-{{- if or (and .Values.ingress.enabled (not .Values.canary.enabled)) .Values.monitoring.enabled }}
+{{- if and .Values.ingress.enabled (not .Values.canary.enabled) }}
 
 apiVersion: v1
 kind: Service
 metadata:
-  name: '{{ include "generic-service.fullname" . }}{{ if .Values.canary.enabled }}-monitoring{{ end }}'
+  name: {{ include "generic-service.fullname" . }}
   labels: {{ include "generic-service.default-labels" . | nindent 4 }}
 
 spec:
@@ -17,16 +17,8 @@ spec:
   {{- end }}
 
   ports:
-    {{- if and .Values.ingress.enabled (not .Values.canary.enabled) }}
     - name: '{{ .Values.ingress.protocol }}-ingress'
       port: 80
       targetPort: {{ .Values.ingress.port }}
-    {{- end }}
-
-    {{- if .Values.monitoring.enabled }}
-    - name: http-monitoring
-      port: 9100
-      targetPort: {{ .Values.monitoring.port }}
-    {{- end }}
 
 {{- end }}

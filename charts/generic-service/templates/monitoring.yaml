@@ -9,6 +9,7 @@ metadata:
 spec:
   selector:
     matchLabels: {{ include "generic-service.selector-labels" . | nindent 6 }}
+      monitoring: "true"
 
   endpoints:
     - port: http-monitoring
@@ -18,5 +19,23 @@ spec:
   targetLabels:
     - app
     - release
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "generic-service.fullname" . }}-monitoring
+  labels: {{ include "generic-service.default-labels" . | nindent 4 }}
+    monitoring: "true"
+
+spec:
+  selector: {{ include "generic-service.selector-labels" . | nindent 4 }}
+
+  clusterIP: None
+  publishNotReadyAddresses: true
+
+  ports:
+    - name: http-monitoring
+      port: 9100
+      targetPort: {{ .Values.monitoring.port }}
 
 {{- end }}
