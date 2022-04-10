@@ -71,6 +71,7 @@ ingress:
   enabled: false
   port: 80
   protocol: http
+  additionalSelectors: {}
   headless: false
   domains: []
   paths: []

@@ -8,6 +8,9 @@ metadata:
 
 spec:
   selector: {{ include "generic-service.selector-labels" . | nindent 4 }}
+  {{- if .Values.ingress.additionalSelectors }}
+  {{- .Values.ingress.additionalSelectors | toYaml | nindent 4 }}
+  {{- end }}
 
   {{- if .Values.ingress.headless }}
   clusterIP: None
