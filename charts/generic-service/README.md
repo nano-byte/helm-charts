@@ -57,12 +57,15 @@ app:
 | `resources.requests.cpu`                  | `10m`                      | The number of CPU cores requested for the service                                                        |
 | `resources.limits.memory`                 | `96Mi`                     | The maximum amount of memory the service may use (recommendation: slightly higher than worst-case usage) |
 | `resources.limits.cpu`                    | `2000m`                    | The maximum number of CPU cores the service may use                                                      |
-| `controller`                              | `Deployment`               | The type of `Pod` controller to create (`Deployment`, `StatefulSet` or `DaemonSet`)                      |
+| `rollout.controller`                      | `Deployment`               | The type of `Pod` controller to create (`Deployment`, `StatefulSet` or `DaemonSet`)                      |
+| `rollout.strategy`                        | `RollingUpdate`            | The rollout strategy (`RollingUpdate`, `Recreate`, `OnDelete`, `Canary` or `BlueGreen`)                  |
+| `rollout.autoPromotion`                   | `true`                     | Automatically promote rollouts (if `rollout.strategy` is `BlueGreen` and `rollout.flagger` if `false`)   |
+| `rollout.flagger`                         | `false`                    | Use Flagger to control rollouts (`rollout.controller` must be `Deployment` or `StatefulSet`)             |
+| `rollout.analysis`                        | req. for Canary or Flagger | Flagger analysis for automatic `Canary` or `BlueGreen` promotion                                         |
 | `replicas`                                | `1`                        | The number of instances of the service to run (set at least `2` for Pod Disruption Budget)               |
 | `autoscaling.enabled`                     | `false`                    | Enables automatic starting of additional instances based on CPU load                                     |
 | `autoscaling.maxReplicas`                 | `3`                        | The maximum number of instances to run (must be larger than `replicas`)                                  |
 | `autoscaling.targetCpu`                   | `50`                       | The desired average CPU load in percent                                                                  |
-| `rollingUpdate`                           | `true`                     | Old and new versions may coexist (manual `Pod` deletion when `false` and `strategy` != `Deployment`)     |
 | `nodeSelector`                            | `{}`                       | Node labels required for scheduling this service, also used as tolerations                               |
 | `persistence.enabled`                     | `false`                    | Enables persistent storage for the service                                                               |
 | `persistence.storageClass`                |                            | The type of disk to use for storage instead of the cluster default                                       |
@@ -93,8 +96,6 @@ app:
 | `netpol.enabled`                          | `false`                    | Apply network policies for the `Pod`s                                                                    |
 | `netpol.ingress`                          | Allow from same namespace  | Ingress network policy rules to apply                                                                    |
 | `netpol.egress`                           | `[]`                       | Egress network policy rules to apply                                                                     |
-| `canary.enabled`                          | `false`                    | Use Flagger for canary rollouts                                                                          |
-| `canary.analysis`                         | success>99%, latency<500ms | Configuration for canary analysis                                                                        |
 | `tracing.enabled`                         | `false`                    | Enables tracing with OpenTelemetry or Jaeger agent (injected as sidecar)                                 |
 | `tracing.probability`                     | `1`                        | Probability of any single trace being sampled; can be overridden for incoming requests e.g. via Istio    |
 | `monitoring.enabled`                      | `false`                    | Use Prometheus for monitoring / metrics scraping                                                         |

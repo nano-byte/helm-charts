@@ -1,4 +1,4 @@
-{{- if and .Values.ingress.enabled (and .Values.ingress.istio.enabled (not .Values.canary.enabled)) }}
+{{- if and .Values.ingress.enabled (and .Values.ingress.istio.enabled (not .Values.rollout.flagger)) }}
 
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService

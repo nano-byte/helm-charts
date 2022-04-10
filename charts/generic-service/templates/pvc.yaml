@@ -1,4 +1,4 @@
-{{- if and .Values.persistence.enabled (ne .Values.controller "StatefulSet") }}
+{{- if and .Values.persistence.enabled (ne .Values.rollout.controller "StatefulSet") }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:

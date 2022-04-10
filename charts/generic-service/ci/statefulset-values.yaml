@@ -1,10 +1,11 @@
-# StatefulSet strategy test
+# StatefulSet rollout controller test
 
 image:
   repository: jwilder/whoami
   tag: latest
 
-controller: StatefulSet
+rollout:
+  controller: StatefulSet
 
 persistence:
   enabled: true

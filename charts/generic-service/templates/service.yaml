@@ -1,4 +1,4 @@
-{{- if and .Values.ingress.enabled (not .Values.canary.enabled) }}
+{{- if and .Values.ingress.enabled (not .Values.rollout.flagger) }}
 
 apiVersion: v1
 kind: Service

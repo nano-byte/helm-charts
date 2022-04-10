@@ -1,4 +1,4 @@
-{{- if and .Values.canary.enabled .Values.ingress.enabled }}
+{{- if .Values.rollout.flagger }}
 
 apiVersion: flagger.app/v1beta1
 kind: Canary
@@ -7,9 +7,19 @@ metadata:
   labels: {{ include "generic-service.default-labels" . | nindent 4 }}
 
 spec:
+  {{- if eq .Values.rollout.strategy "Canary" }}
+  provider: {{ if .Values.ingress.istio.enabled }}istio{{ else if eq .Values.ingress.class "nginx" }}nginx{{ else }}{{ fail "Ingress must use Istio or nginx if rollout.strategy is Canary" }}{{ end }}
+  {{- else if eq .Values.rollout.strategy "BlueGreen" }}
+  {{- else }}
+      {{ fail "rollout.strategy must be Canary or BlueGreen if rollout.flagger is true" }}
+  {{- end }}
+
   targetRef:
     apiVersion: apps/v1
-    kind: {{ .Values.controller }}
+    {{- if and (ne .Values.rollout.controller "Deployment") (ne .Values.rollout.controller "StatefulSet") }}
+      {{ fail "rollout.controller must be Deployment or StatefulSet when rollout.flagger is true" }}
+    {{- end }}
+    kind: {{ .Values.rollout.controller }}
     name: {{ include "generic-service.fullname" . }}
 
   {{- if .Values.autoscaling.enabled }}
@@ -19,7 +29,7 @@ spec:
     name: {{ include "generic-service.fullname" . }}
   {{- end }}
 
-  {{- if and (and .Values.ingress.enabled .Values.ingress.domains) (not .Values.ingress.istio.enabled) }}
+  {{- if and (eq .Values.rollout.strategy "Canary") (not .Values.ingress.istio.enabled) }}
   ingressRef:
     apiVersion: networking.k8s.io/v1
     kind: Ingress
@@ -29,19 +39,18 @@ spec:
   service:
     port: {{ .Values.ingress.port }}
     targetPort: 'ingress-{{ .Values.ingress.protocol }}'
-    {{- if .Values.ingress.istio.enabled }}
+
+    {{- if and (eq .Values.rollout.strategy "Canary") .Values.ingress.istio.enabled }}
 {{ include "generic-service.istio" . | indent 4 }}
     match:
       {{- range .Values.ingress.paths }}
       - uri:
           prefix: {{ . | quote }}
       {{- end }}
-    {{- end }}
     corsPolicy: {{ .Values.ingress.istio.corsPolicy | toYaml | nindent 6 }}
     retries: {{ .Values.ingress.istio.retries | toYaml | nindent 6 }}
-    {{- if .Values.ingress.paths }}
     {{- end }}
 
-  analysis: {{ toYaml .Values.canary.analysis | nindent 4 }}
+  analysis: {{ toYaml (.Values.rollout.analysis | required "rollout.analysis is required if rollout.flagger is true") | nindent 4 }}
 
 {{- end }}

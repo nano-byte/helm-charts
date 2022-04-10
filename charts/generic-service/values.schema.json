@@ -187,11 +187,35 @@
         }
       }
     },
-    "controller": {
-      "type": "string",
-      "enum": ["Deployment", "StatefulSet", "DaemonSet"],
-      "default": "Deployment",
-      "description": "The type of Pod controller to create"
+    "rollout": {
+      "type": "object",
+      "properties": {
+        "controller": {
+          "type": "string",
+          "enum": ["Deployment", "StatefulSet", "DaemonSet"],
+          "default": "Deployment",
+          "description": "The type of Pod controller to create"
+        },
+        "strategy": {
+          "type": "string",
+          "enum": ["RollingUpdate", "Recreate", "OnDelete", "Canary", "BlueGreen"],
+          "default": "RollingUpdate",
+          "description": "The rollout strategy"
+        },
+        "autoPromotion": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically promote successful rollouts (only applicable if rollout.strategy is BlueGreen)"
+        },
+        "flagger": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use Flagger to control rollouts (rollout.controller must be Deployment or StatefulSet)"
+        },
+        "analysis": {
+          "description": "Flagger analysis for automatic Canary or BlueGreen promotion"
+        }
+      }
     },
     "replicas": {
       "type": "integer",
@@ -217,11 +241,6 @@
           "description": "The desired average CPU load in percent"
         }
       }
-    },
-    "rollingUpdate": {
-      "type": "boolean",
-      "default": true,
-      "description": "Old and new versions may coexist (manual Pod deletion when this is false and strategy is not Deployment)"
     },
     "nodeSelector": {
       "type": "object",
@@ -404,58 +423,13 @@
         }
       }
     },
-    "canary": {
-      "type": "object",
-      "properties": {
-        "enabled": {
-          "type": "boolean",
-          "default": false,
-          "description": "Use Flagger for canary rollouts"
-        },
-        "analysis": {
-          "type": "object",
-          "description": "Configuration for canary analysis",
-          "properties": {
-            "interval": {
-              "type": "string",
-              "default": "10s"
-            },
-            "threshold": {
-              "type": "integer",
-              "default": 5
-            },
-            "maxWeight": {
-              "type": "integer",
-              "default": 50
-            },
-            "stepWeight": {
-              "type": "integer",
-              "default": 10
-            },
-            "metrics": {
-              "type": "array",
-              "items": [
-                {
-                  "type": "object",
-                  "properties": {
-                    "name": {"type": "string"},
-                    "threshold": {"type": "integer"},
-                    "interval": {"type": "string"}
-                  }
-                }
-              ]
-            }
-          }
-        }
-      }
-    },
     "tracing": {
       "type": "object",
       "properties": {
         "enabled": {
           "type": "boolean",
           "default": false,
-          "description": "Enables tracing with OpenTelemetry or Jaeger agent (injected as sidecar)"
+          "description": "Enables tracing with Jaeger agent (injected as sidecar)"
         },
         "probability": {
           "type": "integer",

@@ -1,4 +1,4 @@
-{{- if and .Values.autoscaling.enabled (ne .Values.controller "DaemonSet") }}
+{{- if and .Values.autoscaling.enabled (ne .Values.rollout.controller "DaemonSet") }}
 
 apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
@@ -9,7 +9,7 @@ metadata:
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
-    kind: {{ .Values.controller }}
+    kind: {{ .Values.rollout.controller }}
     name: {{ include "generic-service.fullname" . }}
   minReplicas: {{ .Values.replicas }}
   maxReplicas: {{ .Values.autoscaling.maxReplicas }}

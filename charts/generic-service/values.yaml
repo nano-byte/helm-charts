@@ -46,15 +46,19 @@ resources:
     memory: 96Mi
     cpu: 2000m
 
-controller: Deployment
+rollout:
+  controller: Deployment
+  strategy: RollingUpdate
+  autoPromotion: true
+  flagger: false
+  analysis: null
+
 replicas: 1
 
 autoscaling:
   enabled: false
   maxReplicas: 3
   targetCpu: 80
-
-rollingUpdate: true
 
 nodeSelector: {}
 
@@ -94,21 +98,6 @@ netpol:
     # Allow from same namespace
     - from: [podSelector: {}]
   egress: []
-
-canary:
-  enabled: false
-  analysis:
-    interval: 10s
-    threshold: 5
-    maxWeight: 50
-    stepWeight: 10
-    metrics:
-      - name: request-success-rate
-        threshold: 99
-        interval: 1m
-      - name: request-duration
-        threshold: 500
-        interval: 30s
 
 tracing:
   enabled: false

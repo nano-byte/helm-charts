@@ -4,7 +4,8 @@ image:
   repository: jwilder/whoami
   tag: latest
 
-rollingUpdate: false
+rollout:
+  strategy: Recreate
 
 persistence:
   enabled: true

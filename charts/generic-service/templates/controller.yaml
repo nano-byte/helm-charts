@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: {{ .Values.controller }}
+kind: {{ .Values.rollout.controller }}
 metadata:
   name: {{ include "generic-service.fullname" . }}
   labels: {{ include "generic-service.default-labels" . | nindent 4 }}
@@ -9,19 +9,47 @@ metadata:
   {{- end }}
 
 spec:
-  {{- if ne .Values.controller "DaemonSet" }}
+  {{- if ne .Values.rollout.controller "DaemonSet" }}
   replicas: {{ .Values.replicas }}
   {{- end }}
 
   selector:
     matchLabels: {{ include "generic-service.selector-labels" . | nindent 6 }}
 
-  {{- if not .Values.rollingUpdate }}
   strategy:
-    type: {{ if eq .Values.controller "Deployment" }}Recreate{{ else }}OnDelete{{ end }}
+  {{- if eq .Values.rollout.strategy "RollingUpdate" }}
+  {{- else if eq .Values.rollout.strategy "Recreate" }}
+    {{- if or (eq .Values.rollout.controller "StatefulSet") (eq .Values.rollout.controller "DaemonSet") }}
+      {{ fail "rollout.strategy cannot be Recreate if rollout.controller is StatefulSet or DaemonSet, use OnDelete instead" }}
+    {{- end }}
+    type: Recreate
+  {{- else if eq .Values.rollout.strategy "OnDelete" }}
+    {{- if and (ne .Values.rollout.controller "StatefulSet") (ne .Values.rollout.controller "DaemonSet") }}
+      {{ fail "rollout.strategy may only be OnDelete if rollout.controller is StatefulSet or DaemonSet" }}
+    {{- end }}
+    type: OnDelete
+  {{- else if eq .Values.rollout.strategy "Canary" }}
+    {{- if not .Values.ingress.enabled }}
+      {{ fail "ingress.enabled must be true if rollout.strategy is Canary" }}
+    {{- end }}
+    {{- if not .Values.ingress.domains }}
+      {{ fail "ingress.domains must not be empty if rollout.strategy is Canary" }}
+    {{- end }}
+    {{- if not .Values.rollout.flagger }}
+      {{ fail "rollout.flagger must be true if rollout.strategy is Canary" }}
+    {{- end }}
+  {{- else if eq .Values.rollout.strategy "BlueGreen" }}
+    {{- if not .Values.ingress.enabled }}
+      {{ fail "ingress.enabled must be true if rollout.strategy is BlueGreen" }}
+    {{- end }}
+    {{- if not .Values.rollout.flagger }}
+      {{ fail "rollout.flagger must be true if rollout.strategy is BlueGreen" }}
+    {{- end }}
+  {{ else }}
+    {{ fail "Unknown rollout.strategy" }}
   {{- end }}
 
-  {{- if eq .Values.controller "StatefulSet" }}
+  {{- if eq .Values.rollout.controller "StatefulSet" }}
   serviceName: {{ include "generic-service.fullname" . }}
 
   {{- if .Values.persistence.enabled }}
@@ -64,7 +92,7 @@ spec:
     spec:
       securityContext: {{ toYaml .Values.securityContext.pod | nindent 8 }}
       volumes:
-        {{- if and .Values.persistence.enabled (ne .Values.controller "StatefulSet") }}
+        {{- if and .Values.persistence.enabled (ne .Values.rollout.controller "StatefulSet") }}
         - name: persistence
           persistentVolumeClaim:
             claimName: {{ include "generic-service.fullname" . }}
@@ -136,7 +164,7 @@ spec:
 
           volumeMounts:
             {{- if .Values.persistence.enabled }}
-            - name: {{ if eq .Values.controller "StatefulSet" }}{{ include "generic-service.fullname" . }}{{ else }}persistence{{ end }}
+            - name: {{ if eq .Values.rollout.controller "StatefulSet" }}{{ include "generic-service.fullname" . }}{{ else }}persistence{{ end }}
               mountPath: {{ required "Must specify persistence.mountPath when persistence.enabled" .Values.persistence.mountPath }}
             {{- end }}
             {{- if .Values.config }}
@@ -162,7 +190,7 @@ spec:
             - name: '{{ .Values.ingress.protocol }}-ingress'
               containerPort: {{ .Values.ingress.port }}
             {{- end }}
-            {{- if (and .Values.monitoring.enabled (or (not .Values.ingress.enabled) (ne (int .Values.monitoring.port) (int .Values.ingress.port)))) }}
+            {{- if (and .Values.monitoring.enabled (or (not .Values.ingress.enabled) (ne .Values.monitoring.port .Values.ingress.port))) }}
             - name: http-monitoring
               containerPort: {{ .Values.monitoring.port }}
             {{- end }}
