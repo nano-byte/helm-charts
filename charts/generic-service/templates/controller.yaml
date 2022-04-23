@@ -270,26 +270,38 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
+
             {{- if not .Values.autoscaling.enabled }}
             - name: REPLICAS
               value: {{ .Values.replicas | quote }}
             {{- end }}
+
             {{- if .Values.ingress.enabled }}
             - name: PORT
               value: {{ .Values.ingress.port | quote }}
             {{- end }}
+
             {{- if .Values.monitoring.enabled }}
             - name: METRICS_PORT
               value: {{ .Values.monitoring.port | quote }}
-            - name: METRICS__PORT  # .NET Core environment variable configuration syntax
-              value: {{ .Values.monitoring.port | quote }}
             {{- end }}
+
             {{- if .Values.tracing.enabled }}
-            # Tracing configuration
+            {{- if .Values.ingress.istio.enabled }}
             - name: OTEL_SERVICE_NAME
-              value: '{{ include "generic-service.name" . }}.{{ .Release.Namespace }}' # Match naming scheme used by Istio
+              value: '{{ include "generic-service.name" . }}.{{ .Release.Namespace }}'
             - name: JAEGER_SERVICE_NAME
-              value: '{{ include "generic-service.name" . }}.{{ .Release.Namespace }}' # Match naming scheme used by Istio
+              value: '{{ include "generic-service.name" . }}.{{ .Release.Namespace }}'
+            - name: OTEL_PROPAGATORS
+              value: tracecontext,baggage,b3multi
+            - name: JAEGER_PROPAGATION
+              value: b3
+            {{- else }}
+            - name: OTEL_SERVICE_NAME
+              value: {{ include "generic-service.name" . }}
+            - name: JAEGER_SERVICE_NAME
+              value: {{ include "generic-service.name" . }}}
+            {{- end }}
             {{- if ne .Values.tracing.probability 1 }}
             - name: OTEL_TRACES_SAMPLER
               value: parentbased_traceidratio
@@ -300,15 +312,11 @@ spec:
             - name: JAEGER_SAMPLER_PARAM
               value: {{ .Values.tracing.probability | quote }}
             {{- end }}
-            {{- if .Values.ingress.istio.enabled }}
-            - name: OTEL_PROPAGATORS
-              value: tracecontext,baggage,b3multi
-            - name: JAEGER_PROPAGATION
-              value: b3
             {{- end }}
-            {{- end }}
+
             - name: CONFIG_FILE
               value: '{{ if .Values.config }}{{ .Values.configMountPath }}{{ end }}{{ range .Values.additionalConfigs }}:/additional-configs/{{ . }}/data.yaml{{ end }}'
+
             {{- range $key, $val := .Values.env }}
             - name: {{ $key | quote }}
               value: {{ $val | quote }}
