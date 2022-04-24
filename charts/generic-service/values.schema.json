@@ -432,8 +432,10 @@
           "description": "Enables tracing with Jaeger agent (injected as sidecar)"
         },
         "probability": {
-          "type": "integer",
-          "default": 1.0,
+          "type": "number",
+          "default": 1,
+          "minimum": 0,
+          "maximum": 1,
           "description": "Probability of any single trace being sampled; can be overridden for incoming requests e.g. via Istio"
         }
       }
