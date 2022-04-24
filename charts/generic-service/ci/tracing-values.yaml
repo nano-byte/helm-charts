@@ -1,0 +1,13 @@
+# Monitoring test
+
+image:
+  repository: jwilder/whoami
+  tag: latest
+
+ingress:
+  enabled: true
+  port: 8000
+
+tracing:
+  enabled: true
+  probability: 0.5
