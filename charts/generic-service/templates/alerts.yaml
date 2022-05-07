@@ -26,7 +26,7 @@ spec:
 {{- if or (gt .Values.replicas 1.0) (eq .Values.rollout.controller "DaemonSet") }}
         - alert: ReplicasDown
 {{- if eq .Values.rollout.controller "StatefulSet" }}
-          expr: kube_statefulset_status_replicas{namespace="{{ .Release.Namespace }}", statefulset="{{ include "generic-service.fullname" . }}"} - kube_statefulset_status_replicas_available{namespace="{{ .Release.Namespace }}", statefulset="{{ include "generic-service.fullname" . }}"} > 0
+          expr: kube_statefulset_status_replicas{namespace="{{ .Release.Namespace }}", statefulset="{{ include "generic-service.fullname" . }}"} - kube_statefulset_status_replicas_ready{namespace="{{ .Release.Namespace }}", statefulset="{{ include "generic-service.fullname" . }}"} > 0
 {{- else }}
           expr: kube_{{ .Values.rollout.controller | lower }}_status_{{ if eq .Values.rollout.controller "DaemonSet" }}number{{ else }}replicas{{ end }}_unavailable{namespace="{{ .Release.Namespace }}", {{ .Values.rollout.controller | lower }}="{{ include "generic-service.fullname" . }}"} > 0
 {{- end }}
