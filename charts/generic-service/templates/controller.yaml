@@ -121,21 +121,21 @@ spec:
       labels: {{ include "generic-service.default-labels" . | nindent 8 }}
       annotations:
         kubectl.kubernetes.io/default-container: {{ include "generic-service.fullname" . }}
-{{- if .Values.ingress.istio.enabled }}
+      {{- if .Values.ingress.istio.enabled }}
         traffic.sidecar.istio.io/includeInboundPorts: {{ .Values.ingress.port | quote }}
-{{- end }}
-{{- if .Values.tracing.enabled }}
+      {{- end }}
+      {{- if .Values.tracing.enabled }}
         traffic.sidecar.istio.io/excludeOutboundPorts: '5778,9411,14268,14250'  # Jaeger ports
-{{- end }}
-{{- if .Values.config }}
+      {{- end }}
+      {{- if .Values.config }}
         checksum/config: {{ .Values.config | toJson | sha256sum }}
-{{- end }}
-{{- if .Values.secrets }}
+      {{- end }}
+      {{- if .Values.secrets }}
         checksum/secrets: {{ .Values.secrets | toJson | sha256sum }}
-{{- end }}
-{{- if .Values.annotations }}
-{{ .Values.annotations | toYaml | indent 8 }}
-{{- end }}
+      {{- end }}
+      {{- if .Values.annotations }}
+        {{- .Values.annotations | toYaml | nindent 8 }}
+      {{- end }}
 
     spec:
       securityContext: {{ toYaml .Values.securityContext.pod | nindent 8 }}
@@ -332,6 +332,6 @@ spec:
                 command: ["sleep", "5"]
           {{- end }}
 
-        {{- if .Values.sidecars }}
-{{ toYaml .Values.sidecars | indent 8 }}
-        {{- end }}
+      {{- if .Values.sidecars }}
+        {{- toYaml .Values.sidecars | nindent 8 }}
+      {{- end }}
