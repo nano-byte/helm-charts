@@ -9,9 +9,12 @@ kind: {{ .Values.rollout.controller }}
 metadata:
   name: {{ include "generic-service.fullname" . }}
   labels: {{ include "generic-service.default-labels" . | nindent 4 }}
-  {{- if .Values.tracing.enabled }}
   annotations:
+  {{- if .Values.tracing.enabled }}
     sidecar.jaegertracing.io/inject: 'true'
+  {{- end }}
+  {{- if .Values.annotations }}
+    {{- .Values.annotations | toYaml | nindent 4 }}
   {{- end }}
 
 spec:

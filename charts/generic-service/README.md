@@ -52,7 +52,7 @@ app:
 | `livenessProbe`                           |                            | Probe that causes the service to be restarted when failing                                               |
 | `readinessProbe`                          |                            | Probe that prevents the service from receiving traffic when failing                                      |
 | `labels`                                  | `{}`                       | Additional labels to set on all generated resources                                                      |
-| `annotations`                             | `{}`                       | Additional annotations to set on the `Pod`s                                                              |
+| `annotations`                             | `{}`                       | Additional annotations to set on the `Pod` controller and `Pod`s                                                              |
 | `resources.requests.memory`               | `64Mi`                     | The amount of memory requested for the service (recommendation: slightly higher than average usage)      |
 | `resources.requests.cpu`                  | `10m`                      | The number of CPU cores requested for the service                                                        |
 | `resources.limits.memory`                 | `96Mi`                     | The maximum amount of memory the service may use (recommendation: slightly higher than worst-case usage) |

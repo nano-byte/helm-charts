@@ -150,7 +150,7 @@
     "annotations": {
       "type": "object",
       "additionalProperties": {"type": "string"},
-      "description": "Additional annotations to set on the Pods"
+      "description": "Additional annotations to set on the Pod controller and Pods"
     },
     "resources": {
       "type": "object",

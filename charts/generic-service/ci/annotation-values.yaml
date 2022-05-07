@@ -1,0 +1,12 @@
+# Annotation test
+
+image:
+  repository: jwilder/whoami
+  tag: latest
+
+rollout:
+  controller: Deployment
+
+annotations:
+  key1: value1
+  key2: value2
