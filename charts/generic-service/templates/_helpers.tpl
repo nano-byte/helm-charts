@@ -35,6 +35,24 @@ helm.sh/chart: '{{ .Chart.Name }}-{{ .Chart.Version }}'
 {{- end }}
 
 
+{{ define "generic-service.alert-labels" -}}
+{{ include "generic-service.selector-labels" . }}
+{{- if .Values.alerting.labels }}
+{{ .Values.alerting.labels | toYaml }}
+{{- end }}
+namespace: {{ .Release.Namespace }}
+severity:
+{{- end }}
+
+
+{{ define "generic-service.alert-annotations" -}}
+{{ if and .Values.grafana.url .Values.grafana.dashboard -}}
+dashboard: '{{ .Values.grafana.url }}/d/{{ .Values.grafana.dashboard }}?var-namespace={{ .Release.Namespace }}&var-service={{ include "generic-service.fullname" . }}'
+{{- end }}
+summary: {{ .Release.Namespace }}/{{ include "generic-service.fullname" . }}
+{{- end }}
+
+
 {{ define "generic-service.istio" -}}
 
 {{- if .Values.ingress.istio.gateways }}
@@ -51,6 +69,27 @@ hosts:
 {{- end }}
 
 
-{{ define "generic-service.istio-filter" -}}
-  destination_service_namespace="{{ .Release.Namespace }}", destination_service_name="{{ include "generic-service.fullname" . }}", reporter="source"
+{{ define "generic-service.request-count-metric" -}}
+{{- if .Values.ingress.istio.enabled -}}
+istio_requests_total{destination_service_namespace="{{ .Release.Namespace }}", destination_service_name="{{ include "generic-service.fullname" . }}", reporter="source"}
+{{- else -}}
+nginx_ingress_controller_requests{exported_namespace="{{ .Release.Namespace }}", exported_service="{{ include "generic-service.fullname" . }}"}
+{{- end }}
+{{- end }}
+
+
+{{ define "generic-service.request-code-count-metric" -}}
+{{- if .Values.ingress.istio.enabled -}}
+istio_requests_total{destination_service_namespace="{{ .Release.Namespace }}", destination_service_name="{{ include "generic-service.fullname" . }}", reporter="source", response_code=~
+{{- else -}}
+nginx_ingress_controller_requests{exported_namespace="{{ .Release.Namespace }}", exported_service="{{ include "generic-service.fullname" . }}", status=~
+{{- end }}
+{{- end }}
+
+{{ define "generic-service.request-duration-metric" -}}
+{{- if .Values.ingress.istio.enabled -}}
+istio_request_duration_seconds_sum{destination_service_namespace="{{ .Release.Namespace }}", destination_service_name="{{ include "generic-service.fullname" . }}", reporter="source"}
+{{- else -}}
+nginx_ingress_controller_response_duration_seconds_sum{exported_namespace="{{ .Release.Namespace }}", exported_service="{{ include "generic-service.fullname" . }}"}
+{{- end }}
 {{- end }}

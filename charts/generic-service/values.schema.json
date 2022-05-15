@@ -476,57 +476,88 @@
         "labels": {
           "type": "object",
           "additionalProperties": {"type": "string"},
-          "description": "Labels to apply to generic alert rules in addition to component and severity"
+          "description": "Additional labels to apply to alert rules"
         },
-        "memoryUsage": {
+        "memory": {
           "type": "object",
           "properties": {
-            "thresholdFactor": {
+            "maxUsageFactor": {
               "type": "number",
               "default": "0.9",
-              "description": "The maximum usage factor of resources.limits.memory allowed before alerting (between 0 and 1)"
+              "minimum": 0,
+              "maximum": 1,
+              "description": "The maximum usage factor of the memory limit"
             }
           }
         },
-        "http4xxRatio": {
+        "http": {
           "type": "object",
           "properties": {
             "sampleInterval": {
               "type": "string",
-              "default": "5m",
-              "description": "The time interval in which to measure ratio of HTTP 4xx responses for the current state"
+              "default": "20m",
+              "description": "The time interval in which to measure HTTP responses for triggering alerts"
             },
             "referenceInterval": {
               "type": "string",
-              "default": "1d",
-              "description": "The time interval in which to measure ratio of HTTP 4xx responses as a reference for the normal state"
+              "default": "1w",
+              "description": "The time interval to to compare with the sample interval to detect changes"
             },
-            "thresholdFactor": {
+            "maxSlowdown": {
               "type": "number",
-              "default": "1.5",
-              "description": "The maximum factor between the current state and the normal state of HTTP 4xx response ratio allowed"
+              "default": "2.5",
+              "description": "The maximum HTTP response slowdown in the sample interval compared to the reference interval"
+            },
+            "max4xxRatio": {
+              "type": "number",
+              "default": "2.5",
+              "description": "The maximum HTTP 4xx ratio increase in the sample interval compared to the reference interval"
+            },
+            "max5xxCount": {
+              "type": "number",
+              "default": "0",
+              "description": "The maximum number of HTTP 5xx responses in the sample interval"
             }
           }
         },
-        "responseTime": {
+        "grpc": {
           "type": "object",
           "properties": {
             "sampleInterval": {
               "type": "string",
-              "default": "1h",
-              "description": "The time interval in which to measure average HTTP response times for the current state"
+              "default": "15m",
+              "description": "The time interval in which to measure gRPC responses for triggering alerts"
             },
             "referenceInterval": {
               "type": "string",
-              "default": "1d",
-              "description": "The time interval in which to measure average HTTP response times for the normal state"
+              "default": "1w",
+              "description": "The time interval to to compare with the sample interval to detect changes"
             },
-            "thresholdFactor": {
+            "maxErrorRatio": {
               "type": "number",
-              "default": "1.5",
-              "description": "The maximum factor between the current state and the normal state of HTTP response times allowed"
+              "default": "2.5",
+              "description": "The maximum gRPC error ratio increase in the sample interval compared to the reference interval"
+            },
+            "maxCriticalErrors": {
+              "type": "number",
+              "default": "0",
+              "description": "The maximum number of critical gRPC errors responses in the sample interval"
             }
           }
+        }
+      }
+    },
+    "grafana": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "The URL of a Grafana instance with access to the service's metrics"
+        },
+        "dashboard": {
+          "type": "string",
+          "default": "qqsCbY5Zz",
+          "description": "The UID of the Grafana dashboard visualizing the service's metrics"
         }
       }
     },

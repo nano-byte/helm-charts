@@ -112,16 +112,23 @@ monitoring:
 alerting:
   enabled: false
   labels: {}
-  memoryUsage:
-    thresholdFactor: 0.9
-  http4xxRatio:
-    sampleInterval: 5m
-    referenceInterval: 1d
-    thresholdFactor: 1.5
-  responseTime:
-    sampleInterval: 1h
-    referenceInterval: 1d
-    thresholdFactor: 1.5
+  memory:
+    maxUsageFactor: 0.9
+  http:
+    sampleInterval: 20m
+    referenceInterval: 1w
+    maxSlowdown: 2.5
+    max4xxRatio: 2.5
+    max5xxCount: 0
+  grpc:
+    sampleInterval: 20m
+    referenceInterval: 1w
+    maxErrorRatio: 2.5
+    maxCriticalErrors: 0
+
+grafana:
+  url: ''
+  dashboard: qqsCbY5Zz
 
 sidecars: []
 

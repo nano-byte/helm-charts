@@ -1,0 +1,13 @@
+# nginx alerts test
+
+image:
+  repository: jwilder/whoami
+  tag: latest
+
+ingress:
+  enabled: true
+  class: nginx
+  port: 8000
+
+alerting:
+  enabled: true

@@ -9,37 +9,30 @@ metadata:
 
 spec:
   groups:
-{{- if ne .Values.rollout.controller "ArgoRollout" }}
     - name: {{ include "generic-service.fullname" . }}.rules
       rules:
+      {{- if ne .Values.rollout.controller "ArgoRollout" }}
         - alert: Down
           expr: kube_{{ .Values.rollout.controller | lower }}_status_{{ if eq .Values.rollout.controller "DaemonSet" }}number{{ else }}replicas{{ end }}_ready{namespace="{{ .Release.Namespace }}", {{ .Values.rollout.controller | lower }}="{{ include "generic-service.fullname" . }}"} == 0
           for: '{{ if .Values.ingress.enabled }}1m{{ else }}5m{{ end }}'
-          labels:
-            component: {{ include "generic-service.fullname" . }}
-            severity: critical
-{{- if .Values.alerting.labels }}{{ toYaml .Values.alerting.labels | nindent 12 }}{{ end }}
-          annotations:
-            summary: '{{ include "generic-service.fullname" . }} is down.'
+          labels: {{ include "generic-service.alert-labels" . | nindent 12 }} critical
+          annotations: {{ include "generic-service.alert-annotations" . | nindent 12 }} down
             description: 'All replicas for {{ include "generic-service.fullname" . }} are down.'
 
-{{- if or (gt .Values.replicas 1.0) (eq .Values.rollout.controller "DaemonSet") }}
+        {{- if or (gt .Values.replicas 1.0) (eq .Values.rollout.controller "DaemonSet") }}
         - alert: ReplicasDown
-{{- if eq .Values.rollout.controller "StatefulSet" }}
-          expr: kube_statefulset_status_replicas{namespace="{{ .Release.Namespace }}", statefulset="{{ include "generic-service.fullname" . }}"} - kube_statefulset_status_replicas_ready{namespace="{{ .Release.Namespace }}", statefulset="{{ include "generic-service.fullname" . }}"} > 0
-{{- else }}
-          expr: kube_{{ .Values.rollout.controller | lower }}_status_{{ if eq .Values.rollout.controller "DaemonSet" }}number{{ else }}replicas{{ end }}_unavailable{namespace="{{ .Release.Namespace }}", {{ .Values.rollout.controller | lower }}="{{ include "generic-service.fullname" . }}"} > 0
-{{- end }}
+          expr: |
+            {{- if eq .Values.rollout.controller "StatefulSet" }}
+            kube_statefulset_status_replicas{namespace="{{ .Release.Namespace }}", statefulset="{{ include "generic-service.fullname" . }}"} - kube_statefulset_status_replicas_ready{namespace="{{ .Release.Namespace }}", statefulset="{{ include "generic-service.fullname" . }}"} > 0
+            {{- else }}
+            kube_{{ .Values.rollout.controller | lower }}_status_{{ if eq .Values.rollout.controller "DaemonSet" }}number{{ else }}replicas{{ end }}_unavailable{namespace="{{ .Release.Namespace }}", {{ .Values.rollout.controller | lower }}="{{ include "generic-service.fullname" . }}"} > 0
+            {{- end }}
           for: 10m
-          labels:
-            component: {{ include "generic-service.fullname" . }}
-            severity: warning
-{{- if .Values.alerting.labels }}{{ toYaml .Values.alerting.labels | nindent 12 }}{{ end }}
-          annotations:
-            summary: '{{ include "generic-service.fullname" . }} replicas are down.'
+          labels: {{ include "generic-service.alert-labels" . | nindent 12 }} warning
+          annotations: {{ include "generic-service.alert-annotations" . | nindent 12 }} replicas down
             description: '{{"{{ $value }}"}} replicas for {{ include "generic-service.fullname" . }} are down.'
-{{- end }}
-{{- end }}
+        {{- end }}
+      {{- end }}
 
         - alert: MemoryUsageAboveRequest
           expr: |
@@ -47,65 +40,66 @@ spec:
             min(kube_pod_container_resource_requests{namespace="{{ .Release.Namespace }}", container="{{ include "generic-service.fullname" . }}", resource="memory"})
             > 0
           for: 10m
-          labels:
-            component: {{ include "generic-service.fullname" . }}
-            severity: warning
-{{- if .Values.alerting.labels }}{{ toYaml .Values.alerting.labels | nindent 12 }}{{ end }}
-          annotations:
-            summary: '{{ include "generic-service.fullname" . }} using more memory than requested.'
+          labels: {{ include "generic-service.alert-labels" . | nindent 12 }} warning
+          annotations: {{ include "generic-service.alert-annotations" . | nindent 12 }} using more memory than requested
             description: '{{ include "generic-service.fullname" . }} is using {{"{{ $value | humanize1024 }}"}}B more than its requested memory ({{ .Values.resources.requests.memory }}B).'
 
         - alert: MemoryUsageCloseToLimit
           expr: |
             max(container_memory_working_set_bytes{namespace="{{ .Release.Namespace }}", container="{{ include "generic-service.fullname" . }}"}) /
             min(kube_pod_container_resource_limits{namespace="{{ .Release.Namespace }}", container="{{ include "generic-service.fullname" . }}", resource="memory"})
-            > {{ .Values.alerting.memoryUsage.thresholdFactor }}
-          labels:
-            component: {{ include "generic-service.fullname" . }}
-            severity: critical
-{{- if .Values.alerting.labels }}{{ toYaml .Values.alerting.labels | nindent 12 }}{{ end }}
-          annotations:
-            summary: '{{ include "generic-service.fullname" . }} memory usage is close to its limit.'
+            > {{ .Values.alerting.memory.maxUsageFactor }}
+          labels: {{ include "generic-service.alert-labels" . | nindent 12 }} critical
+          annotations: {{ include "generic-service.alert-annotations" . | nindent 12 }} memory usage close to limit
             description: '{{ include "generic-service.fullname" . }} is using {{"{{ $value | humanizePercentage }}"}} of its memory limit ({{ .Values.resources.limits.memory }}B).'
 
-{{ if .Values.ingress.istio.enabled }}
-        - alert: Http5xxResponses
-          expr: ceil(sum(increase(istio_requests_total{ {{ include "generic-service.istio-filter" . }}, response_code=~"5.." }[1m]))) > 0
-          labels:
-            component: {{ include "generic-service.fullname" . }}
-            severity: warning
-{{- if .Values.alerting.labels }}{{ toYaml .Values.alerting.labels | nindent 12 }}{{ end }}
-          annotations:
-            summary: '{{ include "generic-service.fullname" . }} gave HTTP 5xx responses.'
-            description: '{{ include "generic-service.fullname" . }} gave {{"{{ $value }}"}} HTTP 5xx responses in the last minute.'
-
-        - alert: HighHttp4xxRatio
+      {{- if .Values.ingress.enabled }}
+        {{- if or .Values.ingress.istio.enabled (eq .Values.ingress.class "nginx") }}
+        - alert: HttpSlowdown
           expr: |
-            sum(rate(istio_requests_total{ {{ include "generic-service.istio-filter" . }} }[{{ .Values.alerting.http4xxRatio.sampleInterval }}])) > 0 and
-            (sum(rate(istio_requests_total{ {{ include "generic-service.istio-filter" . }}, response_code=~"4.." }[{{ .Values.alerting.http4xxRatio.sampleInterval }}])) / sum(rate(istio_requests_total{ {{ include "generic-service.istio-filter" . }} }[{{ .Values.alerting.http4xxRatio.sampleInterval }}]))) /
-            (sum(rate(istio_requests_total{ {{ include "generic-service.istio-filter" . }}, response_code=~"4.." }[{{ .Values.alerting.http4xxRatio.referenceInterval }}])) / sum(rate(istio_requests_total{ {{ include "generic-service.istio-filter" . }} }[{{ .Values.alerting.http4xxRatio.referenceInterval }}]))) >
-            {{ .Values.alerting.http4xxRatio.thresholdFactor }}
-          labels:
-            component: {{ include "generic-service.fullname" . }}
-            severity: info
-{{- if .Values.alerting.labels }}{{ toYaml .Values.alerting.labels | nindent 12 }}{{ end }}
-          annotations:
-            summary: '{{ include "generic-service.fullname" . }} gave more HTTP 4xx responses than usual.'
-            description: '{{ include "generic-service.fullname" . }} gave {{"{{$value}}"}}x more HTTP 4xx responses in the last {{ .Values.alerting.http4xxRatio.sampleInterval }} than in the last {{ .Values.alerting.http4xxRatio.referenceInterval }}.'
+            (sum(increase({{ include "generic-service.request-duration-metric" . }}[{{ .Values.alerting.http.sampleInterval }}])) / sum(increase({{ include "generic-service.request-count-metric" . }}[{{ .Values.alerting.http.sampleInterval }}]))) /
+            (sum(increase({{ include "generic-service.request-duration-metric" . }}[{{ .Values.alerting.http.referenceInterval }}])) / sum(increase({{ include "generic-service.request-count-metric" . }}[{{ .Values.alerting.http.referenceInterval }}])))
+            > {{ .Values.alerting.http.maxSlowdown }}
+          labels: {{ include "generic-service.alert-labels" . | nindent 12 }} info
+          annotations: {{ include "generic-service.alert-annotations" . | nindent 12 }} HTTP responses slower than usual
+            description: '{{ include "generic-service.fullname" . }} HTTP responses are {{"{{$value}}"}}x slower in the last {{ .Values.alerting.http.sampleInterval }} than in the last {{ .Values.alerting.http.referenceInterval }}.'
 
-        - alert: SlowResponseTime
+        - alert: Http4xx
           expr: |
-            sum(increase(istio_requests_total{ {{ include "generic-service.istio-filter" . }} }[{{ .Values.alerting.responseTime.sampleInterval }}])) > 0 and
-            (sum(increase(istio_request_duration_seconds_sum{ {{ include "generic-service.istio-filter" . }} }[{{ .Values.alerting.responseTime.sampleInterval }}])) / sum(increase(istio_requests_total{ {{ include "generic-service.istio-filter" . }} }[{{ .Values.alerting.responseTime.sampleInterval }}]))) /
-            (sum(increase(istio_request_duration_seconds_sum{ {{ include "generic-service.istio-filter" . }} }[{{ .Values.alerting.responseTime.referenceInterval }}])) / sum(increase(istio_requests_total{ {{ include "generic-service.istio-filter" . }} }[{{ .Values.alerting.responseTime.referenceInterval }}]))) >
-            {{ .Values.alerting.responseTime.thresholdFactor }}
-          labels:
-            component: {{ include "generic-service.fullname" . }}
-            severity: info
-{{- if .Values.alerting.labels }}{{ toYaml .Values.alerting.labels | nindent 12 }}{{ end }}
-          annotations:
-            summary: '{{ include "generic-service.fullname" . }} HTTP responses are slower than usual.'
-            description: '{{ include "generic-service.fullname" . }} HTTP responses are {{"{{$value}}"}}x slower in the last {{ .Values.alerting.responseTime.sampleInterval }} than in the last {{ .Values.alerting.responseTime.referenceInterval }}.'
-{{- end }}
+            (sum(rate({{ include "generic-service.request-code-count-metric" . }}"4.."}[{{ .Values.alerting.http.sampleInterval }}])) / sum(rate({{ include "generic-service.request-count-metric" . }}[{{ .Values.alerting.http.sampleInterval }}]))) /
+            (sum(rate({{ include "generic-service.request-code-count-metric" . }}"4.."}[{{ .Values.alerting.http.referenceInterval }}])) / sum(rate({{ include "generic-service.request-count-metric" . }}[{{ .Values.alerting.http.referenceInterval }}])))
+            > {{ .Values.alerting.http.max4xxRatio }}
+          labels: {{ include "generic-service.alert-labels" . | nindent 12 }} warning
+          annotations: {{ include "generic-service.alert-annotations" . | nindent 12 }} higher HTTP 4xx rate
+            description: '{{ include "generic-service.fullname" . }} gave {{"{{$value}}"}}x more HTTP 4xx responses per request in the last {{ .Values.alerting.http.sampleInterval }} than in the last {{ .Values.alerting.http.referenceInterval }}.'
+
+        - alert: Http5xx
+          expr: |
+            ceil(sum(increase({{ include "generic-service.request-code-count-metric" . }}"5.."}[{{ .Values.alerting.http.sampleInterval }}])))
+            > {{ .Values.alerting.http.max5xxCount }}
+          labels: {{ include "generic-service.alert-labels" . | nindent 12 }} critical
+          annotations: {{ include "generic-service.alert-annotations" . | nindent 12 }} HTTP 5xx responses
+            description: '{{ include "generic-service.fullname" . }} gave {{"{{ $value }}"}} HTTP 5xx responses in the last {{ .Values.alerting.http.sampleInterval }}.'
+        {{- end }}
+
+        {{- if eq .Values.ingress.protocol "grpc" }}
+        - alert: GrpcErrors
+          expr: |
+            (sum(rate(grpc_server_requests_total{namespace="{{ .Release.Namespace }}",app="{{ include "generic-service.fullname" . }}",grpc_code!="OK"}[{{ .Values.alerting.grpc.sampleInterval }}])) / sum(rate(grpc_server_requests_total{namespace="{{ .Release.Namespace }}",app="{{ include "generic-service.fullname" . }}"}[{{ .Values.alerting.grpc.sampleInterval }}]))) /
+            (sum(rate(grpc_server_requests_total{namespace="{{ .Release.Namespace }}",app="{{ include "generic-service.fullname" . }}",grpc_code!="OK"}[{{ .Values.alerting.grpc.referenceInterval }}])) / sum(rate(grpc_server_requests_total{namespace="{{ .Release.Namespace }}",app="{{ include "generic-service.fullname" . }}"}[{{ .Values.alerting.grpc.referenceInterval }}])))
+            > {{ .Values.alerting.grpc.maxErrorRatio }}
+          labels: {{ include "generic-service.alert-labels" . | nindent 12 }} warning
+          annotations: {{ include "generic-service.alert-annotations" . | nindent 12 }} higher gRPC error rate
+            description: '{{ include "generic-service.fullname" . }} gave {{"{{$value}}"}}x more gRPC error responses per request in the last {{ .Values.alerting.grpc.sampleInterval }} than in the last {{ .Values.alerting.grpc.referenceInterval }}.'
+
+        - alert: GrpcCriticalErrors
+          expr: |
+            ceil(sum(increase(grpc_server_requests_total{namespace="{{ .Release.Namespace }}", app="{{ include "generic-service.fullname" . }}", grpc_code=~"Internal|Unknown|Unimplemented|Unavailable|DataLoss"}[1m])))
+            > {{ .Values.alerting.grpc.maxCriticalErrors }}
+          labels: {{ include "generic-service.alert-labels" . | nindent 12 }} critical
+          annotations: {{ include "generic-service.alert-annotations" . | nindent 12 }} critical gRPC errors
+            description: '{{ include "generic-service.fullname" . }} returned {{"{{ $value }}"}} critical gRPC errors in the last {{ .Values.alerting.grpc.sampleInterval }}.'
+        {{- end }}
+      {{- end }}
 
 {{- end }}
