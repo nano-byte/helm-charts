@@ -51,6 +51,7 @@ app:
 | `additionalConfigs`               | `[]`                       | Additional `ConfigMap`s with key named `data.yaml` to be mounted (paths appended to `$CONFIG_FILE`)      |
 | `livenessProbe`                   |                            | Probe that causes the service to be restarted when failing                                               |
 | `readinessProbe`                  |                            | Probe that prevents the service from receiving traffic when failing                                      |
+| `maxShutdownSeconds`              | `30`                       | The number of seconds the pod has to shutdown before it is terminated                                    |
 | `labels`                          | `{}`                       | Additional labels to set on all generated resources                                                      |
 | `annotations`                     | `{}`                       | Additional annotations to set on the `Pod` controller and `Pod`s                                         |
 | `resources.requests.memory`       | `64Mi`                     | The amount of memory requested for the service (recommendation: slightly higher than average usage)      |

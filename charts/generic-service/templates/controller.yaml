@@ -172,6 +172,8 @@ spec:
       serviceAccountName: {{ include "generic-service.fullname" . }}
       {{- end }}
 
+      terminationGracePeriodSeconds: {{ .Values.maxShutdownSeconds }}
+
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -328,7 +330,7 @@ spec:
               value: {{ $val | quote }}
             {{- end }}
 
-          {{- if .Values.ingress.enabled }}
+          {{- if and .Values.ingress.enabled .Values.maxShutdownSeconds }}
           # Delay shutdown to give ingress controller time to reroute traffic
           lifecycle:
             preStop:

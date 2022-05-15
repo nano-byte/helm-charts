@@ -142,6 +142,11 @@
         }
       }
     },
+    "maxShutdownSeconds": {
+      "type": "integer",
+      "default": 30,
+      "description": "The number of seconds the pod has to shutdown before it is terminated"
+    },
     "labels": {
       "type": "object",
       "additionalProperties": {"type": "string"},

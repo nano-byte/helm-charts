@@ -34,6 +34,8 @@ additionalConfigs: []
 #     port: http-ingress
 #     path: /
 
+maxShutdownSeconds: 30
+
 labels: {}
 
 annotations: {}
