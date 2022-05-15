@@ -51,6 +51,6 @@ spec:
     retries: {{ .Values.ingress.istio.retries | toYaml | nindent 6 }}
     {{- end }}
 
-  analysis: {{ toYaml (.Values.rollout.analysis | required "rollout.analysis is required if rollout.flagger is true") | nindent 4 }}
+  analysis: {{ .Values.rollout.analysis | required "rollout.analysis is required if rollout.flagger is true" | toYaml | nindent 4 }}
 
 {{- end }}

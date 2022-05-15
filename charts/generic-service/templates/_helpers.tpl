@@ -38,12 +38,12 @@ helm.sh/chart: '{{ .Chart.Name }}-{{ .Chart.Version }}'
 {{ define "generic-service.istio" -}}
 
 {{- if .Values.ingress.istio.gateways }}
-gateways: {{ toYaml .Values.ingress.istio.gateways | nindent 2 }}
+gateways: {{ .Values.ingress.istio.gateways | toYaml | nindent 2 }}
 {{- end }}
 
 hosts:
 {{- if .Values.ingress.domains }}
-{{ toYaml .Values.ingress.domains | indent 2 }}
+{{ .Values.ingress.domains | toYaml | indent 2 }}
 {{- else }}
   - {{ include "generic-service.fullname" . }}
 {{- end }}

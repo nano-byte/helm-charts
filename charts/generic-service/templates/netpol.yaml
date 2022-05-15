@@ -8,6 +8,6 @@ metadata:
 spec:
   podSelector:
     matchLabels: {{ include "generic-service.selector-labels" . | nindent 6 }}
-  ingress: {{ toYaml .Values.netpol.ingress | nindent 4 }}
-  egress: {{ toYaml .Values.netpol.egress | nindent 4 }}
+  ingress: {{ .Values.netpol.ingress | toYaml | nindent 4 }}
+  egress: {{ .Values.netpol.egress | toYaml | nindent 4 }}
 {{- end }}

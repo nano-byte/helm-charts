@@ -60,7 +60,7 @@ spec:
       canaryMetadata:
         labels:
           role: preview
-      analysis: {{ toYaml (.Values.rollout.analysis | required "rollout.analysis is required if rollout.strategy is Canary") | nindent 8 }}
+      analysis: {{ .Values.rollout.analysis | required "rollout.analysis is required if rollout.strategy is Canary" |toYaml |  nindent 8 }}
       trafficRouting:
         {{- if .Values.ingress.istio.enabled }}
         istio:
@@ -91,7 +91,7 @@ spec:
           role: preview
       autoPromotionEnabled: {{ .Values.rollout.autoPromotion }}
       {{- if .Values.rollout.analysis }}
-      prePromotionAnalysis: {{ toYaml .Values.rollout.analysis | nindent 8 }}
+      prePromotionAnalysis: {{ .Values.rollout.analysis | toYaml | nindent 8 }}
       {{- end }}
     {{- else if not .Values.rollout.flagger }}
       {{ fail "rollout.flagger must be true or rollout.controller must be ArgoRollout if rollout.strategy is BlueGreen" }}
@@ -142,7 +142,7 @@ spec:
       {{- end }}
 
     spec:
-      securityContext: {{ toYaml .Values.securityContext.pod | nindent 8 }}
+      securityContext: {{ .Values.securityContext.pod | toYaml | nindent 8 }}
       volumes:
         {{- if and .Values.persistence.enabled (ne .Values.rollout.controller "StatefulSet") }}
         - name: persistence
@@ -190,7 +190,7 @@ spec:
                   matchLabels: {{ include "generic-service.selector-labels" . | nindent 20 }}
 
       {{- if .Values.nodeSelector }}
-      nodeSelector: {{ toYaml .Values.nodeSelector | nindent 8 }}
+      nodeSelector: {{ .Values.nodeSelector | toYaml | nindent 8 }}
       tolerations:
         {{- range $key, $val := .Values.nodeSelector }}
         - key: {{ $key | quote }}
@@ -205,14 +205,14 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
 
           {{- if .Values.command }}
-          command: {{ toYaml .Values.command | nindent 12 }}
+          command: {{ .Values.command | toYaml | nindent 12 }}
           {{- end }}
 
           {{- if .Values.args }}
-          args: {{ toYaml .Values.args | nindent 12 }}
+          args: {{ .Values.args | toYaml | nindent 12 }}
           {{- end }}
 
-          securityContext: {{ toYaml .Values.securityContext.container | nindent 12 }}
+          securityContext: {{ .Values.securityContext.container | toYaml | nindent 12 }}
 
           volumeMounts:
             {{- if .Values.persistence.enabled }}
@@ -248,14 +248,14 @@ spec:
             {{- end }}
 
           {{- if .Values.livenessProbe }}
-          livenessProbe: {{ toYaml .Values.livenessProbe | nindent 12 }}
+          livenessProbe: {{ .Values.livenessProbe | toYaml | nindent 12 }}
           {{- end }}
 
           {{- if .Values.readinessProbe }}
-          readinessProbe: {{ toYaml .Values.readinessProbe | nindent 12 }}
+          readinessProbe: {{ .Values.readinessProbe | toYaml | nindent 12 }}
           {{- end }}
 
-          resources: {{ toYaml .Values.resources | nindent 12 }}
+          resources: {{ .Values.resources | toYaml | nindent 12 }}
 
           env:
             - name: POD_NAME
