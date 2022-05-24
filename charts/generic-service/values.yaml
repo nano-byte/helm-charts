@@ -123,6 +123,7 @@ alerting:
     max4xxRatio: 2.5
     max5xxCount: 0
   grpc:
+    requestsMetric: grpc_server_handled_total
     sampleInterval: 20m
     referenceInterval: 1w
     maxErrorRatio: 2.5

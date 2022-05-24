@@ -85,8 +85,8 @@ spec:
         {{- if eq .Values.ingress.protocol "grpc" }}
         - alert: GrpcErrors
           expr: |
-            (sum(rate(grpc_server_requests_total{namespace="{{ .Release.Namespace }}",app="{{ include "generic-service.fullname" . }}",grpc_code!="OK"}[{{ .Values.alerting.grpc.sampleInterval }}])) / sum(rate(grpc_server_requests_total{namespace="{{ .Release.Namespace }}",app="{{ include "generic-service.fullname" . }}"}[{{ .Values.alerting.grpc.sampleInterval }}]))) /
-            (sum(rate(grpc_server_requests_total{namespace="{{ .Release.Namespace }}",app="{{ include "generic-service.fullname" . }}",grpc_code!="OK"}[{{ .Values.alerting.grpc.referenceInterval }}])) / sum(rate(grpc_server_requests_total{namespace="{{ .Release.Namespace }}",app="{{ include "generic-service.fullname" . }}"}[{{ .Values.alerting.grpc.referenceInterval }}])))
+            (sum(rate({{ .Values.alerting.grpc.requestsMetric }}{namespace="{{ .Release.Namespace }}",app="{{ include "generic-service.fullname" . }}",grpc_code!="OK"}[{{ .Values.alerting.grpc.sampleInterval }}])) / sum(rate({{ .Values.alerting.grpc.requestsMetric }}{namespace="{{ .Release.Namespace }}",app="{{ include "generic-service.fullname" . }}"}[{{ .Values.alerting.grpc.sampleInterval }}]))) /
+            (sum(rate({{ .Values.alerting.grpc.requestsMetric }}{namespace="{{ .Release.Namespace }}",app="{{ include "generic-service.fullname" . }}",grpc_code!="OK"}[{{ .Values.alerting.grpc.referenceInterval }}])) / sum(rate({{ .Values.alerting.grpc.requestsMetric }}{namespace="{{ .Release.Namespace }}",app="{{ include "generic-service.fullname" . }}"}[{{ .Values.alerting.grpc.referenceInterval }}])))
             > {{ .Values.alerting.grpc.maxErrorRatio }}
           labels: {{ include "generic-service.alert-labels" . | nindent 12 }} warning
           annotations: {{ include "generic-service.alert-annotations" . | nindent 12 }} higher gRPC error rate
@@ -94,7 +94,7 @@ spec:
 
         - alert: GrpcCriticalErrors
           expr: |
-            ceil(sum(increase(grpc_server_requests_total{namespace="{{ .Release.Namespace }}", app="{{ include "generic-service.fullname" . }}", grpc_code=~"Internal|Unknown|Unimplemented|Unavailable|DataLoss"}[1m])))
+            round(sum(increase({{ .Values.alerting.grpc.requestsMetric }}{namespace="{{ .Release.Namespace }}", app="{{ include "generic-service.fullname" . }}", grpc_code=~"Internal|Unknown|Unimplemented|Unavailable|DataLoss"}[1m])))
             > {{ .Values.alerting.grpc.maxCriticalErrors }}
           labels: {{ include "generic-service.alert-labels" . | nindent 12 }} critical
           annotations: {{ include "generic-service.alert-annotations" . | nindent 12 }} critical gRPC errors

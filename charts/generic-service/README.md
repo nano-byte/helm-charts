@@ -32,94 +32,95 @@ app:
 
 ## Values
 
-| Value                             | Default                    | Description                                                                                              |
-| --------------------------------- | -------------------------- | -------------------------------------------------------------------------------------------------------- |
-| `name`                            | Release Name               | The name of the service (used for `app.kubernetes.io/name` label)                                        |
-| `fullname`                        | Release Name (+ `name`)    | The name of the service instance (used for resource names and `app.kubernetes.io/instance` label)        |
-| `image.registry`                  | `docker.io`                | The Registry containing the Docker Image to run (also used as the name of an optional Image Pull Secret) |
-| `image.repository`                | __required__               | The name of the Docker Image image to run (without the Registry)                                         |
-| `image.tag`                       | __required__               | The tag of the Docker Image to run (also used for `app.kubernetes.io/version` label)                     |
-| `image.pullPolicy`                | `IfNotPresent`             | Set to `Always` to try to pull new versions of the Docker Image                                          |
-| `image.pullSecret`                | same as `image.registry`   | Name of the Kubernetes Secret providing credentials for pulling the Image                                |
-| `securityContext.pod`             | `{}`                       | Security context to use for the pod                                                                      |
-| `securityContext.container`       | `{}`                       | Security context to use for the container                                                                |
-| `command`                         | `[]`                       | Overrides the command to launch in the Docker Image                                                      |
-| `args`                            | `[]`                       | The command-line arguments passed to the service                                                         |
-| `env`                             | `{}`                       | The environment variables passed to the service                                                          |
-| `config`                          | `{}`                       | YAML/JSON configuration to be mounted as a file in the container                                         |
-| `configMountPath`                 | `/config/config.yaml`      | The file path in the container to mount the data from `config` into (exposed via `$CONFIG_FILE`)         |
-| `additionalConfigs`               | `[]`                       | Additional `ConfigMap`s with key named `data.yaml` to be mounted (paths appended to `$CONFIG_FILE`)      |
-| `livenessProbe`                   |                            | Probe that causes the service to be restarted when failing                                               |
-| `readinessProbe`                  |                            | Probe that prevents the service from receiving traffic when failing                                      |
-| `maxShutdownSeconds`              | `30`                       | The number of seconds the pod has to shutdown before it is terminated                                    |
-| `labels`                          | `{}`                       | Additional labels to set on all generated resources                                                      |
-| `annotations`                     | `{}`                       | Additional annotations to set on the `Pod` controller and `Pod`s                                         |
-| `resources.requests.memory`       | `64Mi`                     | The amount of memory requested for the service (recommendation: slightly higher than average usage)      |
-| `resources.requests.cpu`          | `10m`                      | The number of CPU cores requested for the service                                                        |
-| `resources.limits.memory`         | `96Mi`                     | The maximum amount of memory the service may use (recommendation: slightly higher than worst-case usage) |
-| `resources.limits.cpu`            | `2000m`                    | The maximum number of CPU cores the service may use                                                      |
-| `rollout.controller`              | `Deployment`               | The type of `Pod` controller to create (`Deployment`, `StatefulSet`, `DaemonSet` or `ArgoRollout`)       |
-| `rollout.strategy`                | `RollingUpdate`            | The rollout strategy (`RollingUpdate`, `Recreate`, `OnDelete`, `Canary` or `BlueGreen`)                  |
-| `rollout.autoPromotion`           | `true`                     | Automatically promote rollouts (if `rollout.strategy` is `BlueGreen` and `rollout.flagger` if `false`)   |
-| `rollout.flagger`                 | `false`                    | Use Flagger to control rollouts (`rollout.controller` must be `Deployment` or `StatefulSet`)             |
-| `rollout.analysis`                | req. for Canary or Flagger | Flagger or Argo Rollouts analysis for automatic `Canary` or `BlueGreen` promotion                        |
-| `replicas`                        | `1`                        | The number of instances of the service to run (set at least `2` for Pod Disruption Budget)               |
-| `autoscaling.enabled`             | `false`                    | Enables automatic starting of additional instances based on CPU load                                     |
-| `autoscaling.maxReplicas`         | `3`                        | The maximum number of instances to run (must be larger than `replicas`)                                  |
-| `autoscaling.targetCpu`           | `50`                       | The desired average CPU load in percent                                                                  |
-| `nodeSelector`                    | `{}`                       | Node labels required for scheduling this service, also used as tolerations                               |
-| `persistence.enabled`             | `false`                    | Enables persistent storage for the service                                                               |
-| `persistence.storageClass`        |                            | The type of disk to use for storage instead of the cluster default                                       |
-| `persistence.accessModes`         | `[ReadWriteOnce]`          | The support access modes the volume can be mounted with                                                  |
-| `persistence.size`                | `1G`                       | The size of the persistent volume to create for the service                                              |
-| `persistence.mountPath`           | __required if enabled__    | The mount path for the storage inside the container                                                      |
-| `secrets[].name`                  | __required if used__       | The name of the Kubernetes `Secret`                                                                      |
-| `secrets[].subPath`               |                            | The path of a single file in the `Secret`                                                                |
-| `secrets[].mountPath`             | __required if used__       | The mount path for the `Secret` inside the container                                                     |
-| `secrets[].files`                 |                            | Map of file names to base64-encoded content; leave empty to reference existing `Secret`                  |
-| `ingress.enabled`                 | `false`                    | Enables ingress into the service (either cluster-internal or public)                                     |
-| `ingress.port`                    | `80`                       | The container port ingress traffic is routed to                                                          |
-| `ingress.protocol`                | `http`                     | The protocol used for ingress (e.g., `http` or `grpc`)                                                   |
-| `ingress.additionalSelectors`     | `{}`                       | Additional label selectors used to restrict the `Pod`s selected by the `Service`.                        |
-| `ingress.headless`                | `false`                    | Creates a headless `Service` to disable Kubernetes-based load balancing                                  |
-| `ingress.domains`                 | `[]`                       | The public domain names under which the service is exposed (leave empty for cluster-internal only)       |
-| `ingress.paths`                   | `[]`                       | HTTP path prefixes to accept ingress traffic for (leave empty to accept traffic for any path)            |
-| `ingress.class`                   |                            | The ingress controller to use (not applicable if `ingress.istio.enabled`)                                |
-| `ingress.annotations`             | `{}`                       | Annotations for `Ingress` resource (not applicable if `ingress.istio.enabled`)                           |
-| `ingress.tls.enabled`             | `false`                    | Enables TLS termination at the ingress (not applicable if `ingress.istio.enabled`)                       |
-| `ingress.tls.secret`              | Release Name + `-tls`      | The name of the `Secret` holding the TLS private key (not applicable if `ingress.istio.enabled`)         |
-| `ingress.istio.enabled`           | `false`                    | Use Istio `VirtualService` instead of Kubernetes `Ingress` resource                                      |
-| `ingress.istio.gateways`          | `[]`                       | The names of the Istio `Gateway`s to use                                                                 |
-| `ingress.istio.httpHeaders`       | `{}`                       | Custom HTTP response headers                                                                             |
-| `ingress.istio.corsPolicy`        | `{}`                       | [Istio CORS policy](https://istio.io/docs/reference/config/networking/virtual-service/#CorsPolicy)       |
-| `ingress.istio.timeout`           | `15s`                      | [Istio timeout](https://istio.io/docs/tasks/traffic-management/request-timeouts/)                        |
-| `ingress.istio.retries`           | `{}`                       | [Istio retry policy](https://istio.io/docs/reference/config/networking/virtual-service/#HTTPRetry)       |
-| `netpol.enabled`                  | `false`                    | Apply network policies for the `Pod`s                                                                    |
-| `netpol.ingress`                  | Allow from same namespace  | Ingress network policy rules to apply                                                                    |
-| `netpol.egress`                   | `[]`                       | Egress network policy rules to apply                                                                     |
-| `tracing.enabled`                 | `false`                    | Enables tracing with OpenTelemetry or Jaeger agent (injected as sidecar)                                 |
-| `tracing.probability`             | `1`                        | Probability of any single trace being sampled; can be overridden for incoming requests e.g. via Istio    |
-| `monitoring.enabled`              | `false`                    | Use Prometheus for monitoring / metrics scraping                                                         |
-| `monitoring.port`                 | `9100`                     | The port to be scraped for monitoring data                                                               |
-| `monitoring.path`                 | `/metrics`                 | The path to be scraped for monitoring data                                                               |
-| `monitoring.interval`             | `1m`                       | The interval at which monitoring data is scraped                                                         |
-| `alerting.enabled`                | `false`                    | Deploys Prometheus alert rule for issues like like unavailable pods or high memory use                   |
-| `alerting.labels`                 | `{}`                       | Additional labels to apply to alert rules                                                                |
-| `alerting.memory.maxUsageFactor`  | `0.9`                      | The maximum usage factor of the memory limit (between `0` and `1`)                                       |
-| `alerting.http.sampleInterval`    | `20m`                      | The time interval in which to measure HTTP responses for triggering alerts                               |
-| `alerting.http.referenceInterval` | `1w`                       | The time interval to to compare with the sample interval to detect changes                               |
-| `alerting.http.maxSlowdown`       | `2.5`                      | The maximum HTTP response slowdown in the sample interval compared to the reference interval             |
-| `alerting.http.max4xxRatio`       | `2.5`                      | The maximum HTTP 4xx ratio increase in the sample interval compared to the reference interval            |
-| `alerting.http.max5xxCount`       | `0`                        | The maximum number of HTTP 5xx responses in the sample interval                                          |
-| `alerting.grpc.sampleInterval`    | `20m`                      | The time interval in which to measure gRPC responses                                                     |
-| `alerting.grpc.referenceInterval` | `1w`                       | The time interval to to compare with the sample interval to detect changes                               |
-| `alerting.grpc.maxErrorRatio`     | `2.5`                      | The maximum gRPC error ratio increase in the sample interval compared to the reference interval          |
-| `alerting.grpc.maxCriticalErrors` | `0`                        | The maximum number of critical gRPC errors responses in the sample interval                              |
-| `grafana.url`                     |                            | The URL of a Grafana instance with access to the service's metrics                                       |
-| `grafana.dashboard`               | `qqsCbY5Zz`                | The UID of the Grafana dashboard visualizing the service's metrics                                       |
-| `sidecars`                        | `[]`                       | Additional sidecar containers to be added to the `Pod`                                                   |
-| `rbac.roles`                      | `[]`                       | Namespace-specific Kubernetes RBAC Roles to assign to the service                                        |
-| `rbac.clusterRoles`               | `[]`                       | Cluster-wide Kubernetes RBAC Roles to assign to the service                                              |
+| Value                             | Default                     | Description                                                                                              |
+| --------------------------------- | --------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `name`                            | Release Name                | The name of the service (used for `app.kubernetes.io/name` label)                                        |
+| `fullname`                        | Release Name (+ `name`)     | The name of the service instance (used for resource names and `app.kubernetes.io/instance` label)        |
+| `image.registry`                  | `docker.io`                 | The Registry containing the Docker Image to run (also used as the name of an optional Image Pull Secret) |
+| `image.repository`                | __required__                | The name of the Docker Image image to run (without the Registry)                                         |
+| `image.tag`                       | __required__                | The tag of the Docker Image to run (also used for `app.kubernetes.io/version` label)                     |
+| `image.pullPolicy`                | `IfNotPresent`              | Set to `Always` to try to pull new versions of the Docker Image                                          |
+| `image.pullSecret`                | same as `image.registry`    | Name of the Kubernetes Secret providing credentials for pulling the Image                                |
+| `securityContext.pod`             | `{}`                        | Security context to use for the pod                                                                      |
+| `securityContext.container`       | `{}`                        | Security context to use for the container                                                                |
+| `command`                         | `[]`                        | Overrides the command to launch in the Docker Image                                                      |
+| `args`                            | `[]`                        | The command-line arguments passed to the service                                                         |
+| `env`                             | `{}`                        | The environment variables passed to the service                                                          |
+| `config`                          | `{}`                        | YAML/JSON configuration to be mounted as a file in the container                                         |
+| `configMountPath`                 | `/config/config.yaml`       | The file path in the container to mount the data from `config` into (exposed via `$CONFIG_FILE`)         |
+| `additionalConfigs`               | `[]`                        | Additional `ConfigMap`s with key named `data.yaml` to be mounted (paths appended to `$CONFIG_FILE`)      |
+| `livenessProbe`                   |                             | Probe that causes the service to be restarted when failing                                               |
+| `readinessProbe`                  |                             | Probe that prevents the service from receiving traffic when failing                                      |
+| `maxShutdownSeconds`              | `30`                        | The number of seconds the pod has to shutdown before it is terminated                                    |
+| `labels`                          | `{}`                        | Additional labels to set on all generated resources                                                      |
+| `annotations`                     | `{}`                        | Additional annotations to set on the `Pod` controller and `Pod`s                                         |
+| `resources.requests.memory`       | `64Mi`                      | The amount of memory requested for the service (recommendation: slightly higher than average usage)      |
+| `resources.requests.cpu`          | `10m`                       | The number of CPU cores requested for the service                                                        |
+| `resources.limits.memory`         | `96Mi`                      | The maximum amount of memory the service may use (recommendation: slightly higher than worst-case usage) |
+| `resources.limits.cpu`            | `2000m`                     | The maximum number of CPU cores the service may use                                                      |
+| `rollout.controller`              | `Deployment`                | The type of `Pod` controller to create (`Deployment`, `StatefulSet`, `DaemonSet` or `ArgoRollout`)       |
+| `rollout.strategy`                | `RollingUpdate`             | The rollout strategy (`RollingUpdate`, `Recreate`, `OnDelete`, `Canary` or `BlueGreen`)                  |
+| `rollout.autoPromotion`           | `true`                      | Automatically promote rollouts (if `rollout.strategy` is `BlueGreen` and `rollout.flagger` if `false`)   |
+| `rollout.flagger`                 | `false`                     | Use Flagger to control rollouts (`rollout.controller` must be `Deployment` or `StatefulSet`)             |
+| `rollout.analysis`                | req. for Canary or Flagger  | Flagger or Argo Rollouts analysis for automatic `Canary` or `BlueGreen` promotion                        |
+| `replicas`                        | `1`                         | The number of instances of the service to run (set at least `2` for Pod Disruption Budget)               |
+| `autoscaling.enabled`             | `false`                     | Enables automatic starting of additional instances based on CPU load                                     |
+| `autoscaling.maxReplicas`         | `3`                         | The maximum number of instances to run (must be larger than `replicas`)                                  |
+| `autoscaling.targetCpu`           | `50`                        | The desired average CPU load in percent                                                                  |
+| `nodeSelector`                    | `{}`                        | Node labels required for scheduling this service, also used as tolerations                               |
+| `persistence.enabled`             | `false`                     | Enables persistent storage for the service                                                               |
+| `persistence.storageClass`        |                             | The type of disk to use for storage instead of the cluster default                                       |
+| `persistence.accessModes`         | `[ReadWriteOnce]`           | The support access modes the volume can be mounted with                                                  |
+| `persistence.size`                | `1G`                        | The size of the persistent volume to create for the service                                              |
+| `persistence.mountPath`           | __required if enabled__     | The mount path for the storage inside the container                                                      |
+| `secrets[].name`                  | __required if used__        | The name of the Kubernetes `Secret`                                                                      |
+| `secrets[].subPath`               |                             | The path of a single file in the `Secret`                                                                |
+| `secrets[].mountPath`             | __required if used__        | The mount path for the `Secret` inside the container                                                     |
+| `secrets[].files`                 |                             | Map of file names to base64-encoded content; leave empty to reference existing `Secret`                  |
+| `ingress.enabled`                 | `false`                     | Enables ingress into the service (either cluster-internal or public)                                     |
+| `ingress.port`                    | `80`                        | The container port ingress traffic is routed to                                                          |
+| `ingress.protocol`                | `http`                      | The protocol used for ingress (e.g., `http` or `grpc`)                                                   |
+| `ingress.additionalSelectors`     | `{}`                        | Additional label selectors used to restrict the `Pod`s selected by the `Service`.                        |
+| `ingress.headless`                | `false`                     | Creates a headless `Service` to disable Kubernetes-based load balancing                                  |
+| `ingress.domains`                 | `[]`                        | The public domain names under which the service is exposed (leave empty for cluster-internal only)       |
+| `ingress.paths`                   | `[]`                        | HTTP path prefixes to accept ingress traffic for (leave empty to accept traffic for any path)            |
+| `ingress.class`                   |                             | The ingress controller to use (not applicable if `ingress.istio.enabled`)                                |
+| `ingress.annotations`             | `{}`                        | Annotations for `Ingress` resource (not applicable if `ingress.istio.enabled`)                           |
+| `ingress.tls.enabled`             | `false`                     | Enables TLS termination at the ingress (not applicable if `ingress.istio.enabled`)                       |
+| `ingress.tls.secret`              | Release Name + `-tls`       | The name of the `Secret` holding the TLS private key (not applicable if `ingress.istio.enabled`)         |
+| `ingress.istio.enabled`           | `false`                     | Use Istio `VirtualService` instead of Kubernetes `Ingress` resource                                      |
+| `ingress.istio.gateways`          | `[]`                        | The names of the Istio `Gateway`s to use                                                                 |
+| `ingress.istio.httpHeaders`       | `{}`                        | Custom HTTP response headers                                                                             |
+| `ingress.istio.corsPolicy`        | `{}`                        | [Istio CORS policy](https://istio.io/docs/reference/config/networking/virtual-service/#CorsPolicy)       |
+| `ingress.istio.timeout`           | `15s`                       | [Istio timeout](https://istio.io/docs/tasks/traffic-management/request-timeouts/)                        |
+| `ingress.istio.retries`           | `{}`                        | [Istio retry policy](https://istio.io/docs/reference/config/networking/virtual-service/#HTTPRetry)       |
+| `netpol.enabled`                  | `false`                     | Apply network policies for the `Pod`s                                                                    |
+| `netpol.ingress`                  | Allow from same namespace   | Ingress network policy rules to apply                                                                    |
+| `netpol.egress`                   | `[]`                        | Egress network policy rules to apply                                                                     |
+| `tracing.enabled`                 | `false`                     | Enables tracing with OpenTelemetry or Jaeger agent (injected as sidecar)                                 |
+| `tracing.probability`             | `1`                         | Probability of any single trace being sampled; can be overridden for incoming requests e.g. via Istio    |
+| `monitoring.enabled`              | `false`                     | Use Prometheus for monitoring / metrics scraping                                                         |
+| `monitoring.port`                 | `9100`                      | The port to be scraped for monitoring data                                                               |
+| `monitoring.path`                 | `/metrics`                  | The path to be scraped for monitoring data                                                               |
+| `monitoring.interval`             | `1m`                        | The interval at which monitoring data is scraped                                                         |
+| `alerting.enabled`                | `false`                     | Deploys Prometheus alert rule for issues like like unavailable pods or high memory use                   |
+| `alerting.labels`                 | `{}`                        | Additional labels to apply to alert rules                                                                |
+| `alerting.memory.maxUsageFactor`  | `0.9`                       | The maximum usage factor of the memory limit (between `0` and `1`)                                       |
+| `alerting.http.sampleInterval`    | `20m`                       | The time interval in which to measure HTTP responses for triggering alerts                               |
+| `alerting.http.referenceInterval` | `1w`                        | The time interval to to compare with the sample interval to detect changes                               |
+| `alerting.http.maxSlowdown`       | `2.5`                       | The maximum HTTP response slowdown in the sample interval compared to the reference interval             |
+| `alerting.http.max4xxRatio`       | `2.5`                       | The maximum HTTP 4xx ratio increase in the sample interval compared to the reference interval            |
+| `alerting.http.max5xxCount`       | `0`                         | The maximum number of HTTP 5xx responses in the sample interval                                          |
+| `alerting.grpc.requestsMetric`    | `grpc_server_handled_total` | The name of the Prometheus metric counting gRPC requests                                                 |
+| `alerting.grpc.sampleInterval`    | `20m`                       | The time interval in which to measure gRPC responses                                                     |
+| `alerting.grpc.referenceInterval` | `1w`                        | The time interval to to compare with the sample interval to detect changes                               |
+| `alerting.grpc.maxErrorRatio`     | `2.5`                       | The maximum gRPC error ratio increase in the sample interval compared to the reference interval          |
+| `alerting.grpc.maxCriticalErrors` | `0`                         | The maximum number of critical gRPC errors responses in the sample interval                              |
+| `grafana.url`                     |                             | The URL of a Grafana instance with access to the service's metrics                                       |
+| `grafana.dashboard`               | `qqsCbY5Zz`                 | The UID of the Grafana dashboard visualizing the service's metrics                                       |
+| `sidecars`                        | `[]`                        | Additional sidecar containers to be added to the `Pod`                                                   |
+| `rbac.roles`                      | `[]`                        | Namespace-specific Kubernetes RBAC Roles to assign to the service                                        |
+| `rbac.clusterRoles`               | `[]`                        | Cluster-wide Kubernetes RBAC Roles to assign to the service                                              |
 
 ## Environment variables
 

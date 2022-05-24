@@ -528,6 +528,11 @@
         "grpc": {
           "type": "object",
           "properties": {
+            "requestsMetric": {
+              "type": "string",
+              "default": "grpc_server_handled_total",
+              "description": "The name of the Prometheus metric counting gRPC requests"
+            },
             "sampleInterval": {
               "type": "string",
               "default": "15m",
