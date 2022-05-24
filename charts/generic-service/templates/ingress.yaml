@@ -6,17 +6,17 @@ metadata:
   name: {{ include "generic-service.fullname" . }}
   labels: {{ include "generic-service.default-labels" . | nindent 4 }}
   annotations:
-  {{- if .Values.ingress.class }}
-    kubernetes.io/ingress.class: {{ .Values.ingress.class }}
-  {{- end }}
   {{- if eq .Values.ingress.class "nginx" }}
     nginx.ingress.kubernetes.io/backend-protocol: {{ .Values.ingress.protocol | upper }}
   {{- end }}
-  {{- range $key, $value := .Values.ingress.annotations }}
-    {{ $key }}: {{ $value | quote }}
+  {{- if .Values.ingress.annotations }}  
+    {{- .Values.ingress.annotations | toYaml | nindent 4 }}
   {{- end }}
 
 spec:
+{{- if .Values.ingress.class }}
+  ingressClassName: {{ .Values.ingress.class }}
+{{- end }}
 {{- if .Values.ingress.tls.enabled }}
   tls:
     - secretName: {{ .Values.ingress.tls.secret | default (printf "%s-tls" .Release.Name) }}
