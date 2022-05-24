@@ -55,6 +55,7 @@ spec:
 
       {{- if .Values.ingress.enabled }}
         {{- if or .Values.ingress.istio.enabled (eq .Values.ingress.class "nginx") }}
+        {{- if .Values.alerting.http.referenceInterval }}
         - alert: HttpSlowdown
           expr: |
             (sum(increase({{ include "generic-service.request-duration-metric" . }}[{{ .Values.alerting.http.sampleInterval }}])) / sum(increase({{ include "generic-service.request-count-metric" . }}[{{ .Values.alerting.http.sampleInterval }}]))) /
@@ -72,10 +73,11 @@ spec:
           labels: {{ include "generic-service.alert-labels" . | nindent 12 }} warning
           annotations: {{ include "generic-service.alert-annotations" . | nindent 12 }} higher HTTP 4xx rate
             description: '{{ include "generic-service.fullname" . }} gave {{"{{$value}}"}}x more HTTP 4xx responses per request in the last {{ .Values.alerting.http.sampleInterval }} than in the last {{ .Values.alerting.http.referenceInterval }}.'
+        {{- end }}
 
         - alert: Http5xx
           expr: |
-            ceil(sum(increase({{ include "generic-service.request-code-count-metric" . }}"5.."}[{{ .Values.alerting.http.sampleInterval }}])))
+            sum(round(increase({{ include "generic-service.request-code-count-metric" . }}"5.."}[{{ .Values.alerting.http.sampleInterval }}])))
             > {{ .Values.alerting.http.max5xxCount }}
           labels: {{ include "generic-service.alert-labels" . | nindent 12 }} critical
           annotations: {{ include "generic-service.alert-annotations" . | nindent 12 }} HTTP 5xx responses
@@ -83,6 +85,7 @@ spec:
         {{- end }}
 
         {{- if eq .Values.ingress.protocol "grpc" }}
+        {{- if .Values.alerting.grpc.referenceInterval }}
         - alert: GrpcErrors
           expr: |
             (sum(rate({{ .Values.alerting.grpc.requestsMetric }}{namespace="{{ .Release.Namespace }}",app="{{ include "generic-service.fullname" . }}",grpc_code!="OK"}[{{ .Values.alerting.grpc.sampleInterval }}])) / sum(rate({{ .Values.alerting.grpc.requestsMetric }}{namespace="{{ .Release.Namespace }}",app="{{ include "generic-service.fullname" . }}"}[{{ .Values.alerting.grpc.sampleInterval }}]))) /
@@ -91,6 +94,7 @@ spec:
           labels: {{ include "generic-service.alert-labels" . | nindent 12 }} warning
           annotations: {{ include "generic-service.alert-annotations" . | nindent 12 }} higher gRPC error rate
             description: '{{ include "generic-service.fullname" . }} gave {{"{{$value}}"}}x more gRPC error responses per request in the last {{ .Values.alerting.grpc.sampleInterval }} than in the last {{ .Values.alerting.grpc.referenceInterval }}.'
+        {{- end }}
 
         - alert: GrpcCriticalErrors
           expr: |
