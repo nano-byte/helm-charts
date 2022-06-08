@@ -159,10 +159,10 @@ spec:
           configMap:
             name: {{ . }}
         {{- end }}
-        {{- range .Values.secrets }}
-        - name: {{ .name }}
+        {{- range $name, $_ := .Values.secrets }}
+        - name: {{ $name }}
           secret:
-            secretName: {{ .name }}
+            secretName: {{ $name }}
         {{- end }}
 
       imagePullSecrets:
@@ -231,12 +231,12 @@ spec:
               subPath: data.yaml
               mountPath: /config/{{ . }}.yaml
             {{- end }}
-            {{- range .Values.secrets }}
-            - name: {{ .name }}
-              {{- if .subPath }}
-              subPath: {{ .subPath }}
+            {{- range $name, $secret := .Values.secrets }}
+            - name: {{ $name }}
+              {{- if $secret.subPath }}
+              subPath: {{ $secret.subPath }}
               {{- end }}
-              mountPath: {{ .mountPath }}
+              mountPath: {{ $secret.mountPath }}
             {{- end }}
 
           ports:

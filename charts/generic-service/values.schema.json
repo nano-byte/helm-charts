@@ -295,35 +295,29 @@
       }
     },
     "secrets": {
-      "type": "array",
-      "items": [
-        {
-          "type": "object",
-          "properties": {
-            "name": {
-              "type": "string",
-              "description": "The name of the Kubernetes Secret"
-            },
-            "subPath": {
-              "type": "string",
-              "description": "The path of a single file in the Secret"
-            },
-            "mountPath": {
-              "type": "string",
-              "description": "The mount path for the Secret inside the container"
-            },
-            "files": {
-              "type": "object",
-              "additionalProperties": {"type": "string"},
-              "description": "Map of file names to base64-encoded content; leave empty to reference existing Secret"
-            }
+      "type": "object",
+      "additionalProperties":
+      {
+        "type": "object",
+        "properties": {
+          "mountPath": {
+            "type": "string",
+            "description": "The mount path for the Secret inside the container"
           },
-          "required": [
-            "name",
-            "mountPath"
-          ]
-        }
-      ]
+          "subPath": {
+            "type": "string",
+            "description": "The path of a single file in the Secret to mount; leave empty to mount all files"
+          },
+          "files": {
+            "type": "object",
+            "additionalProperties": {"type": "string"},
+            "description": "Map of file names to base64-encoded content; leave empty to reference existing Secret"
+          }
+        },
+        "required": [
+          "mountPath"
+        ]
+      }
     },
     "ingress": {
       "type": "object",

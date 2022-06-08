@@ -74,10 +74,9 @@ app:
 | `persistence.accessModes`         | `[ReadWriteOnce]`           | The support access modes the volume can be mounted with                                                  |
 | `persistence.size`                | `1G`                        | The size of the persistent volume to create for the service                                              |
 | `persistence.mountPath`           | __required if enabled__     | The mount path for the storage inside the container                                                      |
-| `secrets[].name`                  | __required if used__        | The name of the Kubernetes `Secret`                                                                      |
-| `secrets[].subPath`               |                             | The path of a single file in the `Secret`                                                                |
-| `secrets[].mountPath`             | __required if used__        | The mount path for the `Secret` inside the container                                                     |
-| `secrets[].files`                 |                             | Map of file names to base64-encoded content; leave empty to reference existing `Secret`                  |
+| `secrets.SECRET_NAME.mountPath`   | __required if used__        | The mount path for the `Secret` named `SECRET_NAME` inside the container                                 |
+| `secrets.SECRET_NAME.subPath`     |                             | The path of a single file in the `Secret` named `SECRET_NAME` to mount; leave empty to mount all files   |
+| `secrets.SECRET_NAME.files`       |                             | Map of file names to base64-encoded content; leave empty to reference existing `Secret`                  |
 | `ingress.enabled`                 | `false`                     | Enables ingress into the service (either cluster-internal or public)                                     |
 | `ingress.port`                    | `80`                        | The container port ingress traffic is routed to                                                          |
 | `ingress.protocol`                | `http`                      | The protocol used for ingress (e.g., `http` or `grpc`)                                                   |

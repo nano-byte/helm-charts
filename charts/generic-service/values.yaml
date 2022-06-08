@@ -72,7 +72,7 @@ persistence:
   size: 1G
   mountPath: ''  # required if enabled
 
-secrets: []
+secrets: {}
 
 ingress:
   enabled: false
