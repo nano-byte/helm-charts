@@ -260,6 +260,8 @@ spec:
           resources: {{ .Values.resources | toYaml | nindent 12 }}
 
           env:
+            - name: POD_CONTROLLER
+              value: {{ .Values.rollout.controller }}
             - name: POD_NAME
               valueFrom:
                 fieldRef:
