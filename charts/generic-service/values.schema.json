@@ -445,6 +445,49 @@
               "description": "Istio retry policy (see https://istio.io/docs/reference/config/networking/virtual-service/#HTTPRetry)"
             }
           }
+        },
+        "extra": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "port": {
+                "type": "integer",
+                "description": "The container port ingress traffic is routed to"
+              },
+              "protocol": {
+                "type": "string",
+                "default": "http",
+                "description": "The protocol used for the port (e.g., http or grpc)"
+              },
+              "domains": {
+                "type": "array",
+                "items": [{"type": "string"}],
+                "description": "The public domain names under which the port is exposed (leave empty for cluster-internal only)"
+              },
+              "paths": {
+                "type": "array",
+                "items": [{"type": "string"}],
+                "description": "HTTP path prefixes to accept ingress traffic for (leave empty to accept traffic for any path)"
+              },
+              "tls": {
+                "type": "object",
+                "properties": {
+                  "enabled": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Enables TLS termination at the ingress"
+                  },
+                  "secret": {
+                    "type": "string",
+                    "description": "The name of the Secret holding the TLS private key"
+                  }
+                }
+              }
+            },
+            "required": ["port"]
+          },
+          "description": "Additional container ports ingress traffic is routed to (not applicable if `ingress.istio.enabled`)"
         }
       }
     },

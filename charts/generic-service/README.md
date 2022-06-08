@@ -99,6 +99,12 @@ app:
 | `ingress.istio.httpHeaders`       | `{}`                        | Custom HTTP response headers                                                                             |
 | `ingress.istio.timeout`           | `15s`                       | [Istio timeout](https://istio.io/docs/tasks/traffic-management/request-timeouts/)                        |
 | `ingress.istio.retries`           | `{}`                        | [Istio retry policy](https://istio.io/docs/reference/config/networking/virtual-service/#HTTPRetry)       |
+| `ingress.extra.*.port`            | __required if used__        | Additional container port ingress traffic is routed to (not applicable if `ingress.istio.enabled`)      |
+| `ingress.extra.*.protocol`        | `http`                      | The protocol used for the port (e.g., `http` or `grpc`)                                                  |
+| `ingress.extra.*.domains`         | `[]`                        | The public domain names under which the port is exposed (leave empty for cluster-internal only)          |
+| `ingress.extra.*.paths`           | `[]`                        | HTTP path prefixes to accept ingress traffic for (leave empty to accept traffic for any path)            |
+| `ingress.extra.*.tls.enabled`     | `false`                     | Enables TLS termination at the ingress                                                                   |
+| `ingress.extra.*.tls.secret`      | Release Name + `*` + `-tls` | The name of the `Secret` holding the TLS private key                                                     |
 | `netpol.enabled`                  | `false`                     | Apply network policies for the `Pod`s                                                                    |
 | `netpol.ingress`                  | Allow from same namespace   | Ingress network policy rules to apply                                                                    |
 | `netpol.egress`                   | `[]`                        | Egress network policy rules to apply                                                                     |

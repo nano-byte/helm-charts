@@ -248,6 +248,13 @@ spec:
             - name: http-monitoring
               containerPort: {{ .Values.monitoring.port }}
           {{- end }}
+          {{- $monitoring := .Values.monitoring }}
+          {{- range $name, $extra := .Values.ingress.extra }}
+            {{- if or (not $monitoring.enabled) (ne $extra.port $monitoring.port) }}
+            - name: {{ $extra.protocol | default "http" }}-{{ $name }}
+              containerPort: {{ $extra.port }}
+            {{- end }}
+          {{- end }}
 
           {{- if .Values.livenessProbe }}
           livenessProbe: {{ .Values.livenessProbe | toYaml | nindent 12 }}

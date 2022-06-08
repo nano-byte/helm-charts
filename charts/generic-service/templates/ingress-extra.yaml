@@ -1,0 +1,46 @@
+{{- if and (and .Values.ingress.enabled .Values.ingress.extra) (not .Values.ingress.istio.enabled) }}
+{{- $root := . -}}
+{{- range $name, $extra := .Values.ingress.extra }}
+{{- if $extra.domains }}
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "generic-service.fullname" $root }}-{{ $name }}
+  labels: {{ include "generic-service.default-labels" $root | nindent 4 }}
+  annotations:
+  {{- if eq $root.Values.ingress.class "nginx" }}
+    nginx.ingress.kubernetes.io/backend-protocol: {{ $extra.protocol | default "http" | upper }}
+  {{- end }}
+  {{- if $root.Values.ingress.annotations }}  
+    {{- $root.Values.ingress.annotations | toYaml | nindent 4 }}
+  {{- end }}
+
+spec:
+{{- if $root.Values.ingress.class }}
+  ingressClassName: {{ $root.Values.ingress.class }}
+{{- end }}
+{{- if $extra.tls }}{{ if $extra.tls.enabled }}
+  tls:
+    - secretName: {{ $extra.tls.secret | default (printf "%s-%s-tls" $root.Release.Name $name) }}
+      hosts: {{ $extra.domains | toYaml | nindent 8 }}
+{{- end }}{{ end }}
+  rules:
+    {{- range $extra.domains }}
+    - host: {{ . | quote }}
+      http:
+        paths:
+        {{- range ($extra.paths | default (list "/")) }}
+          - pathType: Prefix
+            path: {{ . | quote }}
+            backend:
+              service:
+                name: {{ include "generic-service.fullname" $root }}
+                port:
+                  name: {{ $extra.protocol | default "http" }}-{{ $name }}
+        {{- end }}
+      {{- end }}
+
+{{- end }}
+{{- end }}
+{{- end }}
