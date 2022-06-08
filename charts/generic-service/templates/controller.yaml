@@ -60,7 +60,7 @@ spec:
       canaryMetadata:
         labels:
           role: preview
-      analysis: {{ .Values.rollout.analysis | required "rollout.analysis is required if rollout.strategy is Canary" |toYaml |  nindent 8 }}
+      analysis: {{ .Values.rollout.analysis | required "rollout.analysis is required if rollout.strategy is Canary" | toYaml |  nindent 8 }}
       trafficRouting:
         {{- if .Values.ingress.istio.enabled }}
         istio:
@@ -240,14 +240,14 @@ spec:
             {{- end }}
 
           ports:
-            {{- if .Values.ingress.enabled }}
+          {{- if .Values.ingress.enabled }}
             - name: '{{ .Values.ingress.protocol }}-ingress'
               containerPort: {{ .Values.ingress.port }}
-            {{- end }}
-            {{- if (and .Values.monitoring.enabled (or (not .Values.ingress.enabled) (ne .Values.monitoring.port .Values.ingress.port))) }}
+          {{- end }}
+          {{- if (and .Values.monitoring.enabled (or (not .Values.ingress.enabled) (ne .Values.monitoring.port .Values.ingress.port))) }}
             - name: http-monitoring
               containerPort: {{ .Values.monitoring.port }}
-            {{- end }}
+          {{- end }}
 
           {{- if .Values.livenessProbe }}
           livenessProbe: {{ .Values.livenessProbe | toYaml | nindent 12 }}
