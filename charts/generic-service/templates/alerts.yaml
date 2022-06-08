@@ -36,22 +36,22 @@ spec:
 
         - alert: MemoryUsageAboveRequest
           expr: |
-            max(container_memory_working_set_bytes{namespace="{{ .Release.Namespace }}", container="{{ include "generic-service.fullname" . }}"}) -
-            min(kube_pod_container_resource_requests{namespace="{{ .Release.Namespace }}", container="{{ include "generic-service.fullname" . }}", resource="memory"})
+            max(container_memory_working_set_bytes{namespace="{{ .Release.Namespace }}", container="{{ include "generic-service.fullname" . }}"}) by (pod) -
+            min(kube_pod_container_resource_requests{namespace="{{ .Release.Namespace }}", container="{{ include "generic-service.fullname" . }}", resource="memory"}) by (pod)
             > 0
           for: 10m
           labels: {{ include "generic-service.alert-labels" . | nindent 12 }} warning
           annotations: {{ include "generic-service.alert-annotations" . | nindent 12 }} using more memory than requested
-            description: '{{ include "generic-service.fullname" . }} is using {{"{{ $value | humanize1024 }}"}}B more than its requested memory ({{ .Values.resources.requests.memory }}B).'
+            description: '{{"{{ $labels.pod }}"}} is using {{"{{ humanize1024 $value }}"}}B more than its requested memory ({{ .Values.resources.requests.memory }}B).'
 
         - alert: MemoryUsageCloseToLimit
           expr: |
-            max(container_memory_working_set_bytes{namespace="{{ .Release.Namespace }}", container="{{ include "generic-service.fullname" . }}"}) /
-            min(kube_pod_container_resource_limits{namespace="{{ .Release.Namespace }}", container="{{ include "generic-service.fullname" . }}", resource="memory"})
+            max(container_memory_working_set_bytes{namespace="{{ .Release.Namespace }}", container="{{ include "generic-service.fullname" . }}"}) by (pod) /
+            min(kube_pod_container_resource_limits{namespace="{{ .Release.Namespace }}", container="{{ include "generic-service.fullname" . }}", resource="memory"}) by (pod)
             > {{ .Values.alerting.memory.maxUsageFactor }}
           labels: {{ include "generic-service.alert-labels" . | nindent 12 }} critical
           annotations: {{ include "generic-service.alert-annotations" . | nindent 12 }} memory usage close to limit
-            description: '{{ include "generic-service.fullname" . }} is using {{"{{ $value | humanizePercentage }}"}} of its memory limit ({{ .Values.resources.limits.memory }}B).'
+            description: '{{"{{ $labels.pod }}"}} is using {{"{{ humanizePercentage $value }}"}} of its memory limit ({{ .Values.resources.limits.memory }}B).'
 
       {{- if .Values.ingress.enabled }}
         {{- if or .Values.ingress.istio.enabled (eq .Values.ingress.class "nginx") }}
@@ -88,8 +88,8 @@ spec:
         {{- if .Values.alerting.grpc.referenceInterval }}
         - alert: GrpcErrors
           expr: |
-            (sum(rate({{ .Values.alerting.grpc.requestsMetric }}{namespace="{{ .Release.Namespace }}",app="{{ include "generic-service.fullname" . }}",grpc_code!="OK"}[{{ .Values.alerting.grpc.sampleInterval }}])) / sum(rate({{ .Values.alerting.grpc.requestsMetric }}{namespace="{{ .Release.Namespace }}",app="{{ include "generic-service.fullname" . }}"}[{{ .Values.alerting.grpc.sampleInterval }}]))) /
-            (sum(rate({{ .Values.alerting.grpc.requestsMetric }}{namespace="{{ .Release.Namespace }}",app="{{ include "generic-service.fullname" . }}",grpc_code!="OK"}[{{ .Values.alerting.grpc.referenceInterval }}])) / sum(rate({{ .Values.alerting.grpc.requestsMetric }}{namespace="{{ .Release.Namespace }}",app="{{ include "generic-service.fullname" . }}"}[{{ .Values.alerting.grpc.referenceInterval }}])))
+            (sum(rate({{ .Values.alerting.grpc.requestsMetric }}{namespace="{{ .Release.Namespace }}",release="{{ .Release.Name }}",grpc_code!="OK"}[{{ .Values.alerting.grpc.sampleInterval }}])) / sum(rate({{ .Values.alerting.grpc.requestsMetric }}{namespace="{{ .Release.Namespace }}",release="{{ .Release.Name }}"}[{{ .Values.alerting.grpc.sampleInterval }}]))) /
+            (sum(rate({{ .Values.alerting.grpc.requestsMetric }}{namespace="{{ .Release.Namespace }}",release="{{ .Release.Name }}",grpc_code!="OK"}[{{ .Values.alerting.grpc.referenceInterval }}])) / sum(rate({{ .Values.alerting.grpc.requestsMetric }}{namespace="{{ .Release.Namespace }}",release="{{ .Release.Name }}"}[{{ .Values.alerting.grpc.referenceInterval }}])))
             > {{ .Values.alerting.grpc.maxErrorRatio }}
           labels: {{ include "generic-service.alert-labels" . | nindent 12 }} warning
           annotations: {{ include "generic-service.alert-annotations" . | nindent 12 }} higher gRPC error rate
@@ -98,11 +98,11 @@ spec:
 
         - alert: GrpcCriticalErrors
           expr: |
-            round(sum(increase({{ .Values.alerting.grpc.requestsMetric }}{namespace="{{ .Release.Namespace }}", app="{{ include "generic-service.fullname" . }}", grpc_code=~"Internal|Unknown|Unimplemented|Unavailable|DataLoss"}[1m])))
+            round(sum(increase({{ .Values.alerting.grpc.requestsMetric }}{namespace="{{ .Release.Namespace }}", release="{{ .Release.Name }}", grpc_code=~"Internal|Unknown|Unimplemented|Unavailable|DataLoss"}[{{ .Values.alerting.grpc.sampleInterval }}])) by (grpc_code))
             > {{ .Values.alerting.grpc.maxCriticalErrors }}
           labels: {{ include "generic-service.alert-labels" . | nindent 12 }} critical
           annotations: {{ include "generic-service.alert-annotations" . | nindent 12 }} critical gRPC errors
-            description: '{{ include "generic-service.fullname" . }} returned {{"{{ $value }}"}} critical gRPC errors in the last {{ .Values.alerting.grpc.sampleInterval }}.'
+            description: '{{ include "generic-service.fullname" . }} returned {{"{{ $value }}"}} gRPC errors with status code {{"{{ $labels.grpc_code }}"}} in the last {{ .Values.alerting.grpc.sampleInterval }}.'
         {{- end }}
       {{- end }}
 

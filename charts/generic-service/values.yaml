@@ -130,12 +130,13 @@ alerting:
     maxErrorRatio: 2.5
     maxCriticalErrors: 0
 
-grafana:
-  url: ''
-  dashboard: qqsCbY5Zz
-
 sidecars: []
 
 rbac:
   roles: []
   clusterRoles: []
+
+global:
+  grafana:
+    url: ''
+    dashboard: qqsCbY5Zz
