@@ -297,18 +297,18 @@ spec:
             {{- if .Values.tracing.enabled }}
             {{- if .Values.ingress.istio.enabled }}
             - name: OTEL_SERVICE_NAME
-              value: '{{ include "generic-service.name" . }}.{{ .Release.Namespace }}'
+              value: '{{ include "generic-service.fullname" . }}.{{ .Release.Namespace }}'
             - name: JAEGER_SERVICE_NAME
-              value: '{{ include "generic-service.name" . }}.{{ .Release.Namespace }}'
+              value: '{{ include "generic-service.fullname" . }}.{{ .Release.Namespace }}'
             - name: OTEL_PROPAGATORS
               value: tracecontext,baggage,b3multi
             - name: JAEGER_PROPAGATION
               value: b3
             {{- else }}
             - name: OTEL_SERVICE_NAME
-              value: {{ include "generic-service.name" . }}
+              value: {{ include "generic-service.fullname" . }}
             - name: JAEGER_SERVICE_NAME
-              value: {{ include "generic-service.name" . }}
+              value: {{ include "generic-service.fullname" . }}
             {{- end }}
             - name: OTEL_RESOURCE_ATTRIBUTES
               value: 'service.namespace={{ .Release.Namespace }},service.version={{ .Values.image.tag }},service.instance.id=$(POD_NAME),k8s.pod.name=$(POD_NAME),k8s.namespace.name=$(POD_NAMESPACE),k8s.node.name=$(NODE_NAME)'
