@@ -10,7 +10,7 @@ jobs:
         with:
           fetch-depth: 0
       - uses: azure/setup-helm@v1
-      - uses: actions/setup-python@v3
+      - uses: actions/setup-python@v4
         with:
           python-version: '3.x'
       - uses: helm/chart-testing-action@v2.2.1
