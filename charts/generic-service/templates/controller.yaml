@@ -324,8 +324,10 @@ spec:
             {{- end }}
             {{- end }}
 
+            {{- if or .Values.config .Values.additionalConfigs }}
             - name: CONFIG_FILE
               value: '{{ if .Values.config }}{{ .Values.configMountPath }}{{ end }}{{ range .Values.additionalConfigs }}:/additional-configs/{{ . }}/data.yaml{{ end }}'
+            {{- end }}
 
             {{- range $key, $val := .Values.envFrom }}
             - name: {{ $key | quote }}
@@ -334,7 +336,7 @@ spec:
 
             {{- range $key, $val := .Values.env }}
             - name: {{ $key | quote }}
-              value: {{ $val | quote }}
+              {{ if $val }}value: {{ $val | quote }}{{ end }}
             {{- end }}
 
           {{- if and .Values.ingress.enabled .Values.maxShutdownSeconds }}
