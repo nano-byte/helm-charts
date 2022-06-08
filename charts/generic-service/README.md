@@ -81,18 +81,17 @@ app:
 | `ingress.enabled`                 | `false`                     | Enables ingress into the service (either cluster-internal or public)                                     |
 | `ingress.port`                    | `80`                        | The container port ingress traffic is routed to                                                          |
 | `ingress.protocol`                | `http`                      | The protocol used for ingress (e.g., `http` or `grpc`)                                                   |
-| `ingress.additionalSelectors`     | `{}`                        | Additional label selectors used to restrict the `Pod`s selected by the `Service`.                        |
-| `ingress.headless`                | `false`                     | Creates a headless `Service` to disable Kubernetes-based load balancing                                  |
 | `ingress.domains`                 | `[]`                        | The public domain names under which the service is exposed (leave empty for cluster-internal only)       |
 | `ingress.paths`                   | `[]`                        | HTTP path prefixes to accept ingress traffic for (leave empty to accept traffic for any path)            |
-| `ingress.class`                   |                             | The ingress controller to use (not applicable if `ingress.istio.enabled`)                                |
-| `ingress.annotations`             | `{}`                        | Annotations for `Ingress` resource (not applicable if `ingress.istio.enabled`)                           |
 | `ingress.tls.enabled`             | `false`                     | Enables TLS termination at the ingress (not applicable if `ingress.istio.enabled`)                       |
 | `ingress.tls.secret`              | Release Name + `-tls`       | The name of the `Secret` holding the TLS private key (not applicable if `ingress.istio.enabled`)         |
+| `ingress.class`                   |                             | The ingress controller to use (not applicable if `ingress.istio.enabled`)                                |
+| `ingress.annotations`             | `{}`                        | Annotations for `Ingress` resource (not applicable if `ingress.istio.enabled`)                           |
+| `ingress.headless`                | `false`                     | Creates a headless `Service` to disable Kubernetes-based load balancing                                  |
+| `ingress.additionalSelectors`     | `{}`                        | Additional label selectors used to restrict the `Pod`s selected by the `Service`.                        |
 | `ingress.istio.enabled`           | `false`                     | Use Istio `VirtualService` instead of Kubernetes `Ingress` resource                                      |
 | `ingress.istio.gateways`          | `[]`                        | The names of the Istio `Gateway`s to use                                                                 |
 | `ingress.istio.httpHeaders`       | `{}`                        | Custom HTTP response headers                                                                             |
-| `ingress.istio.corsPolicy`        | `{}`                        | [Istio CORS policy](https://istio.io/docs/reference/config/networking/virtual-service/#CorsPolicy)       |
 | `ingress.istio.timeout`           | `15s`                       | [Istio timeout](https://istio.io/docs/tasks/traffic-management/request-timeouts/)                        |
 | `ingress.istio.retries`           | `{}`                        | [Istio retry policy](https://istio.io/docs/reference/config/networking/virtual-service/#HTTPRetry)       |
 | `netpol.enabled`                  | `false`                     | Apply network policies for the `Pod`s                                                                    |

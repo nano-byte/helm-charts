@@ -78,20 +78,19 @@ ingress:
   enabled: false
   port: 80
   protocol: http
-  additionalSelectors: {}
-  headless: false
   domains: []
   paths: []
-  class: ''
-  annotations: {}
   tls:
     enabled: false
     secret: ''
+  class: ''
+  annotations: {}
+  headless: false
+  additionalSelectors: {}
   istio:
     enabled: false
     gateways: []
     httpHeaders: {}
-    corsPolicy: {}
     timeout: 15s
     retries: {}
 

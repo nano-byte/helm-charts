@@ -343,16 +343,6 @@
           "default": "http",
           "description": "The protocol used for ingress (e.g., http or grpc)"
         },
-        "additionalSelectors": {
-          "type": "object",
-          "additionalProperties": {"type": "string"},
-          "description": "Additional label selectors used to restrict the Pods selected by the Service."
-        },
-        "headless": {
-          "type": "boolean",
-          "default": false,
-          "description": "Creates a headless Service to disable Kubernetes-based load balancing"
-        },
         "domains": {
           "type": "array",
           "items": [{"type": "string"}],
@@ -362,15 +352,6 @@
           "type": "array",
           "items": [{"type": "string"}],
           "description": "HTTP path prefixes to accept ingress traffic for (leave empty to accept traffic for any path)"
-        },
-        "class": {
-          "type": "string",
-          "description": "The ingress controller to use (not applicable if ingress.istio.enabled)"
-        },
-        "annotations": {
-          "type": "object",
-          "additionalProperties": {"type": "string"},
-          "description": "Annotations for Ingress resource (not applicable if ingress.istio.enabled)"
         },
         "tls": {
           "type": "object",
@@ -385,6 +366,25 @@
               "description": "The name of the Secret holding the TLS private key (not applicable if ingress.istio.enabled)"
             }
           }
+        },
+        "class": {
+          "type": "string",
+          "description": "The ingress controller to use (not applicable if ingress.istio.enabled)"
+        },
+        "annotations": {
+          "type": "object",
+          "additionalProperties": {"type": "string"},
+          "description": "Annotations for Ingress resource (not applicable if ingress.istio.enabled)"
+        },
+        "headless": {
+          "type": "boolean",
+          "default": false,
+          "description": "Creates a headless Service to disable Kubernetes-based load balancing"
+        },
+        "additionalSelectors": {
+          "type": "object",
+          "additionalProperties": {"type": "string"},
+          "description": "Additional label selectors used to restrict the Pods selected by the Service."
         },
         "istio": {
           "type": "object",
@@ -403,10 +403,6 @@
               "type": "object",
               "additionalProperties": {"type": "string"},
               "description": "Custom HTTP response headers"
-            },
-            "corsPolicy": {
-              "type": "object",
-              "description": "Istio CORS policy (see https://istio.io/docs/reference/config/networking/virtual-service/#CorsPolicy)"
             },
             "timeout": {
               "type": "string",
