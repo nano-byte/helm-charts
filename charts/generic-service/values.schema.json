@@ -78,7 +78,20 @@
     "env": {
       "type": "object",
       "additionalProperties": {"type": "string"},
-      "description": "The environment variables passed to the service"
+      "description": "Environment variables passed to the service as a key-value map"
+    },
+    "envFrom": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "fieldRef": {"type": "object"},
+          "resourceFieldRef": {"type": "object"},
+          "configMapKeyRef": {"type": "object"},
+          "secretKeyRef": {"type": "object"}
+        }
+      },
+      "description": "Environment variables passed to the service from other sources (e.g., secretKeyRef)"
     },
     "config": {
       "type": "object",

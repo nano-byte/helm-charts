@@ -17,6 +17,7 @@ command: []
 args: []
 
 env: {}
+envFrom: {}
 
 config: {}
 configMountPath: /config/config.yaml

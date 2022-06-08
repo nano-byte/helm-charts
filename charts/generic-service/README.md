@@ -45,7 +45,8 @@ app:
 | `securityContext.container`       | `{}`                        | Security context to use for the container                                                                |
 | `command`                         | `[]`                        | Overrides the command to launch in the Docker Image                                                      |
 | `args`                            | `[]`                        | The command-line arguments passed to the service                                                         |
-| `env`                             | `{}`                        | The environment variables passed to the service                                                          |
+| `env`                             | `{}`                        | Environment variables passed to the service as a key-value map                                           |
+| `envFrom`                         | `{}`                        | Environment variables passed to the service from other sources (e.g., `secretKeyRef`)                    |
 | `config`                          | `{}`                        | YAML/JSON configuration to be mounted as a file in the container                                         |
 | `configMountPath`                 | `/config/config.yaml`       | The file path in the container to mount the data from `config` into (exposed via `$CONFIG_FILE`)         |
 | `additionalConfigs`               | `[]`                        | Additional `ConfigMap`s with key named `data.yaml` to be mounted (paths appended to `$CONFIG_FILE`)      |

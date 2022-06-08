@@ -327,6 +327,11 @@ spec:
             - name: CONFIG_FILE
               value: '{{ if .Values.config }}{{ .Values.configMountPath }}{{ end }}{{ range .Values.additionalConfigs }}:/additional-configs/{{ . }}/data.yaml{{ end }}'
 
+            {{- range $key, $val := .Values.envFrom }}
+            - name: {{ $key | quote }}
+              valueFrom: {{ $val | toYaml | nindent 16 }}
+            {{- end }}
+
             {{- range $key, $val := .Values.env }}
             - name: {{ $key | quote }}
               value: {{ $val | quote }}
