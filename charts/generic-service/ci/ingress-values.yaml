@@ -7,6 +7,10 @@ image:
 ingress:
   enabled: true
   port: 8000
+  domains: ['example.com']
+  class: nginx
+  cors:
+    enabled: true
 
 livenessProbe:
   httpGet:

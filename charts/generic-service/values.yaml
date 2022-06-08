@@ -83,6 +83,13 @@ ingress:
   tls:
     enabled: false
     secret: ''
+  cors:
+    enabled: false
+    allowOrigins: []
+    allowMethods: [GET]
+    allowHeaders: [Content-Type]
+    allowCredentials: true
+    exposeHeaders: []
   class: ''
   annotations: {}
   headless: false

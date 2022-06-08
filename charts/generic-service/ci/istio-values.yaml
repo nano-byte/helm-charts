@@ -7,6 +7,8 @@ image:
 ingress:
   enabled: true
   port: 8000
+  cors:
+    enabled: true
   istio:
     enabled: true
 

@@ -68,6 +68,21 @@ hosts:
 
 {{- end }}
 
+{{ define "generic-service.istio-cors-policy" -}}
+{{- if .Values.ingress.cors.enabled }}
+{{- if .Values.ingress.cors.allowOrigins }}
+allowOrigins:
+  {{- range .Values.ingress.cors.allowOrigins }}
+  - {{ if contains . "*" }}regex{{ else }}exact{{ end }}: {{ . | replace "*" ".*" | quote }}
+  {{- end }}
+{{- end }}
+{{ if .Values.ingress.cors.allowMethods }}allowMethods: {{ .Values.ingress.cors.allowMethods | toYaml | nindent 2 }}{{ end }}
+allowCredentials: {{ .Values.ingress.cors.allowCredentials }}
+{{ if .Values.ingress.cors.allowHeaders }}allowHeaders: {{ .Values.ingress.cors.allowHeaders | toYaml | nindent 2 }}{{ end }}
+{{ if .Values.ingress.cors.exposeHeaders }}exposeHeaders: {{ .Values.ingress.cors.exposeHeaders | toYaml | nindent 2 }}{{ end }}
+{{- end }}
+{{- end }}
+
 
 {{ define "generic-service.request-count-metric" -}}
 {{- if .Values.ingress.istio.enabled -}}

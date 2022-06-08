@@ -8,6 +8,14 @@ metadata:
   annotations:
   {{- if eq .Values.ingress.class "nginx" }}
     nginx.ingress.kubernetes.io/backend-protocol: {{ .Values.ingress.protocol | upper }}
+    {{- if .Values.ingress.cors.enabled }}
+    nginx.ingress.kubernetes.io/enable-cors: 'true'
+    {{ if .Values.ingress.cors.allowOrigins }}nginx.ingress.kubernetes.io/cors-allow-origins: {{ join "," .Values.ingress.cors.allowOrigins | quote }}{{ end }}
+    {{ if .Values.ingress.cors.allowMethods }}nginx.ingress.kubernetes.io/cors-allow-methods: {{ join "," .Values.ingress.cors.allowMethods | quote }}{{ end }}
+    {{ if .Values.ingress.cors.allowHeaders }}nginx.ingress.kubernetes.io/cors-allow-headers: {{ join "," .Values.ingress.cors.allowHeaders | quote }}{{ end }}
+    nginx.ingress.kubernetes.io/cors-allow-credentials: {{ .Values.ingress.cors.allowCredentials | quote }}
+    {{ if .Values.ingress.cors.exposeHeaders }}nginx.ingress.kubernetes.io/cors-expose-headers: {{ join "," .Values.ingress.cors.exposeHeaders | quote }}{{ end }}
+    {{- end }}
   {{- end }}
   {{- if .Values.ingress.annotations }}  
     {{- .Values.ingress.annotations | toYaml | nindent 4 }}

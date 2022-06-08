@@ -47,7 +47,7 @@ spec:
       - uri:
           prefix: {{ . | quote }}
       {{- end }}
-    corsPolicy: {{ .Values.ingress.istio.corsPolicy | toYaml | nindent 6 }}
+    corsPolicy: {{ include "generic-service.istio-cors-policy" . | nindent 6 }}
     retries: {{ .Values.ingress.istio.retries | toYaml | nindent 6 }}
     {{- end }}
 

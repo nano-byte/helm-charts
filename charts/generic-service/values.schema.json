@@ -367,6 +367,43 @@
             }
           }
         },
+        "cors": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false,
+              "description": "Enables CORS (only applicable if ingress.class is 'nginx' or ingress.istio.enabled is true)"
+            },
+            "allowOrigins": {
+              "type": "array",
+              "items": [{"type": "string"}],
+              "description": "List of origins allowed to access the ingress via CORS; leave empty to allow any"
+            },
+            "allowMethods": {
+              "type": "array",
+              "items": [{"type": "string"}],
+              "default": ["GET"],
+              "description": "List of HTTP methods allowed to access the ingress via CORS"
+            },
+            "allowHeaders": {
+              "type": "array",
+              "items": [{"type": "string"}],
+              "default": ["Content-Type"],
+              "description": "List of HTTP headers that can be used when requesting the ingress via CORS"
+            },
+            "allowCredentials": {
+              "type": "boolean",
+              "default": true,
+              "description": "Indicates whether the caller is allowed to send the actual request (not the preflight) using credentials"
+            },
+            "exposeHeaders": {
+              "type": "array",
+              "items": [{"type": "string"}],
+              "description": "List of HTTP headers that the browsers are allowed to access"
+            }
+          }
+        },
         "class": {
           "type": "string",
           "description": "The ingress controller to use (not applicable if ingress.istio.enabled)"
