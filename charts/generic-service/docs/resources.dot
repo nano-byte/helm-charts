@@ -2,7 +2,8 @@ digraph {
     HorizontalPodAutoscaler -> Deployment;
     Deployment -> Pod [style=dashed];
     PodDisruptionBudget -> Pod;
-    {Ingress ServiceMonitor} -> Service -> Pod;
+    PodMonitor -> Pod;
+    Ingress -> Service -> Pod;
     Pod -> {ConfigMap PersistentVolumeClaim ServiceAccount};
     RoleBinding -> {ServiceAccount Role};
     ClusterRoleBinding -> {ServiceAccount ClusterRole};

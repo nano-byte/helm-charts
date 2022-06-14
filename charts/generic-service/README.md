@@ -174,7 +174,7 @@ Created if `ingress.enabled` is `true`, `ingress.domains` is not empty and `ingr
 **VirtualService**  
 Created if `ingress.enabled` and `ingress.istio.enabled` are both `true`.
 
-**ServiceMonitor**  
+**PodMonitor**  
 Created if `monitoring.enabled` is `true`.
 
 **PrometheusRule**  

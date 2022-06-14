@@ -1,7 +1,7 @@
 {{- if .Values.monitoring.enabled }}
 
 apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
+kind: PodMonitor
 metadata:
   name: {{ include "generic-service.fullname" . }}
   labels: {{ include "generic-service.default-labels" . | nindent 4 }}
@@ -9,36 +9,17 @@ metadata:
 spec:
   selector:
     matchLabels: {{ include "generic-service.selector-labels" . | nindent 6 }}
-      monitoring: "true"
 
-  endpoints:
+  podMetricsEndpoints:
     - port: http-monitoring
       path: {{ .Values.monitoring.path | quote }}
       interval: {{ .Values.monitoring.interval | quote }}
 
-  targetLabels:
+  podTargetLabels:
     - app
     - release
     {{- if eq .Values.rollout.controller "ArgoRollout" }}
     - role
     {{- end }}
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ include "generic-service.fullname" . }}-monitoring
-  labels: {{ include "generic-service.default-labels" . | nindent 4 }}
-    monitoring: "true"
-
-spec:
-  selector: {{ include "generic-service.selector-labels" . | nindent 4 }}
-
-  clusterIP: None
-  publishNotReadyAddresses: true
-
-  ports:
-    - name: http-monitoring
-      port: 9100
-      targetPort: {{ .Values.monitoring.port }}
 
 {{- end }}
