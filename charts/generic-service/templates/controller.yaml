@@ -164,6 +164,9 @@ spec:
           secret:
             secretName: {{ $name }}
         {{- end }}
+        {{- range $_, $volume := .Values.additionalMounts }}
+        - {{ $volume | toYaml | nindent 10 }}
+        {{- end }}
 
       imagePullSecrets:
         - name: {{ .Values.image.pullSecret | default .Values.image.registry }}
@@ -237,6 +240,10 @@ spec:
               subPath: {{ $secret.subPath }}
               {{- end }}
               mountPath: {{ $secret.mountPath }}
+            {{- end }}
+            {{- range $path, $volume := .Values.additionalMounts }}
+            - name: {{ $volume.name }}
+              mountPath: {{ $path }}
             {{- end }}
 
           ports:

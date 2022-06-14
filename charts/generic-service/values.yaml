@@ -74,6 +74,8 @@ persistence:
 
 secrets: {}
 
+additionalMounts: {}
+
 ingress:
   enabled: false
   port: 80

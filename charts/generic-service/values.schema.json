@@ -319,6 +319,21 @@
         ]
       }
     },
+    "additionalMounts": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the volume"
+          }
+        },
+        "required": ["name"],
+        "additionalProperties": true
+      },
+      "description": "A map of mount paths inside the container to volumes"
+    },
     "ingress": {
       "type": "object",
       "properties": {

@@ -77,6 +77,8 @@ app:
 | `secrets.SECRET_NAME.mountPath`   | __required if used__        | The mount path for the `Secret` named `SECRET_NAME` inside the container                                 |
 | `secrets.SECRET_NAME.subPath`     |                             | The path of a single file in the `Secret` named `SECRET_NAME` to mount; leave empty to mount all files   |
 | `secrets.SECRET_NAME.files`       |                             | Map of file names to base64-encoded content; leave empty to reference existing `Secret`                  |
+| `additionalMounts.PATH.name`      | __required if used__        | The name of an additional volume to be mounted at `PATH` inside the container                            |
+| `additionalMounts.PATH.*`         | __required if used__        | The configuration for the additional volume (e.g., `emptyDir: {}`)                                       |
 | `ingress.enabled`                 | `false`                     | Enables ingress into the service (either cluster-internal or public)                                     |
 | `ingress.port`                    | `80`                        | The container port ingress traffic is routed to                                                          |
 | `ingress.protocol`                | `http`                      | The protocol used for ingress (e.g., `http` or `grpc`)                                                   |
@@ -99,7 +101,7 @@ app:
 | `ingress.istio.httpHeaders`       | `{}`                        | Custom HTTP response headers                                                                             |
 | `ingress.istio.timeout`           | `15s`                       | [Istio timeout](https://istio.io/docs/tasks/traffic-management/request-timeouts/)                        |
 | `ingress.istio.retries`           | `{}`                        | [Istio retry policy](https://istio.io/docs/reference/config/networking/virtual-service/#HTTPRetry)       |
-| `ingress.extra.*.port`            | __required if used__        | Additional container port ingress traffic is routed to (not applicable if `ingress.istio.enabled`)      |
+| `ingress.extra.*.port`            | __required if used__        | Additional container port ingress traffic is routed to (not applicable if `ingress.istio.enabled`)       |
 | `ingress.extra.*.protocol`        | `http`                      | The protocol used for the port (e.g., `http` or `grpc`)                                                  |
 | `ingress.extra.*.domains`         | `[]`                        | The public domain names under which the port is exposed (leave empty for cluster-internal only)          |
 | `ingress.extra.*.paths`           | `[]`                        | HTTP path prefixes to accept ingress traffic for (leave empty to accept traffic for any path)            |
