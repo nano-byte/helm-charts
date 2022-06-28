@@ -11,7 +11,7 @@ spec:
     matchLabels: {{ include "generic-service.selector-labels" . | nindent 6 }}
 
   podMetricsEndpoints:
-    - port: http-monitoring
+    - port: {{ if and .Values.ingress.enabled (eq .Values.monitoring.port .Values.ingress.port) }}http-ingress{{ else }}http-monitoring{{ end }}
       path: {{ .Values.monitoring.path | quote }}
       interval: {{ .Values.monitoring.interval | quote }}
 
