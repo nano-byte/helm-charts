@@ -8,6 +8,7 @@ ingress:
   enabled: true
   class: nginx
   port: 8000
+  domains: [example.com]
 
 alerting:
   enabled: true

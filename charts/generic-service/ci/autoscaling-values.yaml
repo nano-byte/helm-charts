@@ -1,0 +1,8 @@
+# Autoscaling test
+
+image:
+  repository: jwilder/whoami
+  tag: latest
+
+autoscaling:
+  enabled: true
