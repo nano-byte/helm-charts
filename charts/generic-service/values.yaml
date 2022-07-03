@@ -62,6 +62,7 @@ autoscaling:
   enabled: false
   maxReplicas: 3
   targetCpu: 80
+  behavior: {}
 
 nodeSelector: {}
 

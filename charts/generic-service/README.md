@@ -68,6 +68,7 @@ app:
 | `autoscaling.enabled`             | `false`                     | Enables automatic starting of additional instances based on CPU load                                     |
 | `autoscaling.maxReplicas`         | `3`                         | The maximum number of instances to run (must be larger than `replicas`)                                  |
 | `autoscaling.targetCpu`           | `50`                        | The desired average CPU load in percent                                                                  |
+| `autoscaling.behavior`            | `{}`                        | Scaling behavior configuration (see `HorizontalPodAutoscalerBehavior`)                                   |
 | `nodeSelector`                    | `{}`                        | Node labels required for scheduling this service, also used as tolerations                               |
 | `persistence.enabled`             | `false`                     | Enables persistent storage for the service                                                               |
 | `persistence.storageClass`        |                             | The type of disk to use for storage instead of the cluster default                                       |

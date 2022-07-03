@@ -18,6 +18,7 @@ spec:
     name: {{ include "generic-service.fullname" . }}
   minReplicas: {{ .Values.replicas }}
   maxReplicas: {{ .Values.autoscaling.maxReplicas }}
+  behavior: {{ .Values.autoscaling.behavior | toYaml | nindent 4 }}
   metrics:
     - type: Resource
       resource:

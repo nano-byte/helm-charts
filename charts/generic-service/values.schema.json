@@ -257,6 +257,10 @@
           "type": "integer",
           "default": 80,
           "description": "The desired average CPU load in percent"
+        },
+        "behavior": {
+          "type": "object",
+          "description": "Scaling behavior configuration (see HorizontalPodAutoscalerBehavior)"
         }
       }
     },
