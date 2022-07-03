@@ -1,6 +1,6 @@
-{{- if and .Values.autoscaling.enabled (ne .Values.rollout.controller "DaemonSet") }}
+{{- if .Values.autoscaling.enabled }}
 
-apiVersion: autoscaling/v2beta2
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ include "generic-service.fullname" . }}
@@ -22,6 +22,8 @@ spec:
     - type: Resource
       resource:
         name: cpu
-        targetAverageUtilization: {{ .Values.autoscaling.targetCpu }}  # % of {{ required "Must specify resources.requests.cpu when using autoscaling" .Values.resources.requests.cpu }}
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.autoscaling.targetCpu }}
 
 {{- end }}

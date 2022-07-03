@@ -24,7 +24,7 @@ spec:
 
   {{- if .Values.autoscaling.enabled }}
   autoscalerRef:
-    apiVersion: autoscaling/v2beta2
+    apiVersion: autoscaling/v2
     kind: HorizontalPodAutoscaler
     name: {{ include "generic-service.fullname" . }}
   {{- end }}
