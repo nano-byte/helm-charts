@@ -350,7 +350,8 @@
         "protocol": {
           "type": "string",
           "default": "http",
-          "description": "The protocol used for ingress (e.g., http or grpc)"
+          "enum": ["http", "https", "grpc", "grpcs"],
+          "description": "The internal protocol used for ingress"
         },
         "domains": {
           "type": "array",

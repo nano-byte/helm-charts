@@ -2,7 +2,7 @@
 
 This Helm chart simplifies deploying a typical "80% case" service on Kubernetes. It takes care of creating common [Resources](#resources) such as `Deployment`, `Service` and `Ingress`. It also provides optional support for:
 
-- [nginx Ingress Controller](https://kubernetes.github.io/ingress-nginx/) or [Istio](https://istio.io/) for routing
+- [nginx Ingress Controller](https://kubernetes.github.io/ingress-nginx/), [Contour](https://projectcontour.io/) or [Istio](https://istio.io/) for routing
 - [Prometheus Operator](https://github.com/prometheus-operator/prometheus-operator) for monitoring
 - [OpenTelemetry Operator](https://github.com/open-telemetry/opentelemetry-operator) or [Jaeger Operator](https://www.jaegertracing.io/docs/latest/operator/) for tracing
 - [Flagger](https://flagger.app/) and [Argo Rollouts](https://argoproj.github.io/argo-rollouts/) for canary and blue-green deployments
@@ -81,7 +81,7 @@ app:
 | `additionalMounts.PATH.*`         | __required if used__        | The configuration for the additional volume (e.g., `emptyDir: {}`)                                       |
 | `ingress.enabled`                 | `false`                     | Enables ingress into the service (either cluster-internal or public)                                     |
 | `ingress.port`                    | `80`                        | The container port ingress traffic is routed to                                                          |
-| `ingress.protocol`                | `http`                      | The protocol used for ingress (e.g., `http` or `grpc`)                                                   |
+| `ingress.protocol`                | `http`                      | The internal protocol used for ingress (e.g., `http`, `https`, `grpc` or `grpcs`)                        |
 | `ingress.domains`                 | `[]`                        | The public domain names under which the service is exposed (leave empty for cluster-internal only)       |
 | `ingress.paths`                   | `[]`                        | HTTP path prefixes to accept ingress traffic for (leave empty to accept traffic for any path)            |
 | `ingress.tls.enabled`             | `false`                     | Enables TLS termination at the ingress (not applicable if `ingress.istio.enabled`)                       |

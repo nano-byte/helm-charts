@@ -5,6 +5,12 @@ kind: Service
 metadata:
   name: {{ include "generic-service.fullname" . }}
   labels: {{ include "generic-service.default-labels" . | nindent 4 }}
+{{- if eq .Values.ingress.class "contour" }}
+  annotations:
+    projectcontour.io/upstream-protocol.h2c: grpc-ingress{{ range $name, $_ := .Values.ingress.extra }},grpc-{{ $name }}{{ end }}
+    projectcontour.io/upstream-protocol.h2: grpcs-ingress{{ range $name, $_ := .Values.ingress.extra }},grpcs-{{ $name }}{{ end }}
+    projectcontour.io/upstream-protocol.tls: https-ingress{{ range $name, $_ := .Values.ingress.extra }},https-{{ $name }}{{ end }}
+{{- end }}
 
 spec:
   selector: {{ include "generic-service.selector-labels" . | nindent 4 }}
