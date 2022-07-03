@@ -253,10 +253,41 @@
           "default": 3,
           "description": "The maximum number of instances to run (must be larger than replicas)"
         },
-        "targetCpu": {
+        "metric": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["Resource", "Pods", "Object", "External"],
+              "default": "Resource",
+              "description": "The type of metric to use for scaling"
+            },
+            "name": {
+              "type": "string",
+              "default": "cpu",
+              "description": "The name of the metric to use for scaling"
+            },
+            "object": {
+              "type": ["null", "object"],
+              "properties": {
+                "apiVersion": {"type": "string"},
+                "kind": {"type": "string"},
+                "name": {"type": "string"}
+              },
+              "required": ["apiVersion", "kind", "name"],
+              "description": "Reference to the Kubernetes object the metric describes (required if type = Object)"
+            },
+            "selector": {
+              "type": "object",
+              "additionalProperties": {"type": "string"},
+              "description": "Labels for selecting the metric"
+            }
+          }
+        },
+        "targetValue": {
           "type": "integer",
           "default": 80,
-          "description": "The desired average CPU load in percent"
+          "description": "The desired value of the metric to achieve through scaling (e.g., CPU utilization in percent)"
         },
         "behavior": {
           "type": "object",

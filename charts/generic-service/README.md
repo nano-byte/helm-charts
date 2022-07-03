@@ -67,7 +67,11 @@ app:
 | `replicas`                        | `1`                         | The number of instances of the service to run (set at least `2` for Pod Disruption Budget)               |
 | `autoscaling.enabled`             | `false`                     | Enables automatic starting of additional instances based on CPU load                                     |
 | `autoscaling.maxReplicas`         | `3`                         | The maximum number of instances to run (must be larger than `replicas`)                                  |
-| `autoscaling.targetCpu`           | `50`                        | The desired average CPU load in percent                                                                  |
+| `autoscaling.metric.type`         | `Resource`                  | The type of metric to use for scaling (`Resource`, `Pods`, `Object` or `External`)                       |
+| `autoscaling.metric.name`         | `cpu`                       | The name of the metric to use for scaling                                                                |
+| `autoscaling.metric.object`       | req. if `type` = `Object`   | Reference to the Kubernetes object the metric describes                                                  |
+| `autoscaling.metric.selector`     | `{}`                        | Labels for selecting the metric as a key-value map                                                       |
+| `autoscaling.targetValue`         | `80`                        | The desired value of the metric to achieve through scaling (e.g., CPU utilization in percent)            |
 | `autoscaling.behavior`            | `{}`                        | Scaling behavior configuration (see `HorizontalPodAutoscalerBehavior`)                                   |
 | `nodeSelector`                    | `{}`                        | Node labels required for scheduling this service, also used as tolerations                               |
 | `persistence.enabled`             | `false`                     | Enables persistent storage for the service                                                               |

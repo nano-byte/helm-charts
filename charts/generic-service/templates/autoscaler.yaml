@@ -20,11 +20,26 @@ spec:
   maxReplicas: {{ .Values.autoscaling.maxReplicas }}
   behavior: {{ .Values.autoscaling.behavior | toYaml | nindent 4 }}
   metrics:
-    - type: Resource
+    - type: {{ .Values.autoscaling.metric.type }}
+      {{- if eq .Values.autoscaling.metric.type "Resource" }}
       resource:
-        name: cpu
+        name: {{ .Values.autoscaling.metric.name }}
         target:
           type: Utilization
-          averageUtilization: {{ .Values.autoscaling.targetCpu }}
+          averageUtilization: {{ .Values.autoscaling.targetCpu | default .Values.autoscaling.targetValue }}
+      {{- else }}
+      {{ .Values.autoscaling.metric.type | lower }}:
+        metric:
+          name: {{ .Values.autoscaling.metric.name }}
+          {{- if eq .Values.autoscaling.metric.type "Object" }}
+          describedObject: {{ .Values.autoscaling.metric.object | required "autoscaling.metric.object required when autoscaling.metric.type is Object" | toYaml | nindent 10 }}
+          {{- else if eq .Values.autoscaling.metric.type "External" }}
+          selector:
+            matchLabels: {{ .Values.autoscaling.metric.selector | toYaml | nindent 14 }}
+          {{- end }}
+        target:
+          type: Value
+          value: {{ .Values.autoscaling.targetValue }}
+      {{- end }}
 
 {{- end }}

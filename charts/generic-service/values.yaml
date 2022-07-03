@@ -61,7 +61,12 @@ replicas: 1
 autoscaling:
   enabled: false
   maxReplicas: 3
-  targetCpu: 80
+  metric:
+    type: Resource
+    name: cpu
+    object:
+    selector: {}
+  targetValue: 80
   behavior: {}
 
 nodeSelector: {}

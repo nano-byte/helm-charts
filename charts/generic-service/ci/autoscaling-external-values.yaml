@@ -1,0 +1,13 @@
+# Autoscaling external metric test
+
+image:
+  repository: jwilder/whoami
+  tag: latest
+
+autoscaling:
+  enabled: true
+  metric:
+    type: External
+    name: some_metric
+    selector:
+      key: value
