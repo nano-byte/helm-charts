@@ -98,7 +98,7 @@ spec:
 
         - alert: GrpcCriticalErrors
           expr: |
-            round(sum(increase({{ .Values.alerting.grpc.requestsMetric }}{namespace="{{ .Release.Namespace }}", release="{{ .Release.Name }}", grpc_code=~"Internal|Unknown|Unimplemented|Unavailable|DataLoss"}[{{ .Values.alerting.grpc.sampleInterval }}])) by (grpc_code))
+            round(sum(increase({{ .Values.alerting.grpc.requestsMetric }}{namespace="{{ .Release.Namespace }}", release="{{ .Release.Name }}", grpc_code=~"{{ .Values.alerting.grpc.criticalCodes | join "|" }}"}[{{ .Values.alerting.grpc.sampleInterval }}])) by (grpc_code))
             > {{ .Values.alerting.grpc.maxCriticalErrors }}
           labels: {{ include "generic-service.alert-labels" . | nindent 12 }} critical
           annotations: {{ include "generic-service.alert-annotations" . | nindent 12 }} critical gRPC errors

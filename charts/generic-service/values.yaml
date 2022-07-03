@@ -138,6 +138,7 @@ alerting:
     referenceInterval: 1w
     maxErrorRatio: 2.5
     maxCriticalErrors: 0
+    criticalCodes: [Internal, Unimplemented]
 
 sidecars: []
 

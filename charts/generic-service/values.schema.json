@@ -651,6 +651,12 @@
               "type": "number",
               "default": "0",
               "description": "The maximum number of critical gRPC errors responses in the sample interval"
+            },
+            "criticalStatusCodes": {
+              "type": "array",
+              "items": {"type": "string"},
+              "default": ["Internal", "Unimplemented"],
+              "description": "Which gRPC status codes are considered critical errors"
             }
           }
         }
