@@ -15,6 +15,7 @@ metadata:
   {{- if $root.Values.ingress.annotations }}  
     {{- $root.Values.ingress.annotations | toYaml | nindent 4 }}
   {{- end }}
+  
 
 spec:
 {{- if $root.Values.ingress.class }}
@@ -40,7 +41,7 @@ spec:
                   name: {{ $extra.protocol | default "http" }}-{{ $name }}
         {{- end }}
       {{- end }}
-
+---
 {{- end }}
 {{- end }}
 {{- end }}
