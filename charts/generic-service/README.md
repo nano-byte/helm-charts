@@ -112,6 +112,7 @@ app:
 | `ingress.extra.*.paths`           | `[]`                        | HTTP path prefixes to accept ingress traffic for (leave empty to accept traffic for any path)            |
 | `ingress.extra.*.tls.enabled`     | `false`                     | Enables TLS termination at the ingress                                                                   |
 | `ingress.extra.*.tls.secret`      | Release Name + `*` + `-tls` | The name of the `Secret` holding the TLS private key                                                     |
+| `ingress.extra.*.annotations`     | `{}`                        | Additional annotations, merged with `ingress.annotations` (use string `nil` to unset existing values)    |
 | `netpol.enabled`                  | `false`                     | Apply network policies for the `Pod`s                                                                    |
 | `netpol.ingress`                  | Allow from same namespace   | Ingress network policy rules to apply                                                                    |
 | `netpol.egress`                   | `[]`                        | Egress network policy rules to apply                                                                     |

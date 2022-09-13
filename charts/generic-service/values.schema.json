@@ -534,6 +534,11 @@
                     "description": "The name of the Secret holding the TLS private key"
                   }
                 }
+              },
+              "annotations": {
+                "type": "object",
+                "additionalProperties": {"type": "string"},
+                "description": "Additional annotations, merged with ingress.annotations (use string 'nil' to unset existing values)"
               }
             },
             "required": ["port"]
