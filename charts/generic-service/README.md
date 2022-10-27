@@ -137,6 +137,7 @@ app:
 | `alerting.grpc.maxErrorRatio`     | `2.5`                       | The maximum gRPC error ratio increase in the sample interval compared to the reference interval          |
 | `alerting.grpc.maxCriticalErrors` | `0`                         | The maximum number of critical gRPC errors responses in the sample interval                              |
 | `alerting.grpc.criticalCodes`     | `[Internal, Unimplemented]` | Which gRPC status codes are considered critical errors                                                   |
+| `alerting.maxPodAgeSeconds`       |                             | The maximum allowed age of a `Pod` in seconds (useful to ensure regular deployments)                     |
 | `sidecars`                        | `[]`                        | Additional sidecar containers to be added to the `Pod`                                                   |
 | `rbac.roles`                      | `[]`                        | Namespace-specific Kubernetes RBAC Roles to assign to the service                                        |
 | `rbac.clusterRoles`               | `[]`                        | Cluster-wide Kubernetes RBAC Roles to assign to the service                                              |

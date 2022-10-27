@@ -723,6 +723,10 @@
               "description": "Which gRPC status codes are considered critical errors"
             }
           }
+        },
+        "maxPodAgeSeconds": {
+          "type": ["integer", "null"],
+          "description": "The maximum allowed age of a Pod in seconds (useful to ensure regular deployments)"
         }
       }
     },

@@ -106,4 +106,14 @@ spec:
         {{- end }}
       {{- end }}
 
+      {{- if .Values.alerting.maxPodAgeSeconds }}
+        - alert: PodTooOld
+          expr: |
+            time() - kube_pod_created{namespace="{{ .Release.Namespace }}", pod=~"{{ .Release.Name }}-[0-9a-f]+(-[0-9a-z]{5})?"}
+            > {{ .Values.alerting.maxPodAgeSeconds | int }}
+          labels: {{ include "generic-service.alert-labels" . | nindent 12 }} warning
+          annotations: {{ include "generic-service.alert-annotations" . | nindent 12 }} Pods too old
+            description: 'The Pod {{"{{ $labels.pod }}"}} has not been updated for {{"{{ humanizeDuration $value }}"}}.'
+      {{- end }}
+
 {{- end }}

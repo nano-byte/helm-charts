@@ -148,6 +148,7 @@ alerting:
     maxErrorRatio: 2.5
     maxCriticalErrors: 0
     criticalCodes: [Internal, Unimplemented]
+  maxPodAgeSeconds:
 
 sidecars: []
 
