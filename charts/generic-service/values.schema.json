@@ -724,17 +724,19 @@
     },
     "global": {
       "type": "object",
-      "grafana": {
-        "type": "object",
-        "properties": {
-          "url": {
-            "type": "string",
-            "description": "The URL of a Grafana instance with access to the service's metrics"
-          },
-          "dashboard": {
-            "type": "string",
-            "default": "qqsCbY5Zz",
-            "description": "The UID of the Grafana dashboard visualizing the service's metrics"
+      "properties": {
+        "grafana": {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string",
+              "description": "The URL of a Grafana instance with access to the service's metrics"
+            },
+            "dashboard": {
+              "type": "string",
+              "default": "qqsCbY5Zz",
+              "description": "The UID of the Grafana dashboard visualizing the service's metrics"
+            }
           }
         }
       }
