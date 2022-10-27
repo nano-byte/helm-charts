@@ -19,7 +19,7 @@ metadata:
 
 spec:
   {{- if ne .Values.rollout.controller "DaemonSet" }}
-  replicas: {{ .Values.replicas }}
+  replicas: {{ .Values.replicas | int }}
   {{- end }}
 
   selector:
@@ -175,7 +175,7 @@ spec:
       serviceAccountName: {{ include "generic-service.fullname" . }}
       {{- end }}
 
-      terminationGracePeriodSeconds: {{ .Values.maxShutdownSeconds }}
+      terminationGracePeriodSeconds: {{ .Values.maxShutdownSeconds | int }}
 
       affinity:
         podAntiAffinity:
@@ -353,7 +353,7 @@ spec:
               {{ if $val }}value: {{ $val | quote }}{{ end }}
             {{- end }}
 
-          {{- if and .Values.ingress.enabled .Values.maxShutdownSeconds }}
+          {{- if and .Values.ingress.enabled .Values.maxShutdownSeconds | int }}
           # Delay shutdown to give ingress controller time to reroute traffic
           lifecycle:
             preStop:

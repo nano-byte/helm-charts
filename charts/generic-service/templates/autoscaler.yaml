@@ -16,8 +16,8 @@ spec:
     kind: {{ .Values.rollout.controller }}
     {{- end }}
     name: {{ include "generic-service.fullname" . }}
-  minReplicas: {{ .Values.replicas }}
-  maxReplicas: {{ .Values.autoscaling.maxReplicas }}
+  minReplicas: {{ .Values.replicas | int }}
+  maxReplicas: {{ .Values.autoscaling.maxReplicas | int }}
   behavior: {{ .Values.autoscaling.behavior | toYaml | nindent 4 }}
   metrics:
     - type: {{ .Values.autoscaling.metric.type }}
@@ -26,7 +26,7 @@ spec:
         name: {{ .Values.autoscaling.metric.name }}
         target:
           type: Utilization
-          averageUtilization: {{ .Values.autoscaling.targetCpu | default .Values.autoscaling.targetValue }}
+          averageUtilization: {{ .Values.autoscaling.targetCpu | default .Values.autoscaling.targetValue | int }}
       {{- else }}
       {{ .Values.autoscaling.metric.type | lower }}:
         metric:
@@ -39,7 +39,7 @@ spec:
           {{- end }}
         target:
           type: Value
-          value: {{ .Values.autoscaling.targetValue }}
+          value: {{ .Values.autoscaling.targetValue | int }}
       {{- end }}
 
 {{- end }}

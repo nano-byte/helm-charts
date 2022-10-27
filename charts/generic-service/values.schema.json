@@ -688,7 +688,7 @@
               "description": "The maximum gRPC error ratio increase in the sample interval compared to the reference interval"
             },
             "maxCriticalErrors": {
-              "type": "number",
+              "type": "integer",
               "default": "0",
               "description": "The maximum number of critical gRPC errors responses in the sample interval"
             },
