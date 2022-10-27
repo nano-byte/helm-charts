@@ -11,7 +11,7 @@ metadata:
   labels: {{ include "generic-service.default-labels" . | nindent 4 }}
   annotations:
   {{- if .Values.tracing.enabled }}
-    sidecar.jaegertracing.io/inject: 'true'
+    sidecar.jaegertracing.io/inject: {{ .Values.tracing.class | default "true" | quote }}
   {{- end }}
   {{- if .Values.annotations }}
     {{- .Values.annotations | toYaml | nindent 4 }}
@@ -128,7 +128,7 @@ spec:
         traffic.sidecar.istio.io/includeInboundPorts: {{ .Values.ingress.port | quote }}
       {{- end }}
       {{- if .Values.tracing.enabled }}
-        sidecar.opentelemetry.io/inject: 'true'
+        sidecar.opentelemetry.io/inject: {{ .Values.tracing.class | default "true" | quote }}
         traffic.sidecar.istio.io/excludeOutboundPorts: '5778,9411,14268,14250'  # Jaeger ports
       {{- end }}
       {{- if .Values.config }}

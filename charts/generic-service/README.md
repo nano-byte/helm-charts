@@ -118,6 +118,7 @@ app:
 | `netpol.egress`                   | `[]`                        | Egress network policy rules to apply                                                                     |
 | `tracing.enabled`                 | `false`                     | Enables tracing with OpenTelemetry or Jaeger agent (injected as sidecar)                                 |
 | `tracing.probability`             | `1`                         | Probability of any single trace being sampled; can be overridden for incoming requests e.g. via Istio    |
+| `tracing.class`                   |                             | Custom value to set for tracing sidecar injection annotations                                            |
 | `monitoring.enabled`              | `false`                     | Use Prometheus for monitoring / metrics scraping                                                         |
 | `monitoring.port`                 | `9100`                      | The port to be scraped for monitoring data                                                               |
 | `monitoring.path`                 | `/metrics`                  | The path to be scraped for monitoring data                                                               |

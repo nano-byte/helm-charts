@@ -581,6 +581,11 @@
           "minimum": 0,
           "maximum": 1,
           "description": "Probability of any single trace being sampled; can be overridden for incoming requests e.g. via Istio"
+        },
+        "class": {
+          "type": "string",
+          "default": "true",
+          "description": "Custom value to set for tracing sidecar injection annotations"
         }
       }
     },

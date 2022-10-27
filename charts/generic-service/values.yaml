@@ -120,6 +120,7 @@ netpol:
 tracing:
   enabled: false
   probability: 1
+  class: ''
 
 monitoring:
   enabled: false
