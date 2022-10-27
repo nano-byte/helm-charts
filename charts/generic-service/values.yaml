@@ -133,7 +133,6 @@ monitoring:
 
 alerting:
   enabled: false
-  labels: {}
   memory:
     maxUsageFactor: 0.9
   http:
@@ -157,6 +156,7 @@ rbac:
   clusterRoles: []
 
 global:
+  alertLabels: {}
   grafana:
     url: ''
     dashboard: qqsCbY5Zz

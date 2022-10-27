@@ -37,8 +37,8 @@ helm.sh/chart: '{{ .Chart.Name }}-{{ .Chart.Version }}'
 
 {{ define "generic-service.alert-labels" -}}
 {{ include "generic-service.selector-labels" . }}
-{{- if .Values.alerting.labels }}
-{{ .Values.alerting.labels | toYaml }}
+{{- if .Values.global.alertLabels }}
+{{ .Values.global.alertLabels | toYaml }}
 {{- end }}
 namespace: {{ .Release.Namespace }}
 severity:

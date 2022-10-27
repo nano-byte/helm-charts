@@ -646,11 +646,6 @@
           "default": false,
           "description": "Deploys Prometheus alert rule for issues like like unavailable pods or high memory use"
         },
-        "labels": {
-          "type": "object",
-          "additionalProperties": {"type": "string"},
-          "description": "Additional labels to apply to alert rules"
-        },
         "memory": {
           "type": "object",
           "properties": {
@@ -754,6 +749,16 @@
     "global": {
       "type": "object",
       "properties": {
+        "alerting": {
+          "type": "object",
+          "properties": {
+            "labels": {
+              "type": "object",
+              "additionalProperties": {"type": "string"},
+              "description": "Additional labels to apply to alert rules"
+            }
+          }
+        },
         "grafana": {
           "type": "object",
           "properties": {

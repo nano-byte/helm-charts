@@ -125,7 +125,6 @@ app:
 | `monitoring.path`                 | `/metrics`                  | The path to be scraped for monitoring data                                                               |
 | `monitoring.interval`             | `1m`                        | The interval at which monitoring data is scraped                                                         |
 | `alerting.enabled`                | `false`                     | Deploys Prometheus alert rule for issues like like unavailable pods or high memory use                   |
-| `alerting.labels`                 | `{}`                        | Additional labels to apply to alert rules                                                                |
 | `alerting.memory.maxUsageFactor`  | `0.9`                       | The maximum usage factor of the memory limit (between `0` and `1`)                                       |
 | `alerting.http.sampleInterval`    | `20m`                       | The time interval in which to measure HTTP responses for triggering alerts                               |
 | `alerting.http.referenceInterval` | `1w`                        | The time interval to to compare with the sample interval to detect changes                               |
@@ -141,6 +140,7 @@ app:
 | `sidecars`                        | `[]`                        | Additional sidecar containers to be added to the `Pod`                                                   |
 | `rbac.roles`                      | `[]`                        | Namespace-specific Kubernetes RBAC Roles to assign to the service                                        |
 | `rbac.clusterRoles`               | `[]`                        | Cluster-wide Kubernetes RBAC Roles to assign to the service                                              |
+| `global.alertLabels`              | `{}`                        | Additional labels to apply to alert rules                                                                |
 | `global.grafana.url`              |                             | The URL of a Grafana instance with access to the service's metrics                                       |
 | `global.grafana.dashboard`        | `qqsCbY5Zz`                 | The UID of the Grafana dashboard visualizing the service's metrics                                       |
 
