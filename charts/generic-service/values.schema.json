@@ -564,8 +564,7 @@
                 "additionalProperties": {"type": "string"},
                 "description": "Additional annotations, merged with ingress.annotations (use string 'nil' to unset existing values)"
               }
-            },
-            "required": ["port"]
+            }
           },
           "description": "Additional container ports ingress traffic is routed to (not applicable if `ingress.istio.enabled`)"
         }

@@ -49,7 +49,14 @@ spec:
               service:
                 name: {{ include "generic-service.fullname" $root }}
                 port:
+                {{- if $extra.port }}
                   name: {{ $extra.protocol | default "http" }}-{{ $name }}
+                {{- else }}
+                  {{- if $extra.protocol }}
+                    {{ fail "ingress.extra.*.protocol may not be set if ingress.extra.*.port is not set" }}
+                  {{- end }}
+                  name: {{ $root.Values.ingress.protocol }}-ingress
+                {{- end }}
         {{- end }}
       {{- end }}
 ---

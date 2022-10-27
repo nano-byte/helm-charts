@@ -27,9 +27,11 @@ spec:
       port: 80
       targetPort: {{ .Values.ingress.port }}
     {{- range $name, $extra := .Values.ingress.extra }}
+    {{- if $extra.port }}
     - name: {{ $extra.protocol | default "http" }}-{{ $name }}
-      port: {{ $extra.port | required "ingress.extra.*.port is required" }}
+      port: {{ $extra.port }}
       targetPort: {{ $extra.port }}
+    {{- end }}
     {{- end }}
 
 {{- if eq .Values.rollout.controller "ArgoRollout" }}

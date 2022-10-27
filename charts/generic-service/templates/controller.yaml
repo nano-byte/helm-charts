@@ -257,7 +257,7 @@ spec:
           {{- end }}
           {{- $monitoring := .Values.monitoring }}
           {{- range $name, $extra := .Values.ingress.extra }}
-            {{- if or (not $monitoring.enabled) (ne $extra.port $monitoring.port) }}
+            {{- if and $extra.port (or (not $monitoring.enabled) (ne $extra.port $monitoring.port)) }}
             - name: {{ $extra.protocol | default "http" }}-{{ $name }}
               containerPort: {{ $extra.port }}
             {{- end }}

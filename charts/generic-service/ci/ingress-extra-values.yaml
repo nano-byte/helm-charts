@@ -10,6 +10,10 @@ ingress:
   domains: ['example.com']
   class: nginx
   extra:
-    custom:
+    additional-annotation:
+      domains: ['custom-annotation.example.com']
+      annotations:
+        key: value
+    other-port:
       port: 1337
-      domains: ['custom.example.com']
+      domains: ['custom-port.example.com']
