@@ -263,6 +263,10 @@ spec:
             {{- end }}
           {{- end }}
 
+          {{- if .Values.startupProbe }}
+          startupProbe: {{ .Values.startupProbe | toYaml | nindent 12 }}
+          {{- end }}
+
           {{- if .Values.livenessProbe }}
           livenessProbe: {{ .Values.livenessProbe | toYaml | nindent 12 }}
           {{- end }}

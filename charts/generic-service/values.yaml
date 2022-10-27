@@ -23,14 +23,17 @@ config: {}
 configMountPath: /config/config.yaml
 additionalConfigs: []
 
+# startupProbe:
+#   httpGet:
+#     port: http-ingress
+#     path: /
+
 # livenessProbe:
-#   initialDelaySeconds: 10  # Allow for long startup
 #   httpGet:
 #     port: http-ingress
 #     path: /
 
 # readinessProbe:
-#   initialDelaySeconds: 2  # Accept traffic quickly
 #   httpGet:
 #     port: http-ingress
 #     path: /

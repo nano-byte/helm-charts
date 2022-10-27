@@ -12,6 +12,11 @@ ingress:
   cors:
     enabled: true
 
+startupProbe:
+  httpGet:
+    port: http-ingress
+    path: /
+
 livenessProbe:
   httpGet:
     port: http-ingress

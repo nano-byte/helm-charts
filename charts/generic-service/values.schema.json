@@ -107,6 +107,30 @@
       "items": {"type": "string"},
       "description": "Additional ConfigMaps with key named data.yaml to be mounted (paths appended to $CONFIG_FILE)"
     },
+    "startupProbe": {
+      "type": "object",
+      "description": "Probe that waits for the service to initially start",
+      "properties": {
+        "initialDelaySeconds": {"type": "integer"},
+        "periodSeconds": {"type": "integer"},
+        "httpGet": {
+          "type": "object",
+          "properties": {
+            "port": {"type": "string"},
+            "path": {"type": "string"}
+          }
+        },
+        "exec": {
+          "type": "object",
+          "properties": {
+            "command": {
+              "type": "array",
+              "items": {"type": "string"}
+            }
+          }
+        }
+      }
+    },
     "livenessProbe": {
       "type": "object",
       "description": "Probe that causes the service to be restarted when failing",

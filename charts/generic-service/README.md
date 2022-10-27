@@ -50,6 +50,7 @@ app:
 | `config`                          | `{}`                        | YAML/JSON configuration to be mounted as a file in the container                                         |
 | `configMountPath`                 | `/config/config.yaml`       | The file path in the container to mount the data from `config` into (exposed via `$CONFIG_FILE`)         |
 | `additionalConfigs`               | `[]`                        | Additional `ConfigMap`s with key named `data.yaml` to be mounted (paths appended to `$CONFIG_FILE`)      |
+| `startupProbe`                    |                             | Probe that waits for the service to initially start up                                                   |
 | `livenessProbe`                   |                             | Probe that causes the service to be restarted when failing                                               |
 | `readinessProbe`                  |                             | Probe that prevents the service from receiving traffic when failing                                      |
 | `maxShutdownSeconds`              | `30`                        | The number of seconds the pod has to shutdown before it is terminated                                    |
