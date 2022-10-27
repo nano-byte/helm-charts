@@ -63,7 +63,7 @@ spec:
             > {{ .Values.alerting.http.maxSlowdown }}
           labels: {{ include "generic-service.alert-labels" . | nindent 12 }} info
           annotations: {{ include "generic-service.alert-annotations" . | nindent 12 }} HTTP responses slower than usual
-            description: '{{ include "generic-service.fullname" . }} HTTP responses are {{"{{$value}}"}}x slower in the last {{ .Values.alerting.http.sampleInterval }} than in the last {{ .Values.alerting.http.referenceInterval }}.'
+            description: '{{ include "generic-service.fullname" . }} HTTP responses are {{"{{ $value }}"}}x slower in the last {{ .Values.alerting.http.sampleInterval }} than in the last {{ .Values.alerting.http.referenceInterval }}.'
 
         - alert: Http4xx
           expr: |
@@ -72,7 +72,7 @@ spec:
             > {{ .Values.alerting.http.max4xxRatio }}
           labels: {{ include "generic-service.alert-labels" . | nindent 12 }} warning
           annotations: {{ include "generic-service.alert-annotations" . | nindent 12 }} higher HTTP 4xx rate
-            description: '{{ include "generic-service.fullname" . }} gave {{"{{$value}}"}}x more HTTP 4xx responses per request in the last {{ .Values.alerting.http.sampleInterval }} than in the last {{ .Values.alerting.http.referenceInterval }}.'
+            description: '{{ include "generic-service.fullname" . }} gave {{"{{ $value }}"}}x more HTTP 4xx responses per request in the last {{ .Values.alerting.http.sampleInterval }} than in the last {{ .Values.alerting.http.referenceInterval }}.'
         {{- end }}
 
         - alert: Http5xx
@@ -93,7 +93,7 @@ spec:
             > {{ .Values.alerting.grpc.maxErrorRatio }}
           labels: {{ include "generic-service.alert-labels" . | nindent 12 }} warning
           annotations: {{ include "generic-service.alert-annotations" . | nindent 12 }} higher gRPC error rate
-            description: '{{ include "generic-service.fullname" . }} gave {{"{{$value}}"}}x more gRPC error responses per request in the last {{ .Values.alerting.grpc.sampleInterval }} than in the last {{ .Values.alerting.grpc.referenceInterval }}.'
+            description: '{{ include "generic-service.fullname" . }} gave {{"{{ $value }}"}}x more gRPC error responses per request in the last {{ .Values.alerting.grpc.sampleInterval }} than in the last {{ .Values.alerting.grpc.referenceInterval }}.'
         {{- end }}
 
         - alert: GrpcCriticalErrors

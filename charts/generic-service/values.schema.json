@@ -268,7 +268,7 @@
               "description": "The name of the metric to use for scaling"
             },
             "object": {
-              "type": ["null", "object"],
+              "type": ["object", "null"],
               "properties": {
                 "apiVersion": {"type": "string"},
                 "kind": {"type": "string"},
