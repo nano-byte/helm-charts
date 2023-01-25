@@ -157,6 +157,7 @@ In addition to the environment variables specified via the `env` value, the foll
 
 | Value            | Description                                                                                                                                                                               |
 | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `RELEASE_NAME`   | The name of the Helm Release                                                                                                                                                              |
 | `POD_CONTROLLER` | The value of `rollout.controller`                                                                                                                                                         |
 | `POD_NAME`       | The name of the Kubernetes pod                                                                                                                                                            |
 | `POD_NAMESPACE`  | The namespace of the Kubernetes pod                                                                                                                                                       |
