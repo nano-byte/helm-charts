@@ -26,7 +26,7 @@ app.kubernetes.io/name: {{ include "generic-service.name" . }}
 app.kubernetes.io/version: {{ .Values.image.tag | quote }}
 app.kubernetes.io/instance: {{ include "generic-service.fullname" . }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-helm.sh/chart: '{{ .Chart.Name }}-{{ .Chart.Version }}'
+helm.sh/chart: 'generic-service-{{ .Chart.Version }}'
 
 {{- if .Values.labels }}
 {{ .Values.labels | toYaml }}
