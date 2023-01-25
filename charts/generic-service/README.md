@@ -81,7 +81,7 @@ app:
 | `persistence.accessModes`           | `[ReadWriteOnce]`           | The support access modes the volume can be mounted with                                                  |
 | `persistence.size`                  | `1G`                        | The size of the persistent volume to create for the service                                              |
 | `persistence.mountPath`             | __required if enabled__     | The mount path for the storage inside the container                                                      |
-| `secrets.SECRET_NAME.mountPath`     | __required if used__        | The mount path for the `Secret` named `SECRET_NAME` inside the container                                 |
+| `secrets.SECRET_NAME.mountPath`     | __required if used__        | The mount path for the `Secret` named `SECRET_NAME` (supports templating) inside the container           |
 | `secrets.SECRET_NAME.subPath`       |                             | The path of a single file in the `Secret` named `SECRET_NAME` to mount; leave empty to mount all files   |
 | `secrets.SECRET_NAME.files`         |                             | Map of file names to base64-encoded content; leave empty to reference existing `Secret`                  |
 | `additionalMounts.PATH.name`        | __required if used__        | The name of an additional volume to be mounted at `PATH` inside the container                            |
@@ -145,8 +145,8 @@ app:
 | `alerting.grpc.maxCriticalErrors`   | `0`                         | The maximum number of critical gRPC errors responses in the sample interval                              |
 | `alerting.grpc.criticalCodes`       | `[Internal, Unimplemented]` | Which gRPC status codes are considered critical errors                                                   |
 | `sidecars`                          | `[]`                        | Additional sidecar containers to be added to the `Pod`                                                   |
-| `rbac.roles`                        | `[]`                        | Namespace-specific Kubernetes RBAC Roles to assign to the service                                        |
-| `rbac.clusterRoles`                 | `[]`                        | Cluster-wide Kubernetes RBAC Roles to assign to the service                                              |
+| `rbac.roles`                        | `[]`                        | Namespace-specific Kubernetes RBAC Roles to assign to the service (supports templating)                  |
+| `rbac.clusterRoles`                 | `[]`                        | Cluster-wide Kubernetes RBAC Roles to assign to the service (supports templating)                        |
 | `global.alertLabels`                | `{}`                        | Additional labels to apply to alert rules                                                                |
 | `global.grafana.url`                |                             | The URL of a Grafana instance with access to the service's metrics                                       |
 | `global.grafana.dashboard`          | `qqsCbY5Zz`                 | The UID of the Grafana dashboard visualizing the service's metrics                                       |

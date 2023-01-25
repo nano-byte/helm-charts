@@ -1,3 +1,5 @@
+{{- $root := . }}
+
 {{- if eq .Values.rollout.controller "ArgoRollout" }}
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
@@ -155,14 +157,14 @@ spec:
             name: {{ include "generic-service.fullname" . }}
         {{- end }}
         {{- range .Values.additionalConfigs }}
-        - name: config-{{ . }}
+        - name: config-{{ tpl . $root }}
           configMap:
-            name: {{ . }}
+            name: {{ tpl . $root }}
         {{- end }}
         {{- range $name, $_ := .Values.secrets }}
-        - name: {{ $name }}
+        - name: {{ tpl $name $root }}
           secret:
-            secretName: {{ $name }}
+            secretName: {{ tpl $name $root }}
         {{- end }}
         {{- range $_, $volume := .Values.additionalMounts }}
         - {{ $volume | toYaml | nindent 10 }}
@@ -230,12 +232,12 @@ spec:
               mountPath: {{ .Values.configMountPath }}
             {{- end }}
             {{- range .Values.additionalConfigs }}
-            - name: config-{{ . }}
+            - name: config-{{ tpl . $root }}
               subPath: data.yaml
-              mountPath: /config/{{ . }}.yaml
+              mountPath: /config/{{ tpl . $root }}.yaml
             {{- end }}
             {{- range $name, $secret := .Values.secrets }}
-            - name: {{ $name }}
+            - name: {{ tpl $name $root }}
               {{- if $secret.subPath }}
               subPath: {{ $secret.subPath }}
               {{- end }}
@@ -346,7 +348,7 @@ spec:
 
             {{- if or .Values.config .Values.additionalConfigs }}
             - name: CONFIG_FILE
-              value: '{{ if .Values.config }}{{ .Values.configMountPath }}{{ end }}{{ range .Values.additionalConfigs }}:/additional-configs/{{ . }}/data.yaml{{ end }}'
+              value: '{{ if .Values.config }}{{ .Values.configMountPath }}{{ end }}{{ range .Values.additionalConfigs }}:/additional-configs/{{ tpl . $root }}/data.yaml{{ end }}'
             {{- end }}
 
             {{- range $key, $val := .Values.envFrom }}
