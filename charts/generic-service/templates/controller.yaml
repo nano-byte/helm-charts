@@ -18,7 +18,7 @@ metadata:
   {{- end }}
 
 spec:
-  {{- if ne .Values.rollout.controller "DaemonSet" }}
+  {{- if and (not .Values.autoscaling.enabled) (ne .Values.rollout.controller "DaemonSet") }}
   replicas: {{ .Values.replicas | int }}
   {{- end }}
 
