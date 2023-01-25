@@ -27,11 +27,32 @@ spec:
             {{- else }}
             kube_{{ .Values.rollout.controller | lower }}_status_{{ if eq .Values.rollout.controller "DaemonSet" }}number{{ else }}replicas{{ end }}_unavailable{namespace="{{ .Release.Namespace }}", {{ .Values.rollout.controller | lower }}="{{ include "generic-service.fullname" . }}"} > 0
             {{- end }}
-          for: 10m
+          for: {{ .Values.alerting.pod.maxStartupSeconds | int }}s
           labels: {{ include "generic-service.alert-labels" . | nindent 12 }} warning
           annotations: {{ include "generic-service.alert-annotations" . | nindent 12 }} replicas down
             description: '{{"{{ $value }}"}} replicas for {{ include "generic-service.fullname" . }} are down.'
         {{- end }}
+      {{- end }}
+
+        - alert: ContainerRestart
+          # Avoid constantly retriggering during crash loops by comparing over interval slightly longer than CrashLoopBackOff upper limit (5m).
+          # Don't trigger during startup grace period (service might just be waiting for dependencies).
+          expr: |
+            increase(kube_pod_container_status_restarts_total{namespace="{{ .Release.Namespace }}", container="{{ include "generic-service.fullname" . }}"}[6m]) > 0
+            and on (pod)
+            time() - kube_pod_created{namespace="{{ .Release.Namespace }}", pod=~"{{ .Release.Name }}-[0-9a-f]+(-[0-9a-z]{5})?"} > {{ .Values.alerting.pod.maxStartupSeconds | int }}
+          labels: {{ include "generic-service.alert-labels" . | nindent 12 }} critical
+          annotations: {{ include "generic-service.alert-annotations" . | nindent 12 }} crash/restart
+            description: '{{"{{ $labels.pod }}"}} has crashed/restarted.'
+
+      {{- if .Values.alerting.pod.maxAgeSeconds }}
+        - alert: PodTooOld
+          expr: |
+            time() - kube_pod_created{namespace="{{ .Release.Namespace }}", pod=~"{{ .Release.Name }}-[0-9a-f]+(-[0-9a-z]{5})?"}
+            > {{ .Values.alerting.pod.maxAgeSeconds | int }}
+          labels: {{ include "generic-service.alert-labels" . | nindent 12 }} warning
+          annotations: {{ include "generic-service.alert-annotations" . | nindent 12 }} Pods too old
+            description: 'The Pod {{"{{ $labels.pod }}"}} has not been updated for {{"{{ humanizeDuration $value }}"}}.'
       {{- end }}
 
         - alert: MemoryUsageAboveRequest
@@ -42,7 +63,7 @@ spec:
           for: 10m
           labels: {{ include "generic-service.alert-labels" . | nindent 12 }} warning
           annotations: {{ include "generic-service.alert-annotations" . | nindent 12 }} using more memory than requested
-            description: '{{"{{ $labels.pod }}"}} is using {{"{{ humanize1024 $value }}"}}B more than its requested memory ({{ .Values.resources.requests.memory }}B).'
+            description: '{{"{{ $labels.pod }}"}} is using {{"{{ humanize1024 $value }}"}}B more than its memory request ({{ .Values.resources.requests.memory }}B). It runs the risk of being OOMKilled if there is memory pressure on the node.'
 
         - alert: MemoryUsageCloseToLimit
           expr: |
@@ -51,7 +72,61 @@ spec:
             > {{ .Values.alerting.memory.maxUsageFactor }}
           labels: {{ include "generic-service.alert-labels" . | nindent 12 }} critical
           annotations: {{ include "generic-service.alert-annotations" . | nindent 12 }} memory usage close to limit
-            description: '{{"{{ $labels.pod }}"}} is using {{"{{ humanizePercentage $value }}"}} of its memory limit ({{ .Values.resources.limits.memory }}B).'
+            description: '{{"{{ $labels.pod }}"}} is using {{"{{ humanizePercentage $value }}"}} of its memory limit ({{ .Values.resources.limits.memory }}B). It runs the risk of being OOMKilled if it reaches the limit.'
+
+      {{- if and (ne .Values.rollout.controller "StatefulSet") (ne .Values.rollout.strategy "Recreate") }}
+        {{- if .Values.alerting.memory.quotaBufferFactor }}
+        - alert: MemoryRequestQuotaInsufficient
+          expr: |
+            min(kube_resourcequota{namespace="{{ .Release.Namespace }}", resource="requests.memory", type="hard"})
+            - max(kube_resourcequota{namespace="{{ .Release.Namespace }}", resource="requests.memory", type="used"})
+            < {{ .Values.alerting.memory.quotaBufferFactor }} * max(kube_pod_container_resource_requests{namespace="{{ .Release.Namespace }}", container="{{ include "generic-service.fullname" . }}", resource="memory"})
+          for: {{ mul .Values.alerting.pod.maxStartupSeconds .Values.replicas | int }}s
+          labels: {{ include "generic-service.alert-labels" . | nindent 12 }} warning
+          annotations: {{ include "generic-service.alert-annotations" . | nindent 12 }} insufficient memory request quota in {{ .Release.Namespace }}
+            description: 'The remaining/unused memory request quota in {{ .Release.Namespace }} ({{"{{ humanize1024 $value }}"}}B) may be insufficient to allow {{ include "generic-service.fullname" . }} to update or restart.'
+        - alert: MemoryLimitQuotaInsufficient
+          expr: |
+            min(kube_resourcequota{namespace="{{ .Release.Namespace }}", resource="limits.memory", type="hard"})
+            - max(kube_resourcequota{namespace="{{ .Release.Namespace }}", resource="limits.memory", type="used"})
+            < {{ .Values.alerting.memory.quotaBufferFactor }} * max(kube_pod_container_resource_limits{namespace="{{ .Release.Namespace }}", container="{{ include "generic-service.fullname" . }}", resource="memory"})
+          for: {{ mul .Values.alerting.pod.maxStartupSeconds .Values.replicas | int }}s
+          labels: {{ include "generic-service.alert-labels" . | nindent 12 }} warning
+          annotations: {{ include "generic-service.alert-annotations" . | nindent 12 }} insufficient memory limit quota in {{ .Release.Namespace }}
+            description: 'The remaining/unused memory limit quota in {{ .Release.Namespace }} ({{"{{ humanize1024 $value }}"}}B) may be insufficient to allow {{ include "generic-service.fullname" . }} to update or restart.'
+        {{- end }}
+        {{- if .Values.alerting.cpu.quotaBufferFactor }}
+        - alert: CpuRequestQuotaInsufficient
+          expr: |
+            min(kube_resourcequota{namespace="{{ .Release.Namespace }}", resource="requests.cpu", type="hard"})
+            - max(kube_resourcequota{namespace="{{ .Release.Namespace }}", resource="requests.cpu", type="used"})
+            < {{ .Values.alerting.cpu.quotaBufferFactor }} * max(kube_pod_container_resource_requests{namespace="{{ .Release.Namespace }}", container="{{ include "generic-service.fullname" . }}", resource="cpu"})
+          for: {{ mul .Values.alerting.pod.maxStartupSeconds .Values.replicas | int }}s
+          labels: {{ include "generic-service.alert-labels" . | nindent 12 }} warning
+          annotations: {{ include "generic-service.alert-annotations" . | nindent 12 }} insufficient CPU request quota in {{ .Release.Namespace }}
+            description: 'The remaining/unused CPU request quota in {{ .Release.Namespace }} ({{"{{ humanize1024 $value }}"}}B) may be insufficient to allow {{ include "generic-service.fullname" . }} to update or restart.'
+        - alert: CpuLimitQuotaInsufficient
+          expr: |
+            min(kube_resourcequota{namespace="{{ .Release.Namespace }}", resource="limits.cpu", type="hard"})
+            - max(kube_resourcequota{namespace="{{ .Release.Namespace }}", resource="limits.cpu", type="used"})
+            < {{ .Values.alerting.cpu.quotaBufferFactor }} * max(kube_pod_container_resource_limits{namespace="{{ .Release.Namespace }}", container="{{ include "generic-service.fullname" . }}", resource="cpu"})
+          for: {{ mul .Values.alerting.pod.maxStartupSeconds .Values.replicas | int }}s
+          labels: {{ include "generic-service.alert-labels" . | nindent 12 }} warning
+          annotations: {{ include "generic-service.alert-annotations" . | nindent 12 }} insufficient CPU limit quota in {{ .Release.Namespace }}
+            description: 'The remaining/unused CPU limit quota in {{ .Release.Namespace }} ({{"{{ humanize1024 $value }}"}}B) may be insufficient to allow {{ include "generic-service.fullname" . }} to update or restart.'
+        {{- end }}
+      {{- end }}
+
+      {{- if ne (float64 .Values.alerting.cpu.maxThrottleFactor) 1.0 }}
+        - alert: CpuThrottling
+          expr: |
+            increase(container_cpu_cfs_throttled_periods_total{namespace="{{ .Release.Namespace }}", container="{{ include "generic-service.fullname" . }}"}[{{ .Values.alerting.cpu.sampleInterval }}]) /
+            increase(container_cpu_cfs_periods_total{namespace="{{ .Release.Namespace }}", container="{{ include "generic-service.fullname" . }}"}[{{ .Values.alerting.cpu.sampleInterval }}])
+            > {{ .Values.alerting.cpu.maxThrottleFactor }}
+          labels: {{ include "generic-service.alert-labels" . | nindent 12 }} warning
+          annotations: {{ include "generic-service.alert-annotations" . | nindent 12 }} CPU throttling
+            description: '{{"{{ $labels.pod }}"}} was throttled by {{"{{ humanizePercentage $value }}"}} in the last {{ .Values.alerting.cpu.sampleInterval }} because it reached its CPU limit ({{ .Values.resources.limits.cpu }}).'
+      {{- end }}
 
       {{- if .Values.ingress.enabled }}
         {{- if or .Values.ingress.istio.enabled (eq .Values.ingress.class "nginx") }}
@@ -104,16 +179,6 @@ spec:
           annotations: {{ include "generic-service.alert-annotations" . | nindent 12 }} critical gRPC errors
             description: '{{ include "generic-service.fullname" . }} returned {{"{{ $value }}"}} gRPC errors with status code {{"{{ $labels.grpc_code }}"}} in the last {{ .Values.alerting.grpc.sampleInterval }}.'
         {{- end }}
-      {{- end }}
-
-      {{- if .Values.alerting.maxPodAgeSeconds }}
-        - alert: PodTooOld
-          expr: |
-            time() - kube_pod_created{namespace="{{ .Release.Namespace }}", pod=~"{{ .Release.Name }}-[0-9a-f]+(-[0-9a-z]{5})?"}
-            > {{ .Values.alerting.maxPodAgeSeconds | int }}
-          labels: {{ include "generic-service.alert-labels" . | nindent 12 }} warning
-          annotations: {{ include "generic-service.alert-annotations" . | nindent 12 }} Pods too old
-            description: 'The Pod {{"{{ $labels.pod }}"}} has not been updated for {{"{{ humanizeDuration $value }}"}}.'
       {{- end }}
 
 {{- end }}

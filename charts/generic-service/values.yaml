@@ -133,8 +133,16 @@ monitoring:
 
 alerting:
   enabled: false
+  pod:
+    maxStartupSeconds: 120
+    maxAgeSeconds:
   memory:
     maxUsageFactor: 0.9
+    quotaBufferFactor: 1.0
+  cpu:
+    sampleInterval: 1m
+    maxThrottleFactor: 0.01
+    quotaBufferFactor: 1.0
   http:
     sampleInterval: 20m
     referenceInterval: 1w
@@ -148,7 +156,6 @@ alerting:
     maxErrorRatio: 2.5
     maxCriticalErrors: 0
     criticalCodes: [Internal, Unimplemented]
-  maxPodAgeSeconds:
 
 sidecars: []
 

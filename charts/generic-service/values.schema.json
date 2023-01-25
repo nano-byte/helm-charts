@@ -270,7 +270,7 @@
         "enabled": {
           "type": "boolean",
           "default": false,
-          "description": "Enables automatic starting of additional instances based on CPU load"
+          "description": "Enables automatic starting of additional instances"
         },
         "maxReplicas": {
           "type": "integer",
@@ -528,7 +528,7 @@
             "properties": {
               "port": {
                 "type": "integer",
-                "description": "The container port ingress traffic is routed to"
+                "description": "The container port ingress traffic is routed to; defaults to value of ingress.port if not set"
               },
               "protocol": {
                 "type": "string",
@@ -645,6 +645,20 @@
           "default": false,
           "description": "Deploys Prometheus alert rule for issues like like unavailable pods or high memory use"
         },
+        "pod": {
+          "type": "object",
+          "properties": {
+            "maxStartupSeconds": {
+              "type": "integer",
+              "default": 120,
+              "description": "The maximum amount of time a Pod is allowed to take for startup"
+            },
+            "maxAgeSeconds": {
+              "type": ["integer", "null"],
+              "description": "The maximum allowed age of a Pod in seconds (useful to ensure regular deployments)"
+            }
+          }
+        },
         "memory": {
           "type": "object",
           "properties": {
@@ -654,6 +668,35 @@
               "minimum": 0,
               "maximum": 1,
               "description": "The maximum usage factor of the memory limit"
+            },
+            "quotaBufferFactor": {
+              "type": "number",
+              "default": 1,
+              "minimum": 0,
+              "description": "Multiplied with resources.*.memory to determine minimum allowed unused memory quota in namespace"
+            }
+          }
+        },
+        "cpu": {
+          "type": "object",
+          "properties": {
+            "sampleInterval": {
+              "type": "string",
+              "default": "1m",
+              "description": "The time interval in which to measure CPU usage"
+            },
+            "maxThrottleFactor": {
+              "type": "number",
+              "default": 0.01,
+              "minimum": 0,
+              "maximum": 1,
+              "description": "The maximum fraction of the container's execution time during which it experiences CPU throttling"
+            },
+            "quotaBufferFactor": {
+              "type": "number",
+              "default": 1,
+              "minimum": 0,
+              "description": "Multiplied with resources.*.cpu to determine minimum allowed unused CPU quota in namespace"
             }
           }
         },
@@ -722,10 +765,6 @@
               "description": "Which gRPC status codes are considered critical errors"
             }
           }
-        },
-        "maxPodAgeSeconds": {
-          "type": ["integer", "null"],
-          "description": "The maximum allowed age of a Pod in seconds (useful to ensure regular deployments)"
         }
       }
     },
