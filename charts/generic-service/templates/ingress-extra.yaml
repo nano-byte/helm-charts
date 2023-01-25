@@ -10,7 +10,7 @@ metadata:
   labels: {{ include "generic-service.default-labels" $root | nindent 4 }}
   annotations:
   {{- if eq $root.Values.ingress.class "nginx" }}
-    nginx.ingress.kubernetes.io/backend-protocol: {{ $extra.protocol | default "http" | upper }}
+    nginx.ingress.kubernetes.io/backend-protocol: {{ if $extra.port }}{{ $extra.protocol | default "http" | upper }}{{ else }}{{ $root.Values.ingress.protocol | upper }}{{ end }}
   {{- end }}
   {{- if $root.Values.ingress.annotations }}
     {{- if $extra.annotations }}
