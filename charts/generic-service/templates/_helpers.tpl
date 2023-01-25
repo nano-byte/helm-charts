@@ -21,12 +21,16 @@ release: {{ include "generic-service.fullname" . }}
 {{ define "generic-service.default-labels" -}}
 
 {{ include "generic-service.selector-labels" . }}
-version: {{ .Values.image.tag | quote }}
+
 app.kubernetes.io/name: {{ include "generic-service.name" . }}
-app.kubernetes.io/version: {{ .Values.image.tag | quote }}
 app.kubernetes.io/instance: {{ include "generic-service.fullname" . }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 helm.sh/chart: 'generic-service-{{ .Chart.Version }}'
+
+{{- if or .Values.version (not (hasPrefix "@" .Values.image.tag)) }}
+version: {{ .Values.version | default .Values.image.tag | quote }}
+app.kubernetes.io/version: {{ .Values.version | default .Values.image.tag | quote }}
+{{- end }}
 
 {{- if .Values.labels }}
 {{ .Values.labels | toYaml }}

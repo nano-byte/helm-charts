@@ -37,11 +37,11 @@ app:
 | `name`                              | Release Name                | The name of the service (used for `app.kubernetes.io/name` label)                                        |
 | `fullname`                          | Release Name (+ `name`)     | The name of the service instance (used for resource names and `app.kubernetes.io/instance` label)        |
 | `version`                           | same as `image.tag`         | The version of the service (used for `app.kubernetes.io/version` label)                                  |
-| `image.registry`                    | `docker.io`                 | The Registry containing the Docker Image to run (also used as the name of an optional Image Pull Secret) |
-| `image.repository`                  | __required__                | The name of the Docker Image image to run (without the Registry)                                         |
-| `image.tag`                         | __required__                | The tag of the Docker Image to run (also used for `app.kubernetes.io/version` label)                     |
-| `image.pullPolicy`                  | `IfNotPresent`              | Set to `Always` to try to pull new versions of the Docker Image                                          |
-| `image.pullSecret`                  | same as `image.registry`    | Name of the Kubernetes Secret providing credentials for pulling the Image                                |
+| `image.registry`                    | `docker.io`                 | The Registry containing the Docker image to run (also used as the name of an optional Image Pull Secret) |
+| `image.repository`                  | __required__                | The name of the Docker image image to run (without the Registry)                                         |
+| `image.tag`                         | __required__                | The tag of the Docker image to run; start with `@` for digest instead of tag (e.g., `@sha256:abc...`)    |
+| `image.pullPolicy`                  | `IfNotPresent`              | Set to `Always` to try to pull new versions of the Docker image                                          |
+| `image.pullSecret`                  | same as `image.registry`    | Name of the Kubernetes Secret providing credentials for pulling the image                                |
 | `securityContext.pod`               | `{}`                        | Security context to use for the pod                                                                      |
 | `securityContext.container`         | `{}`                        | Security context to use for the container                                                                |
 | `command`                           | `[]`                        | Overrides the command to launch in the Docker image                                                      |

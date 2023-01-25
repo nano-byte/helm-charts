@@ -1,12 +1,13 @@
 name: ''
 fullname: ''
+version: ''
 
 image:
   registry: docker.io
   # repository: required
-  # tag: latest
+  # tag: required
   pullPolicy: IfNotPresent
-  pullSecret: ""
+  pullSecret: ''
 
 securityContext:
   pod: {}

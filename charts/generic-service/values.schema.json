@@ -10,31 +10,35 @@
       "type": "string",
       "description": "The name of the service instance (used for resource names and app.kubernetes.io/instance label)"
     },
+    "version": {
+      "type": "string",
+      "description": "The version of the service (used for app.kubernetes.io/version label)"
+    },
     "image": {
       "type": "object",
       "properties": {
         "registry": {
           "type": "string",
           "default": "docker.io",
-          "description": "The Registry containing the Docker Image to run (also used as the name of an optional Image Pull Secret)"
+          "description": "The Registry containing the Docker image to run (also used as the name of an optional Image Pull Secret)"
         },
         "repository": {
           "type": "string",
-          "description": "The name of the Docker Image image to run (without the Registry)"
+          "description": "The name of the Docker image image to run (without the Registry)"
         },
         "tag": {
           "type": "string",
-          "description": "The tag of the Docker Image to run (also used for app.kubernetes.io/version label)"
+          "description": "The tag of the Docker image to run; start with @ for digest instead of tag (e.g., @sha256:abc...)"
         },
         "pullPolicy": {
           "type": "string",
           "enum": ["Never", "IfNotPresent", "Always"],
           "default": "IfNotPresent",
-          "description": "Set to Always to try to pull new versions of the Docker Image"
+          "description": "Set to Always to try to pull new versions of the Docker image"
         },
         "pullSecret": {
           "type": "string",
-          "description": "Name of the Kubernetes Secret providing credentials for pulling the Image"
+          "description": "Name of the Kubernetes Secret providing credentials for pulling the image; defaults to value of image.registry if not set"
         }
       },
       "required": [
@@ -68,7 +72,7 @@
     "command": {
       "type": "array",
       "items": {"type": "string"},
-      "description": "Overrides the command to launch in the Docker Image"
+      "description": "Overrides the command to launch in the Docker image"
     },
     "args": {
       "type": "array",

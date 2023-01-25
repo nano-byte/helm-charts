@@ -1,0 +1,5 @@
+# Ingress test
+
+image:
+  repository: jwilder/whoami
+  tag: '@sha256:c621c699e1becc851a27716df9773fa9a3f6bccb331e6702330057a688fd1d5a'
