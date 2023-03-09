@@ -4,7 +4,7 @@ apiVersion: flagger.app/v1beta1
 kind: Canary
 metadata:
   name: {{ include "generic-service.fullname" . }}
-  labels: {{ include "generic-service.default-labels" . | nindent 4 }}
+  labels: {{- include "generic-service.default-labels" . | nindent 4 }}
 
 spec:
   {{- if eq .Values.rollout.strategy "Canary" }}
@@ -47,10 +47,10 @@ spec:
       - uri:
           prefix: {{ . | quote }}
       {{- end }}
-    corsPolicy: {{ include "generic-service.istio-cors-policy" . | nindent 6 }}
-    retries: {{ .Values.ingress.istio.retries | toYaml | nindent 6 }}
+    corsPolicy: {{- include "generic-service.istio-cors-policy" . | nindent 6 }}
+    retries: {{- .Values.ingress.istio.retries | toYaml | nindent 6 }}
     {{- end }}
 
-  analysis: {{ .Values.rollout.analysis | required "rollout.analysis is required if rollout.flagger is true" | toYaml | nindent 4 }}
+  analysis: {{- .Values.rollout.analysis | required "rollout.analysis is required if rollout.flagger is true" | toYaml | nindent 4 }}
 
 {{- end }}

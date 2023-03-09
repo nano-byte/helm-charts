@@ -21,7 +21,6 @@ release: {{ include "generic-service.fullname" . }}
 {{ define "generic-service.default-labels" -}}
 
 {{ include "generic-service.selector-labels" . }}
-
 app.kubernetes.io/name: {{ include "generic-service.name" . }}
 app.kubernetes.io/instance: {{ include "generic-service.fullname" . }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
@@ -60,7 +59,7 @@ summary: {{ .Release.Namespace }}/{{ include "generic-service.fullname" . }}
 {{ define "generic-service.istio" -}}
 
 {{- if .Values.ingress.istio.gateways }}
-gateways: {{ .Values.ingress.istio.gateways | toYaml | nindent 2 }}
+gateways: {{- .Values.ingress.istio.gateways | toYaml | nindent 2 }}
 {{- end }}
 
 hosts:
@@ -80,10 +79,10 @@ allowOrigins:
   - {{ if contains . "*" }}regex{{ else }}exact{{ end }}: {{ . | replace "*" ".*" | quote }}
   {{- end }}
 {{- end }}
-{{ if .Values.ingress.cors.allowMethods }}allowMethods: {{ .Values.ingress.cors.allowMethods | toYaml | nindent 2 }}{{ end }}
+{{ if .Values.ingress.cors.allowMethods }}allowMethods: {{- .Values.ingress.cors.allowMethods | toYaml | nindent 2 }}{{ end }}
 allowCredentials: {{ .Values.ingress.cors.allowCredentials }}
-{{ if .Values.ingress.cors.allowHeaders }}allowHeaders: {{ .Values.ingress.cors.allowHeaders | toYaml | nindent 2 }}{{ end }}
-{{ if .Values.ingress.cors.exposeHeaders }}exposeHeaders: {{ .Values.ingress.cors.exposeHeaders | toYaml | nindent 2 }}{{ end }}
+{{ if .Values.ingress.cors.allowHeaders }}allowHeaders: {{- .Values.ingress.cors.allowHeaders | toYaml | nindent 2 }}{{ end }}
+{{ if .Values.ingress.cors.exposeHeaders }}exposeHeaders: {{- .Values.ingress.cors.exposeHeaders | toYaml | nindent 2 }}{{ end }}
 {{- end }}
 {{- end }}
 

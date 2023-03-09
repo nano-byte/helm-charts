@@ -4,7 +4,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ include "generic-service.fullname" . }}
-  labels: {{ include "generic-service.default-labels" . | nindent 4 }}
+  labels: {{- include "generic-service.default-labels" . | nindent 4 }}
   annotations:
   {{- if eq .Values.ingress.class "nginx" }}
     nginx.ingress.kubernetes.io/backend-protocol: {{ .Values.ingress.protocol | upper }}
@@ -17,7 +17,7 @@ metadata:
     {{ if .Values.ingress.cors.exposeHeaders }}nginx.ingress.kubernetes.io/cors-expose-headers: {{ join "," .Values.ingress.cors.exposeHeaders | quote }}{{ end }}
     {{- end }}
   {{- end }}
-  {{- if .Values.ingress.annotations }}  
+  {{- if .Values.ingress.annotations }}
     {{- .Values.ingress.annotations | toYaml | nindent 4 }}
   {{- end }}
 
@@ -28,22 +28,21 @@ spec:
 {{- if .Values.ingress.tls.enabled }}
   tls:
     - secretName: {{ .Values.ingress.tls.secret | default (printf "%s-tls" .Release.Name) }}
-      hosts: {{ .Values.ingress.domains | toYaml | nindent 8 }}
+      hosts: {{- .Values.ingress.domains | toYaml | nindent 8 }}
 {{- end }}
   rules:
-    {{- $root := . -}}
     {{- range .Values.ingress.domains }}
     - host: {{ . | quote }}
       http:
         paths:
-        {{- range ($root.Values.ingress.paths | default (list "/")) }}
+        {{- range ($.Values.ingress.paths | default (list "/")) }}
           - pathType: Prefix
             path: {{ . | quote }}
             backend:
               service:
-                name: {{ include "generic-service.fullname" $root }}
+                name: {{ include "generic-service.fullname" $ }}
                 port:
-                  name: {{ $root.Values.ingress.protocol }}-ingress
+                  name: {{ $.Values.ingress.protocol }}-ingress
         {{- end }}
       {{- end }}
 

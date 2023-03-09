@@ -4,7 +4,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "generic-service.fullname" . }}
-  labels: {{ include "generic-service.default-labels" . | nindent 4 }}
+  labels: {{- include "generic-service.default-labels" . | nindent 4 }}
 {{- if eq .Values.ingress.class "contour" }}
   annotations:
     projectcontour.io/upstream-protocol.h2c: grpc-ingress{{ range $name, $_ := .Values.ingress.extra }},grpc-{{ $name }}{{ end }}
@@ -13,7 +13,7 @@ metadata:
 {{- end }}
 
 spec:
-  selector: {{ include "generic-service.selector-labels" . | nindent 4 }}
+  selector: {{- include "generic-service.selector-labels" . | nindent 4 }}
   {{- if .Values.ingress.additionalSelectors }}
   {{- .Values.ingress.additionalSelectors | toYaml | nindent 4 }}
   {{- end }}
@@ -40,13 +40,13 @@ apiVersion: v1
 kind: Service
 metadata:
   name: '{{ include "generic-service.fullname" . }}-preview'
-  labels: {{ include "generic-service.default-labels" . | nindent 4 }}
+  labels: {{- include "generic-service.default-labels" . | nindent 4 }}
 
 spec:
-  selector: {{ include "generic-service.selector-labels" . | nindent 4 }}
-  {{- if .Values.ingress.additionalSelectors }}
-  {{- .Values.ingress.additionalSelectors | toYaml | nindent 4 }}
-  {{- end }}
+  selector: {{- include "generic-service.selector-labels" . | nindent 4 }}
+    {{- if .Values.ingress.additionalSelectors }}
+    {{- .Values.ingress.additionalSelectors | toYaml | nindent 4 }}
+    {{- end }}
 
   {{- if .Values.ingress.headless }}
   clusterIP: None

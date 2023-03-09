@@ -4,7 +4,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ include "generic-service.fullname" . }}
-  labels: {{ include "generic-service.default-labels" . | nindent 4 }}
+  labels: {{- include "generic-service.default-labels" . | nindent 4 }}
 
 spec:
   scaleTargetRef:
@@ -18,7 +18,7 @@ spec:
     name: {{ include "generic-service.fullname" . }}
   minReplicas: {{ .Values.replicas | int }}
   maxReplicas: {{ .Values.autoscaling.maxReplicas | int }}
-  behavior: {{ .Values.autoscaling.behavior | toYaml | nindent 4 }}
+  behavior: {{- .Values.autoscaling.behavior | toYaml | nindent 4 }}
   metrics:
     - type: {{ .Values.autoscaling.metric.type }}
       {{- if eq .Values.autoscaling.metric.type "Resource" }}
@@ -32,10 +32,10 @@ spec:
         metric:
           name: {{ .Values.autoscaling.metric.name }}
           {{- if eq .Values.autoscaling.metric.type "Object" }}
-          describedObject: {{ .Values.autoscaling.metric.object | required "autoscaling.metric.object required when autoscaling.metric.type is Object" | toYaml | nindent 10 }}
+          describedObject: {{- .Values.autoscaling.metric.object | required "autoscaling.metric.object required when autoscaling.metric.type is Object" | toYaml | nindent 10 }}
           {{- else if eq .Values.autoscaling.metric.type "External" }}
           selector:
-            matchLabels: {{ .Values.autoscaling.metric.selector | toYaml | nindent 14 }}
+            matchLabels: {{- .Values.autoscaling.metric.selector | toYaml | nindent 14 }}
           {{- end }}
         target:
           type: Value

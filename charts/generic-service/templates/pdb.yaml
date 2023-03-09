@@ -4,12 +4,12 @@ apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: {{ include "generic-service.fullname" . }}
-  labels: {{ include "generic-service.default-labels" . | nindent 4 }}
+  labels: {{- include "generic-service.default-labels" . | nindent 4 }}
 
 spec:
   minAvailable: 1
 
   selector:
-    matchLabels: {{ include "generic-service.selector-labels" . | nindent 6 }}
+    matchLabels: {{- include "generic-service.selector-labels" . | nindent 6 }}
 
 {{- end }}

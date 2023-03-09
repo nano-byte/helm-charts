@@ -1,5 +1,3 @@
-{{- $root := . }}
-
 {{- if eq .Values.rollout.controller "ArgoRollout" }}
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
@@ -10,7 +8,7 @@ kind: {{ .Values.rollout.controller }}
 
 metadata:
   name: {{ include "generic-service.fullname" . }}
-  labels: {{ include "generic-service.default-labels" . | nindent 4 }}
+  labels: {{- include "generic-service.default-labels" . | nindent 4 }}
   annotations:
   {{- if .Values.tracing.enabled }}
     sidecar.jaegertracing.io/inject: {{ .Values.tracing.class | default "true" | quote }}
@@ -25,7 +23,7 @@ spec:
   {{- end }}
 
   selector:
-    matchLabels: {{ include "generic-service.selector-labels" . | nindent 6 }}
+    matchLabels: {{- include "generic-service.selector-labels" . | nindent 6 }}
 
   strategy:
   {{- if eq .Values.rollout.strategy "RollingUpdate" }}
@@ -62,7 +60,7 @@ spec:
       canaryMetadata:
         labels:
           role: preview
-      analysis: {{ .Values.rollout.analysis | required "rollout.analysis is required if rollout.strategy is Canary" | toYaml |  nindent 8 }}
+      analysis: {{- .Values.rollout.analysis | required "rollout.analysis is required if rollout.strategy is Canary" | toYaml |  nindent 8 }}
       trafficRouting:
         {{- if .Values.ingress.istio.enabled }}
         istio:
@@ -93,7 +91,7 @@ spec:
           role: preview
       autoPromotionEnabled: {{ .Values.rollout.autoPromotion }}
       {{- if .Values.rollout.analysis }}
-      prePromotionAnalysis: {{ .Values.rollout.analysis | toYaml | nindent 8 }}
+      prePromotionAnalysis: {{- .Values.rollout.analysis | toYaml | nindent 8 }}
       {{- end }}
     {{- else if not .Values.rollout.flagger }}
       {{ fail "rollout.flagger must be true or rollout.controller must be ArgoRollout if rollout.strategy is BlueGreen" }}
@@ -113,7 +111,7 @@ spec:
         {{- if .Values.persistence.storageClass }}
         storageClassName: '{{ .Values.persistence.storageClass }}'
         {{- end }}
-        accessModes: {{ .Values.persistence.accessModes | toYaml | nindent 10 }}
+        accessModes: {{- .Values.persistence.accessModes | toYaml | nindent 10 }}
         resources:
           requests:
             storage: '{{ .Values.persistence.size }}'
@@ -123,7 +121,7 @@ spec:
 
   template:
     metadata:
-      labels: {{ include "generic-service.default-labels" . | nindent 8 }}
+      labels: {{- include "generic-service.default-labels" . | nindent 8 }}
       annotations:
         kubectl.kubernetes.io/default-container: {{ include "generic-service.fullname" . }}
       {{- if .Values.ingress.istio.enabled }}
@@ -144,7 +142,7 @@ spec:
       {{- end }}
 
     spec:
-      securityContext: {{ .Values.securityContext.pod | toYaml | nindent 8 }}
+      securityContext: {{- .Values.securityContext.pod | toYaml | nindent 8 }}
       volumes:
         {{- if and .Values.persistence.enabled (ne .Values.rollout.controller "StatefulSet") }}
         - name: persistence
@@ -157,14 +155,14 @@ spec:
             name: {{ include "generic-service.fullname" . }}
         {{- end }}
         {{- range .Values.additionalConfigs }}
-        - name: config-{{ tpl . $root }}
+        - name: config-{{ tpl . $ }}
           configMap:
-            name: {{ tpl . $root }}
+            name: {{ tpl . $ }}
         {{- end }}
         {{- range $name, $_ := .Values.secrets }}
-        - name: {{ tpl $name $root }}
+        - name: {{ tpl $name $ }}
           secret:
-            secretName: {{ tpl $name $root }}
+            secretName: {{ tpl $name $ }}
         {{- end }}
         {{- range $_, $volume := .Values.additionalMounts }}
         - {{ $volume | toYaml | nindent 10 }}
@@ -187,17 +185,17 @@ spec:
               podAffinityTerm:
                 topologyKey: topology.kubernetes.io/zone
                 labelSelector:
-                  matchLabels: {{ include "generic-service.selector-labels" . | nindent 20 }}
+                  matchLabels: {{- include "generic-service.selector-labels" . | nindent 20 }}
             # Try to avoid scheduling multiple replicas on the same node
             # On restricted environments this might be unavoidable which is why this criterion is not required.
             - weight: 100
               podAffinityTerm:
                 topologyKey: kubernetes.io/hostname
                 labelSelector:
-                  matchLabels: {{ include "generic-service.selector-labels" . | nindent 20 }}
+                  matchLabels: {{- include "generic-service.selector-labels" . | nindent 20 }}
 
       {{- if .Values.nodeSelector }}
-      nodeSelector: {{ .Values.nodeSelector | toYaml | nindent 8 }}
+      nodeSelector: {{- .Values.nodeSelector | toYaml | nindent 8 }}
       tolerations:
         {{- range $key, $val := .Values.nodeSelector }}
         - key: {{ $key | quote }}
@@ -212,14 +210,14 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
 
           {{- if .Values.command }}
-          command: {{ .Values.command | toYaml | nindent 12 }}
+          command: {{- .Values.command | toYaml | nindent 12 }}
           {{- end }}
 
           {{- if .Values.args }}
-          args: {{ .Values.args | toYaml | nindent 12 }}
+          args: {{- .Values.args | toYaml | nindent 12 }}
           {{- end }}
 
-          securityContext: {{ .Values.securityContext.container | toYaml | nindent 12 }}
+          securityContext: {{- .Values.securityContext.container | toYaml | nindent 12 }}
 
           volumeMounts:
             {{- if .Values.persistence.enabled }}
@@ -232,12 +230,12 @@ spec:
               mountPath: {{ .Values.configMountPath }}
             {{- end }}
             {{- range .Values.additionalConfigs }}
-            - name: config-{{ tpl . $root }}
+            - name: config-{{ tpl . $ }}
               subPath: data.yaml
-              mountPath: /config/{{ tpl . $root }}.yaml
+              mountPath: /config/{{ tpl . $ }}.yaml
             {{- end }}
             {{- range $name, $secret := .Values.secrets }}
-            - name: {{ tpl $name $root }}
+            - name: {{ tpl $name $ }}
               {{- if $secret.subPath }}
               subPath: {{ $secret.subPath }}
               {{- end }}
@@ -266,18 +264,18 @@ spec:
           {{- end }}
 
           {{- if .Values.startupProbe }}
-          startupProbe: {{ .Values.startupProbe | toYaml | nindent 12 }}
+          startupProbe: {{- .Values.startupProbe | toYaml | nindent 12 }}
           {{- end }}
 
           {{- if .Values.livenessProbe }}
-          livenessProbe: {{ .Values.livenessProbe | toYaml | nindent 12 }}
+          livenessProbe: {{- .Values.livenessProbe | toYaml | nindent 12 }}
           {{- end }}
 
           {{- if .Values.readinessProbe }}
-          readinessProbe: {{ .Values.readinessProbe | toYaml | nindent 12 }}
+          readinessProbe: {{- .Values.readinessProbe | toYaml | nindent 12 }}
           {{- end }}
 
-          resources: {{ .Values.resources | toYaml | nindent 12 }}
+          resources: {{- .Values.resources | toYaml | nindent 12 }}
 
           env:
             - name: RELEASE_NAME
@@ -348,12 +346,12 @@ spec:
 
             {{- if or .Values.config .Values.additionalConfigs }}
             - name: CONFIG_FILE
-              value: '{{ if .Values.config }}{{ .Values.configMountPath }}{{ end }}{{ range .Values.additionalConfigs }}:/additional-configs/{{ tpl . $root }}/data.yaml{{ end }}'
+              value: '{{ if .Values.config }}{{ .Values.configMountPath }}{{ end }}{{ range .Values.additionalConfigs }}:/additional-configs/{{ tpl . $ }}/data.yaml{{ end }}'
             {{- end }}
 
             {{- range $key, $val := .Values.envFrom }}
             - name: {{ $key | quote }}
-              valueFrom: {{ $val | toYaml | nindent 16 }}
+              valueFrom: {{- $val | toYaml | nindent 16 }}
             {{- end }}
 
             {{- range $key, $val := .Values.env }}
