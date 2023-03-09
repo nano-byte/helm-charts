@@ -20,21 +20,21 @@
         "registry": {
           "type": "string",
           "default": "docker.io",
-          "description": "The Registry containing the Docker image to run (also used as the name of an optional Image Pull Secret)"
+          "description": "The Registry containing the image to run"
         },
         "repository": {
           "type": "string",
-          "description": "The name of the Docker image image to run (without the Registry)"
+          "description": "The name of the image image to run (without the Registry)"
         },
         "tag": {
           "type": "string",
-          "description": "The tag of the Docker image to run; start with @ for digest instead of tag (e.g., @sha256:abc...)"
+          "description": "The tag of the image to run; start with @ for digest instead of tag (e.g., @sha256:abc...)"
         },
         "pullPolicy": {
           "type": "string",
           "enum": ["Never", "IfNotPresent", "Always"],
           "default": "IfNotPresent",
-          "description": "Set to Always to try to pull new versions of the Docker image"
+          "description": "Set to Always to try to pull new versions of the image"
         },
         "pullSecret": {
           "type": "string",
@@ -72,7 +72,7 @@
     "command": {
       "type": "array",
       "items": {"type": "string"},
-      "description": "Overrides the command to launch in the Docker image"
+      "description": "Overrides the command to launch in the image"
     },
     "args": {
       "type": "array",
@@ -118,14 +118,20 @@
         "initialDelaySeconds": {"type": "integer"},
         "periodSeconds": {"type": "integer"},
         "httpGet": {
-          "type": "object",
+          "type": ["object", "null"],
           "properties": {
             "port": {"type": "string"},
             "path": {"type": "string"}
           }
         },
+        "grpc": {
+          "type": ["object", "null"],
+          "properties": {
+            "port": {"type": "integer"}
+          }
+        },
         "exec": {
-          "type": "object",
+          "type": ["object", "null"],
           "properties": {
             "command": {
               "type": "array",
@@ -142,14 +148,20 @@
         "initialDelaySeconds": {"type": "integer"},
         "periodSeconds": {"type": "integer"},
         "httpGet": {
-          "type": "object",
+          "type": ["object", "null"],
           "properties": {
             "port": {"type": "string"},
             "path": {"type": "string"}
           }
         },
+        "grpc": {
+          "type": ["object", "null"],
+          "properties": {
+            "port": {"type": "integer"}
+          }
+        },
         "exec": {
-          "type": "object",
+          "type": ["object", "null"],
           "properties": {
             "command": {
               "type": "array",
@@ -166,14 +178,20 @@
         "initialDelaySeconds": {"type": "integer"},
         "periodSeconds": {"type": "integer"},
         "httpGet": {
-          "type": "object",
+          "type": ["object", "null"],
           "properties": {
             "port": {"type": "string"},
             "path": {"type": "string"}
           }
         },
+        "grpc": {
+          "type": ["object", "null"],
+          "properties": {
+            "port": {"type": "integer"}
+          }
+        },
         "exec": {
-          "type": "object",
+          "type": ["object", "null"],
           "properties": {
             "command": {
               "type": "array",
