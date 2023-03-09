@@ -27,7 +27,7 @@ spec:
             {{- else }}
             kube_{{ .Values.rollout.controller | lower }}_status_{{ if eq .Values.rollout.controller "DaemonSet" }}number{{ else }}replicas{{ end }}_unavailable{namespace="{{ .Release.Namespace }}", {{ .Values.rollout.controller | lower }}="{{ include "generic-service.fullname" . }}"} > 0
             {{- end }}
-          for: {{ .Values.alerting.pod.maxStartupSeconds | int }}s
+          for: {{ mul .Values.alerting.pod.maxStartupSeconds .Values.replicas | int }}s
           labels: {{- include "generic-service.alert-labels" . | nindent 12 }} warning
           annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} replicas down
             description: '{{"{{ $value }}"}} replicas for {{ include "generic-service.fullname" . }} are down.'
