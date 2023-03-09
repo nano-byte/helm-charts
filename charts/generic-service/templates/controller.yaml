@@ -168,8 +168,10 @@ spec:
         - {{ $volume | toYaml | nindent 10 }}
         {{- end }}
 
+      {{- if .Values.image.pullSecret }}
       imagePullSecrets:
-        - name: {{ .Values.image.pullSecret | default .Values.image.registry }}
+        - name: {{ .Values.image.pullSecret }}
+      {{- end }}
 
       {{- if or .Values.rbac.roles .Values.rbac.clusterRoles }}
       serviceAccountName: {{ include "generic-service.fullname" . }}

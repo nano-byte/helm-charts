@@ -38,7 +38,7 @@
         },
         "pullSecret": {
           "type": "string",
-          "description": "Name of the Kubernetes Secret providing credentials for pulling the image; defaults to value of image.registry if not set"
+          "description": "Name of the Kubernetes Secret providing credentials for pulling the image"
         }
       },
       "required": [
