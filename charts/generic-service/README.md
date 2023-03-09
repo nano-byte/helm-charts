@@ -75,6 +75,7 @@ app:
 | `autoscaling.metric.selector`       | `{}`                        | Labels for selecting the metric as a key-value map                                                       |
 | `autoscaling.targetValue`           | `80`                        | The desired value of the metric to achieve through scaling (e.g., CPU utilization in percent)            |
 | `autoscaling.behavior`              | `{}`                        | Scaling behavior configuration (see `HorizontalPodAutoscalerBehavior`)                                   |
+| `nodePreferences`                   | `{}`                        | Sets of preferred values for specific node keys                                                          |
 | `nodeSelector`                      | `{}`                        | Node labels required for scheduling this service, also used as tolerations                               |
 | `persistence.enabled`               | `false`                     | Enables persistent storage for the service                                                               |
 | `persistence.storageClass`          |                             | The type of disk to use for storage instead of the cluster default                                       |

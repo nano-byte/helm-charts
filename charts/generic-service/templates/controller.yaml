@@ -196,6 +196,19 @@ spec:
                 labelSelector:
                   matchLabels: {{- include "generic-service.selector-labels" . | nindent 20 }}
 
+        {{- if .Values.nodePreferences }}
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 1
+              preference:
+                matchExpressions:
+                  {{- range $key, $values := .Values.nodePreferences }}
+                  - key: {{ $key | quote }}
+                    operator: In
+                    values: {{- $values | toYaml | nindent 22 }}
+                  {{- end }}
+        {{- end }}
+
       {{- if .Values.nodeSelector }}
       nodeSelector: {{- .Values.nodeSelector | toYaml | nindent 8 }}
       tolerations:

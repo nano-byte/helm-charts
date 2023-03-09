@@ -341,6 +341,14 @@
         }
       }
     },
+    "nodePreferences": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {"type": "string"}
+      },
+      "description": "Sets of preferred values for specific node keys"
+    },
     "nodeSelector": {
       "type": "object",
       "additionalProperties": {"type": "string"},
