@@ -1,4 +1,4 @@
-{{- if gt .Values.replicas 1.0 }}  # At least 2 replicas are required to avoid outage during disruptions
+{{- if and .Values.ingress.enabled (gt .Values.replicas 1.0) }}
 
 apiVersion: policy/v1
 kind: PodDisruptionBudget
