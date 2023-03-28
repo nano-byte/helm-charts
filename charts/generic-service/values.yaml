@@ -95,7 +95,7 @@ ingress:
   paths: []
   tls:
     enabled: false
-    secret: ''
+    secret: '{{ .Release.Name }}-tls'
   cors:
     enabled: false
     allowOrigins: []

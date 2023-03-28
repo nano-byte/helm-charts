@@ -462,6 +462,7 @@
             },
             "secret": {
               "type": "string",
+              "default": "{{ .Release.Name }}-tls",
               "description": "The name of the Secret holding the TLS private key (not applicable if ingress.istio.enabled)"
             }
           }
