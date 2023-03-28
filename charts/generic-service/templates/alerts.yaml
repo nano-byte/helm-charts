@@ -16,6 +16,7 @@ spec:
           expr: kube_{{ .Values.rollout.controller | lower }}_status_{{ if eq .Values.rollout.controller "DaemonSet" }}number{{ else }}replicas{{ end }}_ready{namespace="{{ .Release.Namespace }}", {{ .Values.rollout.controller | lower }}="{{ include "generic-service.fullname" . }}"} == 0
           for: '{{ if .Values.ingress.enabled }}1m{{ else }}5m{{ end }}'
           labels: {{- include "generic-service.alert-labels" . | nindent 12 }} critical
+            topic: availability
           annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} down
             description: 'All replicas for {{ include "generic-service.fullname" . }} are down.'
 
@@ -29,6 +30,7 @@ spec:
             {{- end }}
           for: {{ mul .Values.alerting.pod.maxStartupSeconds .Values.replicas | int }}s
           labels: {{- include "generic-service.alert-labels" . | nindent 12 }} warning
+            topic: availability
           annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} replicas down
             description: '{{"{{ $value }}"}} replicas for {{ include "generic-service.fullname" . }} are down.'
         {{- end }}
@@ -42,6 +44,7 @@ spec:
             and on (pod)
             time() - kube_pod_created{namespace="{{ .Release.Namespace }}", pod=~"{{ .Release.Name }}-[0-9a-f]+(-[0-9a-z]{5})?"} > {{ .Values.alerting.pod.maxStartupSeconds | int }}
           labels: {{- include "generic-service.alert-labels" . | nindent 12 }} critical
+            topic: availability
           annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} crash/restart
             description: '{{"{{ $labels.pod }}"}} has crashed/restarted.'
 
@@ -51,6 +54,7 @@ spec:
             time() - kube_pod_created{namespace="{{ .Release.Namespace }}", pod=~"{{ .Release.Name }}-[0-9a-f]+(-[0-9a-z]{5})?"}
             > {{ .Values.alerting.pod.maxAgeSeconds | int }}
           labels: {{- include "generic-service.alert-labels" . | nindent 12 }} warning
+            topic: updates
           annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} Pods too old
             description: 'The Pod {{"{{ $labels.pod }}"}} has not been updated for {{"{{ humanizeDuration $value }}"}}.'
       {{- end }}
@@ -64,6 +68,7 @@ spec:
             > 0
           for: 10m
           labels: {{- include "generic-service.alert-labels" . | nindent 12 }} warning
+            topic: resources
           annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} using more memory than requested
             description: '{{"{{ $labels.pod }}"}} is using {{"{{ humanize1024 $value }}"}}B more than its memory request ({{ .Values.resources.requests.memory }}B). It runs the risk of being OOMKilled if there is memory pressure on the node.'
 
@@ -73,6 +78,7 @@ spec:
             min(kube_pod_container_resource_limits{namespace="{{ .Release.Namespace }}", container="{{ include "generic-service.fullname" . }}", resource="memory"}) by (pod)
             > {{ .Values.alerting.memory.maxUsageFactor }}
           labels: {{- include "generic-service.alert-labels" . | nindent 12 }} critical
+            topic: resources
           annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} memory usage close to limit
             description: '{{"{{ $labels.pod }}"}} is using {{"{{ humanizePercentage $value }}"}} of its memory limit ({{ .Values.resources.limits.memory }}B). It runs the risk of being OOMKilled if it reaches the limit.'
       {{- end }}
@@ -86,6 +92,7 @@ spec:
             < {{ .Values.alerting.memory.quotaBufferFactor }} * max(kube_pod_container_resource_requests{namespace="{{ .Release.Namespace }}", container="{{ include "generic-service.fullname" . }}", resource="memory"})
           for: {{ mul .Values.alerting.pod.maxStartupSeconds .Values.replicas | int }}s
           labels: {{- include "generic-service.alert-labels" . | nindent 12 }} warning
+            topic: quotas
           annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} insufficient memory request quota in {{ .Release.Namespace }}
             description: 'The remaining/unused memory request quota in {{ .Release.Namespace }} ({{"{{ humanize1024 $value }}"}}B) may be insufficient to allow {{ include "generic-service.fullname" . }} to update or restart.'
         - alert: MemoryLimitQuotaInsufficient
@@ -95,6 +102,7 @@ spec:
             < {{ .Values.alerting.memory.quotaBufferFactor }} * max(kube_pod_container_resource_limits{namespace="{{ .Release.Namespace }}", container="{{ include "generic-service.fullname" . }}", resource="memory"})
           for: {{ mul .Values.alerting.pod.maxStartupSeconds .Values.replicas | int }}s
           labels: {{- include "generic-service.alert-labels" . | nindent 12 }} warning
+            topic: quotas
           annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} insufficient memory limit quota in {{ .Release.Namespace }}
             description: 'The remaining/unused memory limit quota in {{ .Release.Namespace }} ({{"{{ humanize1024 $value }}"}}B) may be insufficient to allow {{ include "generic-service.fullname" . }} to update or restart.'
         {{- end }}
@@ -106,6 +114,7 @@ spec:
             < {{ .Values.alerting.cpu.quotaBufferFactor }} * max(kube_pod_container_resource_requests{namespace="{{ .Release.Namespace }}", container="{{ include "generic-service.fullname" . }}", resource="cpu"})
           for: {{ mul .Values.alerting.pod.maxStartupSeconds .Values.replicas | int }}s
           labels: {{- include "generic-service.alert-labels" . | nindent 12 }} warning
+            topic: quotas
           annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} insufficient CPU request quota in {{ .Release.Namespace }}
             description: 'The remaining/unused CPU request quota in {{ .Release.Namespace }} ({{"{{ humanize1024 $value }}"}}B) may be insufficient to allow {{ include "generic-service.fullname" . }} to update or restart.'
         - alert: CpuLimitQuotaInsufficient
@@ -115,6 +124,7 @@ spec:
             < {{ .Values.alerting.cpu.quotaBufferFactor }} * max(kube_pod_container_resource_limits{namespace="{{ .Release.Namespace }}", container="{{ include "generic-service.fullname" . }}", resource="cpu"})
           for: {{ mul .Values.alerting.pod.maxStartupSeconds .Values.replicas | int }}s
           labels: {{- include "generic-service.alert-labels" . | nindent 12 }} warning
+            topic: quotas
           annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} insufficient CPU limit quota in {{ .Release.Namespace }}
             description: 'The remaining/unused CPU limit quota in {{ .Release.Namespace }} ({{"{{ humanize1024 $value }}"}}B) may be insufficient to allow {{ include "generic-service.fullname" . }} to update or restart.'
         {{- end }}
@@ -127,6 +137,7 @@ spec:
             increase(container_cpu_cfs_periods_total{namespace="{{ .Release.Namespace }}", container="{{ include "generic-service.fullname" . }}"}[{{ .Values.alerting.cpu.sampleInterval }}])
             > {{ .Values.alerting.cpu.maxThrottleFactor }}
           labels: {{- include "generic-service.alert-labels" . | nindent 12 }} warning
+            topic: resources
           annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} CPU throttling
             description: '{{"{{ $labels.pod }}"}} was throttled by {{"{{ humanizePercentage $value }}"}} in the last {{ .Values.alerting.cpu.sampleInterval }} because it reached its CPU limit ({{ .Values.resources.limits.cpu }}).'
       {{- end }}
@@ -140,6 +151,7 @@ spec:
             (sum(increase({{ include "generic-service.request-duration-metric" . }}[{{ .Values.alerting.http.referenceInterval }}])) / sum(increase({{ include "generic-service.request-count-metric" . }}[{{ .Values.alerting.http.referenceInterval }}])))
             > {{ .Values.alerting.http.maxSlowdown }}
           labels: {{- include "generic-service.alert-labels" . | nindent 12 }} info
+            topic: ingress
           annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} HTTP responses slower than usual
             description: '{{ include "generic-service.fullname" . }} HTTP responses are {{"{{ $value }}"}}x slower in the last {{ .Values.alerting.http.sampleInterval }} than in the last {{ .Values.alerting.http.referenceInterval }}.'
 
@@ -158,6 +170,7 @@ spec:
             sum(round(increase({{ include "generic-service.request-code-count-metric" . }}"5.."}[{{ .Values.alerting.http.sampleInterval }}])))
             > {{ .Values.alerting.http.max5xxCount }}
           labels: {{- include "generic-service.alert-labels" . | nindent 12 }} critical
+            topic: ingress
           annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} HTTP 5xx responses
             description: '{{ include "generic-service.fullname" . }} gave {{"{{ $value }}"}} HTTP 5xx responses in the last {{ .Values.alerting.http.sampleInterval }}.'
         {{- end }}
@@ -170,6 +183,7 @@ spec:
             (sum(rate({{ .Values.alerting.grpc.requestsMetric }}{namespace="{{ .Release.Namespace }}",release="{{ .Release.Name }}",grpc_code!="OK"}[{{ .Values.alerting.grpc.referenceInterval }}])) / sum(rate({{ .Values.alerting.grpc.requestsMetric }}{namespace="{{ .Release.Namespace }}",release="{{ .Release.Name }}"}[{{ .Values.alerting.grpc.referenceInterval }}])))
             > {{ .Values.alerting.grpc.maxErrorRatio }}
           labels: {{- include "generic-service.alert-labels" . | nindent 12 }} warning
+            topic: ingress
           annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} higher gRPC error rate
             description: '{{ include "generic-service.fullname" . }} gave {{"{{ $value }}"}}x more gRPC error responses per request in the last {{ .Values.alerting.grpc.sampleInterval }} than in the last {{ .Values.alerting.grpc.referenceInterval }}.'
         {{- end }}
@@ -179,6 +193,7 @@ spec:
             round(sum(increase({{ .Values.alerting.grpc.requestsMetric }}{namespace="{{ .Release.Namespace }}", release="{{ .Release.Name }}", grpc_code=~"{{ .Values.alerting.grpc.criticalCodes | join "|" }}"}[{{ .Values.alerting.grpc.sampleInterval }}])) by (grpc_code))
             > {{ .Values.alerting.grpc.maxCriticalErrors | int }}
           labels: {{- include "generic-service.alert-labels" . | nindent 12 }} critical
+            topic: ingress
           annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} critical gRPC errors
             description: '{{ include "generic-service.fullname" . }} returned {{"{{ $value }}"}} gRPC errors with status code {{"{{ $labels.grpc_code }}"}} in the last {{ .Values.alerting.grpc.sampleInterval }}.'
         {{- end }}
