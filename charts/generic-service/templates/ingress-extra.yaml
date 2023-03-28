@@ -25,7 +25,7 @@ metadata:
   {{- else if $extra.annotations }}
     {{- $extra.annotations | toYaml | nindent 4 }}
   {{- end }}
-  
+
 
 spec:
 {{- if $.Values.ingress.class }}

@@ -17,7 +17,7 @@ metadata:
     {{ if .Values.ingress.cors.exposeHeaders }}nginx.ingress.kubernetes.io/cors-expose-headers: {{ join "," .Values.ingress.cors.exposeHeaders | quote }}{{ end }}
     {{- end }}
   {{- end }}
-  {{- if .Values.ingress.annotations }}
+  {{- if .Values.ingress.annotations }}  
     {{- .Values.ingress.annotations | toYaml | nindent 4 }}
   {{- end }}
 
@@ -31,7 +31,7 @@ spec:
       hosts: {{- .Values.ingress.domains | toYaml | nindent 8 }}
 {{- end }}
   rules:
-    {{- range .Values.ingress.domains }}
+        {{- range .Values.ingress.domains }}
     - host: {{ . | quote }}
       http:
         paths:
