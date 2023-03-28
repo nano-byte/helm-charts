@@ -122,6 +122,9 @@ spec:
   template:
     metadata:
       labels: {{- include "generic-service.default-labels" . | nindent 8 }}
+      {{- if and .Values.ingress.enabled .Values.ingress.domains }}
+        allow-from: public
+      {{- end }}
       annotations:
         kubectl.kubernetes.io/default-container: {{ include "generic-service.fullname" . }}
       {{- if .Values.ingress.istio.enabled }}
