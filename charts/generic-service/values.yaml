@@ -139,6 +139,7 @@ alerting:
     maxStartupSeconds: 120
     maxAgeSeconds:
   memory:
+    enabled: true
     maxUsageFactor: 0.9
     quotaBufferFactor: 1.0
   cpu:

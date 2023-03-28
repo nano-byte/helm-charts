@@ -55,6 +55,8 @@ spec:
             description: 'The Pod {{"{{ $labels.pod }}"}} has not been updated for {{"{{ humanizeDuration $value }}"}}.'
       {{- end }}
 
+
+      {{- if .Values.alerting.memory.enabled }}
         - alert: MemoryUsageAboveRequest
           expr: |
             max(container_memory_working_set_bytes{namespace="{{ .Release.Namespace }}", container="{{ include "generic-service.fullname" . }}"}) by (pod) -
@@ -73,6 +75,7 @@ spec:
           labels: {{- include "generic-service.alert-labels" . | nindent 12 }} critical
           annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} memory usage close to limit
             description: '{{"{{ $labels.pod }}"}} is using {{"{{ humanizePercentage $value }}"}} of its memory limit ({{ .Values.resources.limits.memory }}B). It runs the risk of being OOMKilled if it reaches the limit.'
+      {{- end }}
 
       {{- if and (ne .Values.rollout.controller "StatefulSet") (ne .Values.rollout.strategy "Recreate") }}
         {{- if .Values.alerting.memory.quotaBufferFactor }}
