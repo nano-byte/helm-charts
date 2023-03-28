@@ -1,6 +1,7 @@
 {{- if and (and .Values.ingress.enabled .Values.ingress.extra) (not .Values.ingress.istio.enabled) }}
 {{- range $name, $extra := .Values.ingress.extra }}
 {{- if $extra.domains }}
+{{ $class := $extra.class | default $.Values.ingress.class }}
 
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -8,7 +9,7 @@ metadata:
   name: {{ include "generic-service.fullname" $ }}-{{ $name }}
   labels: {{- include "generic-service.default-labels" $ | nindent 4 }}
   annotations:
-  {{- if eq $.Values.ingress.class "nginx" }}
+  {{- if eq $class "nginx" }}
     nginx.ingress.kubernetes.io/backend-protocol: {{ if $extra.port }}{{ $extra.protocol | default "http" | upper }}{{ else }}{{ $.Values.ingress.protocol | upper }}{{ end }}
   {{- end }}
   {{- if $.Values.ingress.annotations }}
@@ -28,8 +29,8 @@ metadata:
 
 
 spec:
-{{- if $.Values.ingress.class }}
-  ingressClassName: {{ $.Values.ingress.class }}
+{{- if $class  }}
+  ingressClassName: {{ $class }}
 {{- end }}
 {{- if $extra.tls }}{{ if $extra.tls.enabled }}
   tls:

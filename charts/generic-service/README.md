@@ -109,6 +109,7 @@ app:
 | `ingress.istio.httpHeaders`         | `{}`                        | Custom HTTP response headers                                                                             |
 | `ingress.istio.timeout`             | `15s`                       | [Istio timeout](https://istio.io/docs/tasks/traffic-management/request-timeouts/)                        |
 | `ingress.istio.retries`             | `{}`                        | [Istio retry policy](https://istio.io/docs/reference/config/networking/virtual-service/#HTTPRetry)       |
+| `ingress.extra.*.class`             | same as `ingress.class`     | Additional ingress controller to use (not applicable if `ingress.istio.enabled`)                         |
 | `ingress.extra.*.port`              | same as `ingress.port`      | Additional container port ingress traffic is routed to (not applicable if `ingress.istio.enabled`)       |
 | `ingress.extra.*.protocol`          | `http`                      | The protocol used for the port (e.g., `http` or `grpc`)                                                  |
 | `ingress.extra.*.domains`           | `[]`                        | The public domain names under which the port is exposed (leave empty for cluster-internal only)          |

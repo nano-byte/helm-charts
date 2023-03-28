@@ -557,6 +557,10 @@
           "additionalProperties": {
             "type": "object",
             "properties": {
+              "class": {
+                "type": "string",
+                "description": "Additional ingress controller to use (not applicable if ingress.istio.enabled)"
+              },
               "port": {
                 "type": "integer",
                 "description": "The container port ingress traffic is routed to; defaults to value of ingress.port if not set"
