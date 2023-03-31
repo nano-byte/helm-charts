@@ -182,6 +182,22 @@ spec:
 
       terminationGracePeriodSeconds: {{ .Values.maxShutdownSeconds | int }}
 
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          matchLabelKeys:
+            - app
+            - release
+            # Allow rebalancing during update
+            - {{ if eq .Values.rollout.controller "Deployment" }}pod-template-hash{{ else }}version{{ end }}
+        - maxSkew: 2
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: ScheduleAnyway
+          matchLabelKeys:
+            - app
+            - release
+
       affinity:
         {{- if .Values.podAffinity }}
         podAffinity:
@@ -197,22 +213,6 @@ spec:
                 labelSelector:
                   matchLabels: {{- .Values.podAffinity | toYaml | nindent 20 }}
         {{- end }}
-
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            # Try to avoid scheduling multiple replicas in the same zone
-            - weight: 50
-              podAffinityTerm:
-                topologyKey: topology.kubernetes.io/zone
-                labelSelector:
-                  matchLabels: {{- include "generic-service.selector-labels" . | nindent 20 }}
-            # Try to avoid scheduling multiple replicas on the same node
-            # On restricted environments this might be unavoidable which is why this criterion is not required.
-            - weight: 100
-              podAffinityTerm:
-                topologyKey: kubernetes.io/hostname
-                labelSelector:
-                  matchLabels: {{- include "generic-service.selector-labels" . | nindent 20 }}
 
         {{- if .Values.nodePreferences }}
         nodeAffinity:
