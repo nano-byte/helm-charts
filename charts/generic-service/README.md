@@ -75,8 +75,8 @@ app:
 | `autoscaling.metric.selector`       | `{}`                        | Labels for selecting the metric as a key-value map                                                       |
 | `autoscaling.targetValue`           | `80`                        | The desired value of the metric to achieve through scaling (e.g., CPU utilization in percent)            |
 | `autoscaling.behavior`              | `{}`                        | Scaling behavior configuration (see `HorizontalPodAutoscalerBehavior`)                                   |
-| `nodePreferences`                   | `{}`                        | Sets of preferred values for specific node keys                                                          |
-| `nodeSelector`                      | `{}`                        | Node labels required for scheduling this service, also used as tolerations                               |
+| `nodePreferences`                   | `{}`                        | Sets of label values to select nodes this service should be run on (preferred)                           |
+| `nodeSelector`                      | `{}`                        | Labels to select nodes this service may be run on (required)                                             |
 | `persistence.enabled`               | `false`                     | Enables persistent storage for the service                                                               |
 | `persistence.storageClass`          |                             | The type of disk to use for storage instead of the cluster default                                       |
 | `persistence.accessModes`           | `[ReadWriteOnce]`           | The support access modes the volume can be mounted with                                                  |
@@ -102,7 +102,7 @@ app:
 | `ingress.cors.exposeHeaders`        | `[]`                        | List of HTTP headers that the browsers are allowed to access                                             |
 | `ingress.class`                     |                             | The ingress controller to use (not applicable if `ingress.istio.enabled`)                                |
 | `ingress.annotations`               | `{}`                        | Annotations for `Ingress` resource (not applicable if `ingress.istio.enabled`)                           |
-| `ingress.headless`                  | `false`                     | Creates a headless `Service` to disable Kubernetes-based load balancing                                  |
+| `ingress.headless`                  | `false`                     | Makes the `Service` headless to disable Kubernetes-based load balancing                                  |
 | `ingress.additionalSelectors`       | `{}`                        | Additional label selectors used to restrict the `Pod`s selected by the `Service`.                        |
 | `ingress.istio.enabled`             | `false`                     | Use Istio `VirtualService` instead of Kubernetes `Ingress` resource                                      |
 | `ingress.istio.gateways`            | `[]`                        | The names of the Istio `Gateway`s to use                                                                 |

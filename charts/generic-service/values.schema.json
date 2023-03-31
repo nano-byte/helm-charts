@@ -347,12 +347,12 @@
         "type": "array",
         "items": {"type": "string"}
       },
-      "description": "Sets of preferred values for specific node keys"
+      "description": "Sets of label values to select nodes this service should be run on (preferred)"
     },
     "nodeSelector": {
       "type": "object",
       "additionalProperties": {"type": "string"},
-      "description": "Node labels required for scheduling this service, also used as tolerations"
+      "description": "Labels to select nodes this service may be run on (required)"
     },
     "persistence": {
       "type": "object",
@@ -516,7 +516,7 @@
         "headless": {
           "type": "boolean",
           "default": false,
-          "description": "Creates a headless Service to disable Kubernetes-based load balancing"
+          "description": "Makes the Service headless to disable Kubernetes-based load balancing"
         },
         "additionalSelectors": {
           "type": "object",
