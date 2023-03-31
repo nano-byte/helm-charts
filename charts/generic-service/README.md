@@ -76,6 +76,7 @@ app:
 | `autoscaling.targetValue`           | `80`                        | The desired value of the metric to achieve through scaling (e.g., CPU utilization in percent)            |
 | `autoscaling.behavior`              | `{}`                        | Scaling behavior configuration (see `HorizontalPodAutoscalerBehavior`)                                   |
 | `nodePreferences`                   | `{}`                        | Sets of label values to select nodes this service should be run on (preferred)                           |
+| `podAffinity`                       | `{}`                        | Labels to select other pods this service should share nodes or zones with (preferred)                    |
 | `nodeSelector`                      | `{}`                        | Labels to select nodes this service may be run on (required)                                             |
 | `persistence.enabled`               | `false`                     | Enables persistent storage for the service                                                               |
 | `persistence.storageClass`          |                             | The type of disk to use for storage instead of the cluster default                                       |

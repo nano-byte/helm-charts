@@ -183,6 +183,21 @@ spec:
       terminationGracePeriodSeconds: {{ .Values.maxShutdownSeconds | int }}
 
       affinity:
+        {{- if .Values.podAffinity }}
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 10
+              podAffinityTerm:
+                topologyKey: kubernetes.io/hostname
+                labelSelector:
+                  matchLabels: {{- .Values.podAffinity | toYaml | nindent 20 }}
+            - weight: 1
+              podAffinityTerm:
+                topologyKey: topology.kubernetes.io/zone
+                labelSelector:
+                  matchLabels: {{- .Values.podAffinity | toYaml | nindent 20 }}
+        {{- end }}
+
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
             # Try to avoid scheduling multiple replicas in the same zone

@@ -341,6 +341,11 @@
         }
       }
     },
+    "podAffinity": {
+      "type": "object",
+      "additionalProperties": {"type": "string"},
+      "description": "Labels to select other pods this service should share nodes or zones with (preferred)"
+    },
     "nodePreferences": {
       "type": "object",
       "additionalProperties": {

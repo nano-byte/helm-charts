@@ -73,6 +73,7 @@ autoscaling:
   targetValue: 80
   behavior: {}
 
+podAffinity: {}
 nodePreferences: {}
 nodeSelector: {}
 
