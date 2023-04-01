@@ -28,7 +28,7 @@ spec:
   strategy:
   {{- if eq .Values.rollout.strategy "RollingUpdate" }}
     {{- if eq .Values.rollout.controller "ArgoRollout" }}
-      {{ fail "rollout.strategy cannot be StatefulSet if rollout.controller is ArgoRollout, must be Canary or BlueGreen" }}
+      {{ fail "rollout.strategy cannot be RollingUpdate if rollout.controller is ArgoRollout, must be Canary or BlueGreen" }}
     {{- end }}
   {{- else if eq .Values.rollout.strategy "Recreate" }}
     {{- if or (eq .Values.rollout.controller "StatefulSet") (eq .Values.rollout.controller "DaemonSet") }}
