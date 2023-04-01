@@ -523,6 +523,11 @@
           "default": false,
           "description": "Makes the Service headless to disable Kubernetes-based load balancing"
         },
+        "nodeLocal": {
+          "type": "boolean",
+          "default": false,
+          "description": "Creates an additional Service with the suffix '-local' that only routes to pods on the same node"
+        },
         "additionalSelectors": {
           "type": "object",
           "additionalProperties": {"type": "string"},

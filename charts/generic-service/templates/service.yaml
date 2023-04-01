@@ -37,6 +37,28 @@ spec:
     {{- end }}
     {{- end }}
 
+{{- if .Values.ingress.nodeLocal }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: '{{ include "generic-service.fullname" . }}-local'
+  labels: {{- include "generic-service.default-labels" . | nindent 4 }}
+
+spec:
+  selector: {{- include "generic-service.selector-labels" . | nindent 4 }}
+    {{- if .Values.ingress.additionalSelectors }}
+    {{- .Values.ingress.additionalSelectors | toYaml | nindent 4 }}
+    {{- end }}
+
+  internalTrafficPolicy: Local
+
+  ports:
+    - name: '{{ .Values.ingress.protocol }}-ingress'
+      port: 80
+      targetPort: {{ .Values.ingress.port }}
+{{- end }}
+
 {{- if eq .Values.rollout.controller "ArgoRollout" }}
 ---
 apiVersion: v1
