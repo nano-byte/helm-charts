@@ -12,6 +12,7 @@ spec:
     - name: {{ include "generic-service.fullname" . }}.rules
       rules:
       {{- if ne .Values.rollout.controller "ArgoRollout" }}
+        {{- if gt .Values.replicas 0.0 }}
         - alert: Down
           expr: kube_{{ .Values.rollout.controller | lower }}_status_{{ if eq .Values.rollout.controller "DaemonSet" }}number{{ else }}replicas{{ end }}_ready{namespace="{{ .Release.Namespace }}", {{ .Values.rollout.controller | lower }}="{{ include "generic-service.fullname" . }}"} == 0
           for: '{{ if .Values.ingress.enabled }}1m{{ else }}5m{{ end }}'
@@ -19,6 +20,7 @@ spec:
             topic: availability
           annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} down
             description: 'All replicas for {{ include "generic-service.fullname" . }} are down.'
+        {{- end }}
 
         {{- if or (gt .Values.replicas 1.0) (eq .Values.rollout.controller "DaemonSet") }}
         - alert: ReplicasDown
