@@ -145,6 +145,7 @@ spec:
       {{- end }}
 
     spec:
+      enableServiceLinks: false
       securityContext: {{- .Values.securityContext.pod | toYaml | nindent 8 }}
       volumes:
         {{- if and .Values.persistence.enabled (ne .Values.rollout.controller "StatefulSet") }}
