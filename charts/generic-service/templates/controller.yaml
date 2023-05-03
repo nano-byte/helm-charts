@@ -187,17 +187,15 @@ spec:
         - maxSkew: 1
           topologyKey: kubernetes.io/hostname
           whenUnsatisfiable: ScheduleAnyway
-          matchLabelKeys:
-            - app
-            - release
-            # Allow rebalancing during update
-            - {{ if eq .Values.rollout.controller "Deployment" }}pod-template-hash{{ else }}version{{ end }}
+          labelSelector:
+            matchLabels: {{- include "generic-service.selector-labels" . | nindent 14 }}
+              # Allow rebalancing during update
+              version: {{ .Values.version | default .Values.image.tag | quote }}
         - maxSkew: 2
           topologyKey: topology.kubernetes.io/zone
           whenUnsatisfiable: ScheduleAnyway
-          matchLabelKeys:
-            - app
-            - release
+          labelSelector:
+            matchLabels: {{- include "generic-service.selector-labels" . | nindent 14 }}
 
       affinity:
         {{- if .Values.podAffinity }}
