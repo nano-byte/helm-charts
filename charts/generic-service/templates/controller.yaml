@@ -263,8 +263,8 @@ spec:
             {{- end }}
             {{- range .Values.additionalConfigs }}
             - name: config-{{ tpl . $ }}
-              subPath: data.yaml
-              mountPath: /config/{{ tpl . $ }}.yaml
+              # Mount entire directory instead of just file to enable hot-reload
+              mountPath: '/additional-configs/{{ tpl . $ }}'
             {{- end }}
             {{- range $name, $secret := .Values.secrets }}
             - name: {{ tpl $name $ }}
@@ -378,7 +378,7 @@ spec:
 
             {{- if or .Values.config .Values.additionalConfigs }}
             - name: CONFIG_FILE
-              value: '{{ if .Values.config }}{{ .Values.configMountPath }}{{ end }}{{ range .Values.additionalConfigs }}:/config/{{ tpl . $ }}.yaml{{ end }}'
+              value: '{{ if .Values.config }}{{ .Values.configMountPath }}{{ end }}{{ range .Values.additionalConfigs }}:/additional-configs/{{ tpl . $ }}/data.yaml{{ end }}'
             {{- end }}
 
             {{- range $key, $val := .Values.envFrom }}
