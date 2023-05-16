@@ -186,7 +186,7 @@ spec:
       topologySpreadConstraints:
         - maxSkew: 1
           topologyKey: kubernetes.io/hostname
-          whenUnsatisfiable: ScheduleAnyway
+          whenUnsatisfiable: {{ if .Values.scheduling.enforceReplicaSpread }}DoNotSchedule{{ else }}ScheduleAnyway{{ end }}
           labelSelector:
             matchLabels: {{- include "generic-service.selector-labels" . | nindent 14 }}
               # Allow rebalancing during update
