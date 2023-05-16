@@ -1,0 +1,12 @@
+# Pod and node affinity test
+
+image:
+  repository: jwilder/whoami
+  tag: latest
+
+
+scheduling:
+  nodePreferences:
+    someKey: [someValue1, someValue2]
+  podAffinity:
+    someKey: someValue

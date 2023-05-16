@@ -341,23 +341,28 @@
         }
       }
     },
-    "podAffinity": {
+    "scheduling": {
       "type": "object",
-      "additionalProperties": {"type": "string"},
-      "description": "Labels to select other pods this service should share nodes or zones with (preferred)"
-    },
-    "nodePreferences": {
-      "type": "object",
-      "additionalProperties": {
-        "type": "array",
-        "items": {"type": "string"}
-      },
-      "description": "Sets of label values to select nodes this service should be run on (preferred)"
-    },
-    "nodeSelector": {
-      "type": "object",
-      "additionalProperties": {"type": "string"},
-      "description": "Labels to select nodes this service may be run on (required)"
+      "properties": {
+        "nodeSelector": {
+          "type": "object",
+          "additionalProperties": {"type": "string"},
+          "description": "Labels to select nodes this service may be run on"
+        },
+        "nodePreferences": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "description": "Sets of label values to select nodes this service should be run on if possible"
+        },
+        "podAffinity": {
+          "type": "object",
+          "additionalProperties": {"type": "string"},
+          "description": "Labels to select other pods this service should share nodes with if possible"
+        }
+      }
     },
     "persistence": {
       "type": "object",

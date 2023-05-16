@@ -198,38 +198,38 @@ spec:
             matchLabels: {{- include "generic-service.selector-labels" . | nindent 14 }}
 
       affinity:
-        {{- if .Values.podAffinity }}
+        {{- if .Values.scheduling.podAffinity }}
         podAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
             - weight: 10
               podAffinityTerm:
                 topologyKey: kubernetes.io/hostname
                 labelSelector:
-                  matchLabels: {{- .Values.podAffinity | toYaml | nindent 20 }}
+                  matchLabels: {{- .Values.scheduling.podAffinity | toYaml | nindent 20 }}
             - weight: 1
               podAffinityTerm:
                 topologyKey: topology.kubernetes.io/zone
                 labelSelector:
-                  matchLabels: {{- .Values.podAffinity | toYaml | nindent 20 }}
+                  matchLabels: {{- .Values.scheduling.podAffinity | toYaml | nindent 20 }}
         {{- end }}
 
-        {{- if .Values.nodePreferences }}
+        {{- if .Values.scheduling.nodePreferences }}
         nodeAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
             - weight: 1
               preference:
                 matchExpressions:
-                  {{- range $key, $values := .Values.nodePreferences }}
+                  {{- range $key, $values := .Values.scheduling.nodePreferences }}
                   - key: {{ $key | quote }}
                     operator: In
                     values: {{- $values | toYaml | nindent 22 }}
                   {{- end }}
         {{- end }}
 
-      {{- if .Values.nodeSelector }}
-      nodeSelector: {{- .Values.nodeSelector | toYaml | nindent 8 }}
+      {{- if .Values.scheduling.nodeSelector }}
+      nodeSelector: {{- .Values.scheduling.nodeSelector | toYaml | nindent 8 }}
       tolerations:
-        {{- range $key, $val := .Values.nodeSelector }}
+        {{- range $key, $val := .Values.scheduling.nodeSelector }}
         - key: {{ $key | quote }}
           operator: Equal
           value: {{ $val | quote }}
