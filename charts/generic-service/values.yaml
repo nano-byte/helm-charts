@@ -76,6 +76,7 @@ autoscaling:
 scheduling:
   nodeSelector: {}
   nodePreferences: {}
+  nodeExclusions: {}
   podAffinity: {}
   enforceReplicaSpread: false
 

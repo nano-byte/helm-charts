@@ -357,6 +357,14 @@
           },
           "description": "Sets of label values to select nodes this service should be run on if possible"
         },
+        "nodeExclusions": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "description": "Sets of label values to select nodes this service must not run on"
+        },
         "podAffinity": {
           "type": "object",
           "additionalProperties": {"type": "string"},

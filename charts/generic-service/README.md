@@ -77,6 +77,7 @@ app:
 | `autoscaling.behavior`              | `{}`                        | Scaling behavior configuration (see `HorizontalPodAutoscalerBehavior`)                                   |
 | `scheduling.nodeSelector`           | `{}`                        | Labels to select nodes this service may be run on                                                        |
 | `scheduling.nodePeferences`         | `{}`                        | Sets of label values to select nodes this service should be run on if possible                           |
+| `scheduling.nodeExclusions`         | `{}`                        | Sets of label values to select nodes this service must not run on.                                       |
 | `scheduling.podAffinity`            | `{}`                        | Labels to select other pods this service should share nodes with if possible                             |
 | `scheduling.enforceReplicaSpread`   | `false`                     | Make even spread of replicas across nodes mandatory                                                      |
 | `persistence.enabled`               | `false`                     | Enables persistent storage for the service                                                               |

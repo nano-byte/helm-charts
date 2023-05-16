@@ -203,8 +203,9 @@ spec:
                   matchLabels: {{- .Values.scheduling.podAffinity | toYaml | nindent 20 }}
         {{- end }}
 
-        {{- if .Values.scheduling.nodePreferences }}
+        {{- if or .Values.scheduling.nodePreferences .Values.scheduling.nodeExclusions }}
         nodeAffinity:
+          {{- if .Values.scheduling.nodePreferences }}
           preferredDuringSchedulingIgnoredDuringExecution:
             - weight: 100
               preference:
@@ -214,6 +215,17 @@ spec:
                     operator: In
                     values: {{- $values | toYaml | nindent 22 }}
                   {{- end }}
+          {{- end }}
+          {{- if .Values.scheduling.nodeExclusions }}
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                {{- range $key, $values := .Values.scheduling.nodeExclusions }}
+                - key: {{ $key | quote }}
+                  operator: NotIn
+                  values: {{- $values | toYaml | nindent 22 }}
+                {{- end }}
+          {{- end }}
         {{- end }}
 
       {{- if .Values.scheduling.nodeSelector }}
