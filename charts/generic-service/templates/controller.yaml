@@ -191,11 +191,6 @@ spec:
             matchLabels: {{- include "generic-service.selector-labels" . | nindent 14 }}
               # Allow rebalancing during update
               version: {{ .Values.version | default .Values.image.tag | quote }}
-        - maxSkew: 2
-          topologyKey: topology.kubernetes.io/zone
-          whenUnsatisfiable: ScheduleAnyway
-          labelSelector:
-            matchLabels: {{- include "generic-service.selector-labels" . | nindent 14 }}
 
       affinity:
         {{- if .Values.scheduling.podAffinity }}
@@ -204,11 +199,6 @@ spec:
             - weight: 100
               podAffinityTerm:
                 topologyKey: kubernetes.io/hostname
-                labelSelector:
-                  matchLabels: {{- .Values.scheduling.podAffinity | toYaml | nindent 20 }}
-            - weight: 1
-              podAffinityTerm:
-                topologyKey: topology.kubernetes.io/zone
                 labelSelector:
                   matchLabels: {{- .Values.scheduling.podAffinity | toYaml | nindent 20 }}
         {{- end }}
