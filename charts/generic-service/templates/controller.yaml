@@ -201,7 +201,7 @@ spec:
         {{- if .Values.scheduling.podAffinity }}
         podAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 10
+            - weight: 100
               podAffinityTerm:
                 topologyKey: kubernetes.io/hostname
                 labelSelector:
@@ -216,7 +216,7 @@ spec:
         {{- if .Values.scheduling.nodePreferences }}
         nodeAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 1
+            - weight: 100
               preference:
                 matchExpressions:
                   {{- range $key, $values := .Values.scheduling.nodePreferences }}
