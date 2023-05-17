@@ -102,7 +102,7 @@ ingress:
     secret: '{{ .Release.Name }}-tls'
   cors:
     enabled: false
-    allowOrigins: []
+    allowOrigin: []
     allowMethods: [GET]
     allowHeaders: [Content-Type]
     allowCredentials: true

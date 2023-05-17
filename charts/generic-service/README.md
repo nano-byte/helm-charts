@@ -98,7 +98,7 @@ app:
 | `ingress.tls.enabled`               | `false`                     | Enables TLS termination at the ingress (not applicable if `ingress.istio.enabled`)                       |
 | `ingress.tls.secret`                | `{{ .Release.Name }}-tls`   | The name of the `Secret` holding the TLS private key (not applicable if `ingress.istio.enabled`)         |
 | `ingress.cors.enabled`              | `false`                     | Enables CORS (only applicable if `ingress.class` is `nginx` or `ingress.istio.enabled` is `true`)        |
-| `ingress.cors.allowOrigins`         | `[]`                        | List of origins allowed to access the ingress via CORS; leave empty to allow any                         |
+| `ingress.cors.allowOrigin`         | `[]`                        | List of origins allowed to access the ingress via CORS; leave empty to allow any                         |
 | `ingress.cors.allowMethods`         | `[GET]`                     | List of HTTP methods allowed to access the ingress via CORS                                              |
 | `ingress.cors.allowHeaders`         | `[Content-Type]`            | List of HTTP headers that can be used when requesting the ingress via CORS                               |
 | `ingress.cors.allowCredentials`     | `true`                      | Indicates whether the caller is allowed to send the actual request (not the preflight) using credentials |

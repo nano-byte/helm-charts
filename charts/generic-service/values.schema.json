@@ -519,7 +519,7 @@
               "default": false,
               "description": "Enables CORS (only applicable if ingress.class is 'nginx' or ingress.istio.enabled is true)"
             },
-            "allowOrigins": {
+            "allowOrigin": {
               "type": "array",
               "items": {"type": "string"},
               "description": "List of origins allowed to access the ingress via CORS; leave empty to allow any"

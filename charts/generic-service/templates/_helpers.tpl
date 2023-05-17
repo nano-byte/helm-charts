@@ -73,9 +73,9 @@ hosts:
 
 {{ define "generic-service.istio-cors-policy" -}}
 {{- if .Values.ingress.cors.enabled }}
-{{- if .Values.ingress.cors.allowOrigins }}
+{{- if .Values.ingress.cors.allowOrigin }}
 allowOrigins:
-  {{- range .Values.ingress.cors.allowOrigins }}
+  {{- range .Values.ingress.cors.allowOrigin }}
   - {{ if contains . "*" }}regex{{ else }}exact{{ end }}: {{ . | replace "*" ".*" | quote }}
   {{- end }}
 {{- end }}
