@@ -44,7 +44,8 @@
       "required": [
         "repository",
         "tag"
-      ]
+      ],
+      "additionalProperties": false
     },
     "securityContext": {
       "type": "object",
@@ -67,7 +68,8 @@
             "readOnlyRootFilesystem": {"type": "boolean"}
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "command": {
       "type": "array",
@@ -122,13 +124,15 @@
           "properties": {
             "port": {"type": "string"},
             "path": {"type": "string"}
-          }
+          },
+          "additionalProperties": true
         },
         "grpc": {
           "type": ["object", "null"],
           "properties": {
             "port": {"type": "integer"}
-          }
+          },
+          "additionalProperties": true
         },
         "exec": {
           "type": ["object", "null"],
@@ -136,9 +140,11 @@
             "command": {
               "type": "array",
               "items": {"type": "string"}
-            }
+            },
+            "additionalProperties": true
           }
-        }
+        },
+        "additionalProperties": true
       }
     },
     "livenessProbe": {
@@ -152,13 +158,15 @@
           "properties": {
             "port": {"type": "string"},
             "path": {"type": "string"}
-          }
+          },
+          "additionalProperties": true
         },
         "grpc": {
           "type": ["object", "null"],
           "properties": {
             "port": {"type": "integer"}
-          }
+          },
+          "additionalProperties": true
         },
         "exec": {
           "type": ["object", "null"],
@@ -167,9 +175,11 @@
               "type": "array",
               "items": {"type": "string"}
             }
-          }
+          },
+          "additionalProperties": true
         }
-      }
+      },
+      "additionalProperties": true
     },
     "readinessProbe": {
       "type": "object",
@@ -182,13 +192,15 @@
           "properties": {
             "port": {"type": "string"},
             "path": {"type": "string"}
-          }
+          },
+          "additionalProperties": true
         },
         "grpc": {
           "type": ["object", "null"],
           "properties": {
             "port": {"type": "integer"}
-          }
+          },
+          "additionalProperties": true
         },
         "exec": {
           "type": ["object", "null"],
@@ -197,9 +209,11 @@
               "type": "array",
               "items": {"type": "string"}
             }
-          }
+          },
+          "additionalProperties": true
         }
-      }
+      },
+      "additionalProperties": true
     },
     "maxShutdownSeconds": {
       "type": "integer",
@@ -249,7 +263,8 @@
             }
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "rollout": {
       "type": "object",
@@ -279,7 +294,8 @@
         "analysis": {
           "description": "Flagger or Argo Rollouts analysis for automatic Canary or BlueGreen promotion"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "replicas": {
       "type": "integer",
@@ -339,7 +355,8 @@
           "type": "object",
           "description": "Scaling behavior configuration (see HorizontalPodAutoscalerBehavior)"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "scheduling": {
       "type": "object",
@@ -375,7 +392,8 @@
           "default": false,
           "description": "Make even spread of replicas across nodes mandatory"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "persistence": {
       "type": "object",
@@ -404,7 +422,8 @@
           "type": "string",
           "description": "The mount path for the storage inside the container"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "secrets": {
       "type": "object",
@@ -428,7 +447,8 @@
         },
         "required": [
           "mountPath"
-        ]
+        ],
+        "additionalProperties": false
       }
     },
     "additionalMounts": {
@@ -488,7 +508,8 @@
               "default": "{{ .Release.Name }}-tls",
               "description": "The name of the Secret holding the TLS private key (not applicable if ingress.istio.enabled)"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "cors": {
           "type": "object",
@@ -525,7 +546,8 @@
               "items": {"type": "string"},
               "description": "List of HTTP headers that the browsers are allowed to access"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "class": {
           "type": "string",
@@ -578,7 +600,8 @@
               "type": "object",
               "description": "Istio retry policy (see https://istio.io/docs/reference/config/networking/virtual-service/#HTTPRetry)"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "extra": {
           "type": "object",
@@ -627,11 +650,13 @@
                 "additionalProperties": {"type": "string"},
                 "description": "Additional annotations, merged with ingress.annotations (use string 'nil' to unset existing values)"
               }
-            }
+            },
+            "additionalProperties": false
           },
           "description": "Additional container ports ingress traffic is routed to (not applicable if `ingress.istio.enabled`)"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "netpol": {
       "type": "object",
@@ -651,7 +676,8 @@
           "items": {"type": "object"},
           "description": "Ingress network policy rules to apply"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "tracing": {
       "type": "object",
@@ -673,7 +699,8 @@
           "default": "true",
           "description": "Custom value to set for tracing sidecar injection annotations"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "monitoring": {
       "type": "object",
@@ -698,7 +725,8 @@
           "default": "1m",
           "description": "The interval at which monitoring data is scraped"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "alerting": {
       "type": "object",
@@ -720,7 +748,8 @@
               "type": ["integer", "null"],
               "description": "The maximum allowed age of a Pod in seconds (useful to ensure regular deployments)"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "memory": {
           "type": "object",
@@ -743,7 +772,8 @@
               "minimum": 0,
               "description": "Multiplied with resources.*.memory to determine minimum allowed unused memory quota in namespace"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "cpu": {
           "type": "object",
@@ -766,7 +796,8 @@
               "minimum": 0,
               "description": "Multiplied with resources.*.cpu to determine minimum allowed unused CPU quota in namespace"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "http": {
           "type": "object",
@@ -796,7 +827,8 @@
               "default": 0,
               "description": "The maximum number of HTTP 5xx responses in the sample interval"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "grpc": {
           "type": "object",
@@ -832,8 +864,10 @@
               "default": ["Internal", "Unimplemented"],
               "description": "Which gRPC status codes are considered critical errors"
             }
-          }
-        }
+          },
+          "additionalProperties": false
+        },
+        "additionalProperties": false
       }
     },
     "sidecars": {
@@ -854,7 +888,8 @@
           "items": {"type": "string"},
           "description": "Cluster-wide Kubernetes RBAC Roles to assign to the service"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "global": {
       "type": "object",
