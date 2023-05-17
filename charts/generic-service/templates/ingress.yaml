@@ -22,20 +22,22 @@ metadata:
   {{- end }}
 
 spec:
-{{- if .Values.ingress.class }}
+  {{- if .Values.ingress.class }}
   ingressClassName: {{ .Values.ingress.class }}
-{{- end }}
-{{- if .Values.ingress.tls.enabled }}
+  {{- end }}
+
+  {{- if .Values.ingress.tls.enabled }}
   tls:
     - secretName: {{ tpl .Values.ingress.tls.secret . }}
       hosts: {{- .Values.ingress.domains | toYaml | nindent 8 }}
-{{- end }}
+  {{- end }}
+
   rules:
-        {{- range .Values.ingress.domains }}
+    {{- range .Values.ingress.domains }}
     - host: {{ . | quote }}
       http:
         paths:
-        {{- range ($.Values.ingress.paths | default (list "/")) }}
+          {{- range ($.Values.ingress.paths | default (list "/")) }}
           - pathType: Prefix
             path: {{ . | quote }}
             backend:
@@ -43,7 +45,7 @@ spec:
                 name: {{ include "generic-service.fullname" $ }}
                 port:
                   name: {{ $.Values.ingress.protocol }}-ingress
-        {{- end }}
-      {{- end }}
+          {{- end }}
+    {{- end }}
 
 {{- end }}
