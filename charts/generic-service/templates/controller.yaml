@@ -401,6 +401,9 @@ spec:
                 command: ["sleep", "5"]
           {{- end }}
 
-      {{- if .Values.sidecars }}
-        {{- toYaml .Values.sidecars | nindent 8 }}
+      {{- range .Values.sidecars }}
+        - {{- toYaml . | nindent 10 }}
+      {{- end }}
+      {{- range .Values.sidecarTemplates }}
+        - {{- tpl . $ | nindent 10 }}
       {{- end }}

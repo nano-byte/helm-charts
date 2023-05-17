@@ -152,6 +152,7 @@ app:
 | `alerting.grpc.maxCriticalErrors`   | `0`                         | The maximum number of critical gRPC errors responses in the sample interval                              |
 | `alerting.grpc.criticalCodes`       | `[Internal, Unimplemented]` | Which gRPC status codes are considered critical errors                                                   |
 | `sidecars`                          | `[]`                        | Additional sidecar containers to be added to the `Pod`                                                   |
+| `sidecarTemplates`                  | `[]`                        | Strings to be templated providing additional sidecar containers to be added to the Pod                   |
 | `rbac.roles`                        | `[]`                        | Namespace-specific Kubernetes RBAC Roles to assign to the service (supports templating)                  |
 | `rbac.clusterRoles`                 | `[]`                        | Cluster-wide Kubernetes RBAC Roles to assign to the service (supports templating)                        |
 | `global.alertLabels`                | `{}`                        | Additional labels to apply to alert rules                                                                |

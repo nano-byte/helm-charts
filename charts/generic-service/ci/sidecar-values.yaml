@@ -1,0 +1,23 @@
+# Sidecar test
+
+name: test
+fullname: my-test
+
+image:
+  repository: jwilder/whoami
+  tag: latest
+
+sidecars:
+  - name: sidecar1
+    image: jwilder/whoami
+    env:
+      - name: PORT
+        value: '8081'
+
+sidecarTemplates:
+  - |
+      name: sidecar2
+      image: {{ .Values.image.repository }}
+      env:
+        - name: PORT
+          value: '8082'

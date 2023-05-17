@@ -875,6 +875,11 @@
       "items": {"type": "object"},
       "description": "Additional sidecar containers to be added to the Pod"
     },
+    "sidecarsTemplates": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Strings to be templated providing additional sidecar containers to be added to the Pod"
+    },
     "rbac": {
       "type": "object",
       "properties": {

@@ -166,6 +166,7 @@ alerting:
     criticalCodes: [Internal, Unimplemented]
 
 sidecars: []
+sidecarTemplates: []
 
 rbac:
   roles: []
