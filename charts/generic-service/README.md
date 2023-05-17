@@ -77,7 +77,7 @@ app:
 | `autoscaling.behavior`              | `{}`                        | Scaling behavior configuration (see `HorizontalPodAutoscalerBehavior`)                                   |
 | `scheduling.nodeSelector`           | `{}`                        | Labels to select nodes this service may be run on                                                        |
 | `scheduling.nodePeferences`         | `{}`                        | Sets of label values to select nodes this service should be run on if possible                           |
-| `scheduling.nodeExclusions`         | `{}`                        | Sets of label values to select nodes this service must not run on.                                       |
+| `scheduling.nodeExclusions`         | `{}`                        | Sets of label values to select nodes this service must not run on                                        |
 | `scheduling.podAffinity`            | `{}`                        | Labels to select other pods this service should share nodes with if possible                             |
 | `scheduling.enforceReplicaSpread`   | `false`                     | Make even spread of replicas across nodes mandatory                                                      |
 | `persistence.enabled`               | `false`                     | Enables persistent storage for the service                                                               |
@@ -98,7 +98,7 @@ app:
 | `ingress.tls.enabled`               | `false`                     | Enables TLS termination at the ingress (not applicable if `ingress.istio.enabled`)                       |
 | `ingress.tls.secret`                | `{{ .Release.Name }}-tls`   | The name of the `Secret` holding the TLS private key (not applicable if `ingress.istio.enabled`)         |
 | `ingress.cors.enabled`              | `false`                     | Enables CORS (only applicable if `ingress.class` is `nginx` or `ingress.istio.enabled` is `true`)        |
-| `ingress.cors.allowOrigin`         | `[]`                        | List of origins allowed to access the ingress via CORS; leave empty to allow any                         |
+| `ingress.cors.allowOrigin`          | `[]`                        | List of origins allowed to access the ingress via CORS; leave empty to allow any                         |
 | `ingress.cors.allowMethods`         | `[GET]`                     | List of HTTP methods allowed to access the ingress via CORS                                              |
 | `ingress.cors.allowHeaders`         | `[Content-Type]`            | List of HTTP headers that can be used when requesting the ingress via CORS                               |
 | `ingress.cors.allowCredentials`     | `true`                      | Indicates whether the caller is allowed to send the actual request (not the preflight) using credentials |
@@ -107,7 +107,7 @@ app:
 | `ingress.annotations`               | `{}`                        | Annotations for `Ingress` resource (not applicable if `ingress.istio.enabled`)                           |
 | `ingress.headless`                  | `false`                     | Makes the `Service` headless to disable Kubernetes-based load balancing                                  |
 | `ingress.nodeLocal`                 | `false`                     | Creates an additional `Service` with the suffix `-local` that only routes to pods on the same node       |
-| `ingress.additionalSelectors`       | `{}`                        | Additional label selectors used to restrict the `Pod`s selected by the `Service`.                        |
+| `ingress.additionalSelectors`       | `{}`                        | Additional label selectors used to restrict the `Pod`s selected by the `Service`                         |
 | `ingress.istio.enabled`             | `false`                     | Use Istio `VirtualService` instead of Kubernetes `Ingress` resource                                      |
 | `ingress.istio.gateways`            | `[]`                        | The names of the Istio `Gateway`s to use                                                                 |
 | `ingress.istio.httpHeaders`         | `{}`                        | Custom HTTP response headers                                                                             |
