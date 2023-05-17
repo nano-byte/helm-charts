@@ -12,19 +12,15 @@ metadata:
   {{- if eq $class "nginx" }}
     nginx.ingress.kubernetes.io/backend-protocol: {{ if $extra.port }}{{ $extra.protocol | default "http" | upper }}{{ else }}{{ $.Values.ingress.protocol | upper }}{{ end }}
   {{- end }}
-  {{- if $.Values.ingress.annotations }}
-    {{- if $extra.annotations }}
-      {{- $merged := deepCopy $.Values.ingress.annotations | mustMerge $extra.annotations }}
-      {{- range $mname, $mvalue := $merged }}
-        {{- if ne $mvalue "nil" }}
-          {{- dict $mname $mvalue | toYaml | nindent 4 }}
-        {{- end }}
+  {{- if $extra.annotations }}
+    {{- $merged := deepCopy $.Values.ingress.annotations | mustMerge $extra.annotations }}
+    {{- range $mname, $mvalue := $merged }}
+      {{- if ne $mvalue "nil" }}
+        {{- dict $mname $mvalue | toYaml | nindent 4 }}
       {{- end }}
-    {{- else }}
-      {{- $.Values.ingress.annotations | toYaml | nindent 4 }}
     {{- end }}
-  {{- else if $extra.annotations }}
-    {{- $extra.annotations | toYaml | nindent 4 }}
+  {{- else if $.Values.ingress.annotations }}
+    {{- $.Values.ingress.annotations | toYaml | nindent 4 }}
   {{- end }}
 
 spec:
