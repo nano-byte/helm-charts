@@ -95,6 +95,7 @@ ingress:
   enabled: false
   port: 80
   protocol: http
+  timeoutSeconds: null
   domains: []
   paths: []
   tls:
@@ -116,7 +117,6 @@ ingress:
     enabled: false
     gateways: []
     httpHeaders: {}
-    timeout: 15s
     retries: {}
   extra: {}
 

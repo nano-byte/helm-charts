@@ -8,6 +8,9 @@ metadata:
   annotations:
   {{- if eq .Values.ingress.class "nginx" }}
     nginx.ingress.kubernetes.io/backend-protocol: {{ .Values.ingress.protocol | upper }}
+    {{- if .Values.ingress.timeoutSeconds }}
+    nginx.ingress.kubernetes.io/proxy-read-timeout: '{{ .Values.ingress.timeoutSeconds }}'
+    {{- end }}
     {{- if .Values.ingress.cors.enabled }}
     nginx.ingress.kubernetes.io/enable-cors: 'true'
     {{ if .Values.ingress.cors.allowOrigin }}nginx.ingress.kubernetes.io/cors-allow-origin: {{ join "," .Values.ingress.cors.allowOrigin | quote }}{{ end }}

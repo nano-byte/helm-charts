@@ -27,7 +27,7 @@ spec:
             - grpc-metadata-server
             - grpc-metadata-x-envoy-upstream-service-time
       corsPolicy: {{- include "generic-service.istio-cors-policy" . | nindent 8 }}
-      timeout: {{ $.Values.ingress.istio.timeout }}
+      {{- if $.Values.ingress.timeoutSeconds }}timeout: {{ $.Values.ingress.timeoutSeconds | duration }}{{ end }}
       retries: {{- $.Values.ingress.istio.retries | toYaml | nindent 8 }}
     {{- end }}
   {{- else }}
@@ -37,7 +37,7 @@ spec:
             port:
               number: 80
       corsPolicy: {{- include "generic-service.istio-cors-policy" . | nindent 8 }}
-      timeout: {{ .Values.ingress.istio.timeout }}
+      {{- if $.Values.ingress.timeoutSeconds }}timeout: {{ $.Values.ingress.timeoutSeconds | duration }}{{ end }}
       retries: {{- .Values.ingress.istio.retries | toYaml | nindent 8 }}
   {{- end }}
 

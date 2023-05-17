@@ -93,6 +93,7 @@ app:
 | `ingress.enabled`                   | `false`                     | Enables ingress into the service (either cluster-internal or public)                                     |
 | `ingress.port`                      | `80`                        | The container port ingress traffic is routed to                                                          |
 | `ingress.protocol`                  | `http`                      | The internal protocol used for ingress (e.g., `http`, `https`, `grpc` or `grpcs`)                        |
+| `ingress.timeoutSeconds`            |                             | Number of seconds after which to timeout waiting for response from service                               |
 | `ingress.domains`                   | `[]`                        | The public domain names under which the service is exposed (leave empty for cluster-internal only)       |
 | `ingress.paths`                     | `[]`                        | HTTP path prefixes to accept ingress traffic for (leave empty to accept traffic for any path)            |
 | `ingress.tls.enabled`               | `false`                     | Enables TLS termination at the ingress (not applicable if `ingress.istio.enabled`)                       |
@@ -111,11 +112,11 @@ app:
 | `ingress.istio.enabled`             | `false`                     | Use Istio `VirtualService` instead of Kubernetes `Ingress` resource                                      |
 | `ingress.istio.gateways`            | `[]`                        | The names of the Istio `Gateway`s to use                                                                 |
 | `ingress.istio.httpHeaders`         | `{}`                        | Custom HTTP response headers                                                                             |
-| `ingress.istio.timeout`             | `15s`                       | [Istio timeout](https://istio.io/docs/tasks/traffic-management/request-timeouts/)                        |
 | `ingress.istio.retries`             | `{}`                        | [Istio retry policy](https://istio.io/docs/reference/config/networking/virtual-service/#HTTPRetry)       |
 | `ingress.extra.*.class`             | same as `ingress.class`     | Additional ingress controller to use (not applicable if `ingress.istio.enabled`)                         |
 | `ingress.extra.*.port`              | same as `ingress.port`      | Additional container port ingress traffic is routed to (not applicable if `ingress.istio.enabled`)       |
 | `ingress.extra.*.protocol`          | `http`                      | The protocol used for the port (e.g., `http` or `grpc`)                                                  |
+| `ingress.extra.*.timeoutSeconds`    |                             | Number of seconds after which to timeout waiting for response from service                               |
 | `ingress.extra.*.domains`           | `[]`                        | The public domain names under which the port is exposed (leave empty for cluster-internal only)          |
 | `ingress.extra.*.paths`             | `[]`                        | HTTP path prefixes to accept ingress traffic for (leave empty to accept traffic for any path)            |
 | `ingress.extra.*.tls.enabled`       | `false`                     | Enables TLS termination at the ingress                                                                   |

@@ -485,6 +485,10 @@
           "enum": ["http", "https", "grpc", "grpcs"],
           "description": "The internal protocol used for ingress"
         },
+        "timeoutSeconds": {
+          "type": ["integer", "null"],
+          "description": "Number of seconds after which to timeout waiting for response from service"
+        },
         "domains": {
           "type": "array",
           "items": {"type": "string"},
@@ -591,11 +595,6 @@
               "additionalProperties": {"type": "string"},
               "description": "Custom HTTP response headers"
             },
-            "timeout": {
-              "type": "string",
-              "default": "15s",
-              "description": "Istio timeout (see https://istio.io/docs/tasks/traffic-management/request-timeouts/)"
-            },
             "retries": {
               "type": "object",
               "description": "Istio retry policy (see https://istio.io/docs/reference/config/networking/virtual-service/#HTTPRetry)"
@@ -620,6 +619,10 @@
                 "type": "string",
                 "default": "http",
                 "description": "The protocol used for the port (e.g., http or grpc)"
+              },
+              "timeoutSeconds": {
+                "type": ["integer", "null"],
+                "description": "Number of seconds after which to timeout waiting for response from service"
               },
               "domains": {
                 "type": "array",
