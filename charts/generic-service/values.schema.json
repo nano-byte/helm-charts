@@ -826,7 +826,7 @@
               "default": 0,
               "description": "The maximum number of critical gRPC errors responses in the sample interval"
             },
-            "criticalStatusCodes": {
+            "criticalCodes": {
               "type": "array",
               "items": {"type": "string"},
               "default": ["Internal", "Unimplemented"],

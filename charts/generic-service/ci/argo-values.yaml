@@ -11,4 +11,4 @@ ingress:
 rollout:
   controller: ArgoRollout
   strategy: BlueGreen
-  autoPromotionEnabled: true
+  autoPromotion: true
