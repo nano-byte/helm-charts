@@ -189,8 +189,10 @@ spec:
           whenUnsatisfiable: {{ if .Values.scheduling.enforceReplicaSpread }}DoNotSchedule{{ else }}ScheduleAnyway{{ end }}
           labelSelector:
             matchLabels: {{- include "generic-service.selector-labels" . | nindent 14 }}
+              {{- if or .Values.version (not (hasPrefix "@" .Values.image.tag)) }}
               # Allow rebalancing during update
               version: {{ .Values.version | default .Values.image.tag | quote }}
+              {{- end }}
 
       affinity:
         {{- if .Values.scheduling.podAffinity }}
