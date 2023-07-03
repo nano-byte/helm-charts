@@ -169,7 +169,7 @@ spec:
             secretName: {{ tpl $name $ }}
         {{- end }}
         {{- range $_, $volume := .Values.additionalMounts }}
-        - {{ tpl ($volume | toJson) $ }}
+        - {{ tpl ($volume | toYaml) $ | nindent 10 }}
         {{- end }}
 
       {{- if .Values.image.pullSecret }}
