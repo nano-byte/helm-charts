@@ -278,8 +278,10 @@ spec:
               mountPath: {{ $secret.mountPath }}
             {{- end }}
             {{- range $path, $volume := .Values.additionalMounts }}
-            - name: {{ $volume.name }}
+            {{- if ne $path "_" }}
+            - name: {{ tpl $volume.name $ }}
               mountPath: {{ $path }}
+            {{- end }}
             {{- end }}
 
           ports:
