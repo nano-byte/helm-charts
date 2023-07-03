@@ -21,10 +21,6 @@ spec:
   {{- .Values.ingress.additionalSelectors | toYaml | nindent 4 }}
   {{- end }}
 
-  {{- if .Values.ingress.headless }}
-  clusterIP: None
-  {{- end }}
-
   ports:
     - name: '{{ .Values.ingress.protocol }}-ingress'
       port: 80
@@ -33,9 +29,35 @@ spec:
     {{- if $extra.port }}
     - name: {{ $extra.protocol | default "http" }}-{{ $name }}
       port: {{ $extra.port }}
-      targetPort: {{ $extra.port }}
     {{- end }}
     {{- end }}
+
+{{- if .Values.ingress.headless }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: '{{ include "generic-service.fullname" . }}-headless'
+  labels: {{- include "generic-service.default-labels" . | nindent 4 }}
+
+spec:
+  selector: {{- include "generic-service.selector-labels" . | nindent 4 }}
+    {{- if .Values.ingress.additionalSelectors }}
+    {{- .Values.ingress.additionalSelectors | toYaml | nindent 4 }}
+    {{- end }}
+
+  clusterIP: None
+
+  ports:
+    - name: '{{ .Values.ingress.protocol }}-ingress'
+      port: {{ .Values.ingress.port }}
+    {{- range $name, $extra := .Values.ingress.extra }}
+    {{- if $extra.port }}
+    - name: {{ $extra.protocol | default "http" }}-{{ $name }}
+      port: {{ $extra.port }}
+    {{- end }}
+    {{- end }}
+{{- end }}
 
 {{- if .Values.ingress.nodeLocal }}
 ---
@@ -47,9 +69,6 @@ metadata:
 
 spec:
   selector: {{- include "generic-service.selector-labels" . | nindent 4 }}
-    {{- if .Values.ingress.additionalSelectors }}
-    {{- .Values.ingress.additionalSelectors | toYaml | nindent 4 }}
-    {{- end }}
 
   internalTrafficPolicy: Local
 
@@ -57,6 +76,12 @@ spec:
     - name: '{{ .Values.ingress.protocol }}-ingress'
       port: 80
       targetPort: {{ .Values.ingress.port }}
+    {{- range $name, $extra := .Values.ingress.extra }}
+    {{- if $extra.port }}
+    - name: {{ $extra.protocol | default "http" }}-{{ $name }}
+      port: {{ $extra.port }}
+    {{- end }}
+    {{- end }}
 {{- end }}
 
 {{- if eq .Values.rollout.controller "ArgoRollout" }}
@@ -81,6 +106,12 @@ spec:
     - name: '{{ .Values.ingress.protocol }}-ingress'
       port: 80
       targetPort: {{ .Values.ingress.port }}
+    {{- range $name, $extra := .Values.ingress.extra }}
+    {{- if $extra.port }}
+    - name: {{ $extra.protocol | default "http" }}-{{ $name }}
+      port: {{ $extra.port }}
+    {{- end }}
+    {{- end }}
 {{- end }}
 
 {{- end }}

@@ -565,7 +565,7 @@
         "headless": {
           "type": "boolean",
           "default": false,
-          "description": "Makes the Service headless to disable Kubernetes-based load balancing"
+          "description": "Creates an additional Service with the suffix '-headless' that directly exposes Pod IPs"
         },
         "nodeLocal": {
           "type": "boolean",
