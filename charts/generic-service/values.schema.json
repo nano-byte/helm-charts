@@ -567,6 +567,11 @@
           "default": false,
           "description": "Creates an additional Service with the suffix '-headless' that directly exposes Pod IPs"
         },
+        "headlessExposesAll": {
+          "type": "boolean",
+          "default": false,
+          "description": "Exposes all replicas, including unready ones, via the '-headless' Service"
+        },
         "nodeLocal": {
           "type": "boolean",
           "default": false,

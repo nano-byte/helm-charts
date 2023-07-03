@@ -42,11 +42,12 @@ metadata:
 
 spec:
   selector: {{- include "generic-service.selector-labels" . | nindent 4 }}
-    {{- if .Values.ingress.additionalSelectors }}
+    {{- if and .Values.ingress.additionalSelectors (not .Values.ingress.headlessExposesAll) }}
     {{- .Values.ingress.additionalSelectors | toYaml | nindent 4 }}
     {{- end }}
 
   clusterIP: None
+  publishNotReadyAddresses: {{ .Values.ingress.headlessExposesAll }}
 
   ports:
     - name: '{{ .Values.ingress.protocol }}-ingress'

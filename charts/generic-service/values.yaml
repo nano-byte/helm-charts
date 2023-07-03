@@ -111,6 +111,7 @@ ingress:
   class: ''
   annotations: {}
   headless: false
+  headlessExposesAll: false
   nodeLocal: false
   additionalSelectors: {}
   istio:

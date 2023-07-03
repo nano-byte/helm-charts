@@ -107,6 +107,7 @@ app:
 | `ingress.class`                     |                             | The ingress controller to use (not applicable if `ingress.istio.enabled`)                                |
 | `ingress.annotations`               | `{}`                        | Annotations for `Ingress` resource (not applicable if `ingress.istio.enabled`)                           |
 | `ingress.headless`                  | `false`                     | Creates an additional `Service` with the suffix `-headless` that directly exposes Pod IPs                |
+| `ingress.headlessExposesAll`        | `false`                     | Exposes all replicas, including unready ones, via the `-headless` `Service`                              |
 | `ingress.nodeLocal`                 | `false`                     | Creates an additional `Service` with the suffix `-local` that only routes to pods on the same node       |
 | `ingress.additionalSelectors`       | `{}`                        | Additional label selectors used to restrict the `Pod`s selected by the `Service`                         |
 | `ingress.istio.enabled`             | `false`                     | Use Istio `VirtualService` instead of Kubernetes `Ingress` resource                                      |
