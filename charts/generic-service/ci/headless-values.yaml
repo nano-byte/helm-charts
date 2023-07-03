@@ -1,4 +1,4 @@
-# Node-local ingress test
+# Headless service test
 
 image:
   repository: jwilder/whoami
@@ -7,4 +7,5 @@ image:
 ingress:
   enabled: true
   port: 8000
-  nodeLocal: true
+  headless: true
+  headlessExposesAll: true
