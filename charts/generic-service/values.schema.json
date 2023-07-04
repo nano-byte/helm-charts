@@ -361,6 +361,10 @@
     "scheduling": {
       "type": "object",
       "properties": {
+        "priority": {
+          "type": "string",
+          "description": "The name of the PriorityClass to use for scheduling this service"
+        },
         "nodeSelector": {
           "type": "object",
           "additionalProperties": {"type": "string"},

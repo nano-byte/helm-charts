@@ -183,6 +183,10 @@ spec:
 
       terminationGracePeriodSeconds: {{ .Values.maxShutdownSeconds | int }}
 
+      {{- if .Values.scheduling.priority }}
+      priorityClassName: {{ .Values.scheduling.priority }}
+      {{- end }}
+
       topologySpreadConstraints:
         - maxSkew: 1
           topologyKey: kubernetes.io/hostname

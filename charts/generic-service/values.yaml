@@ -74,6 +74,7 @@ autoscaling:
   behavior: {}
 
 scheduling:
+  priority: ''
   nodeSelector: {}
   nodePreferences: {}
   nodeExclusions: {}

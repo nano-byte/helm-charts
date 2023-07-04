@@ -75,6 +75,7 @@ app:
 | `autoscaling.metric.selector`       | `{}`                        | Labels for selecting the metric as a key-value map                                                       |
 | `autoscaling.targetValue`           | `80`                        | The desired value of the metric to achieve through scaling (e.g., CPU utilization in percent)            |
 | `autoscaling.behavior`              | `{}`                        | Scaling behavior configuration (see `HorizontalPodAutoscalerBehavior`)                                   |
+| `scheduling.priority`               |                             | The name of the `PriorityClass` to use for scheduling this service                                       |
 | `scheduling.nodeSelector`           | `{}`                        | Labels to select nodes this service may be run on                                                        |
 | `scheduling.nodePeferences`         | `{}`                        | Sets of label values to select nodes this service should be run on if possible                           |
 | `scheduling.nodeExclusions`         | `{}`                        | Sets of label values to select nodes this service must not run on                                        |
