@@ -154,6 +154,17 @@ app:
 | `alerting.grpc.maxErrorRatio`       | `2.5`                       | The maximum gRPC error ratio increase in the sample interval compared to the reference interval          |
 | `alerting.grpc.maxCriticalErrors`   | `0`                         | The maximum number of critical gRPC errors responses in the sample interval                              |
 | `alerting.grpc.criticalCodes`       | `[Internal, Unimplemented]` | Which gRPC status codes are considered critical errors                                                   |
+| `alerting.custom.*.metric`          | __required if used__        | The name of the Prometheus metric exposed by the service                                                 |
+| `alerting.custom.*.metricLabels`    | `{}`                        | Labels to use for filtering the metric                                                                   |
+| `alerting.custom.*.aggregate`       | __required if used__        | The aggregate function to use to combine metric values from multiple replicas (e.g., `max` or `sum`)     |
+| `alerting.custom.*.increaseOver`    |                             | A sliding window in which to calculate the increase of the metric (e.g., `10m`)                          |
+| `alerting.custom.*.averageOver`     |                             | A sliding window in which to calculate the average value of the metric (e.g., `10m`)                     |
+| `alerting.custom.*.round`           | `false`                     | Round the result before evaluating the predicate                                                         |
+| `alerting.custom.*.predicate`       | __required if used__        | An expression that triggers the alert when the metric fulfills it                                        |
+| `alerting.custom.*.severity`        | `warning`                   | The severity of the alert                                                                                |
+| `alerting.custom.*.topic`           |                             | The severity of the alert                                                                                |
+| `alerting.custom.*.summary`         | __required if used__        | A short summary of the alert                                                                             |
+| `alerting.custom.*.description`     | __required if used__        | A longer description of the alert; can include metric labels via templating                              |
 | `sidecars`                          | `[]`                        | Additional sidecar containers to be added to the `Pod`                                                   |
 | `sidecarTemplates`                  | `[]`                        | Strings to be templated providing additional sidecar containers to be added to the Pod                   |
 | `rbac.roles`                        | `[]`                        | Namespace-specific Kubernetes RBAC Roles to assign to the service (supports templating)                  |

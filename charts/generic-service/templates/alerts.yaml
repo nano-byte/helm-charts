@@ -201,4 +201,28 @@ spec:
         {{- end }}
       {{- end }}
 
+      {{- range $name, $props := .Values.alerting.custom }}
+      {{- if not $.Values.monitoring.enabled }}{{ fail "Custom alerts can only be used when monitoring.enabled is true" }}{{ end }}
+        - alert: {{ $name | quote }}
+          expr: |
+            {{ $props.aggregate | required "alert aggregate required" }}(
+              {{- if $props.round }}round({{ end }}
+              {{- if $props.increaseOver }}increase({{ end }}
+              {{- if $props.averageOver }}avg_over_time({{ end }}
+                {{ $props.metric | required "alert metric required" }}{
+                  namespace="{{ $.Release.Namespace }}", release="{{ $.Release.Name }}"{{ range $key, $val := $props.metricLabels }}, {{ $key }}={{ tpl $val $ | quote }}{{ end }}
+                }
+              {{- if $props.averageOver }}[{{ $props.averageOver }}]){{ end }}
+              {{- if $props.increaseOver }}[{{ $props.increaseOver }}]){{ end }}
+              {{- if $props.round }}){{ end }}
+            )
+            {{ $props.predicate | required "alert predicate required" }}
+          labels: {{- include "generic-service.alert-labels" $ | nindent 12 }} {{ $props.severity | default "warning" }}
+          {{- if $props.topic }}
+            topic: {{ $props.topic }}
+          {{- end }}
+          annotations: {{- include "generic-service.alert-annotations" $ | nindent 12 }} {{ $props.summary | required "alert summary required" }}
+            description: {{ $props.description | required "alert description required" | quote }}
+      {{- end }}
+
 {{- end }}

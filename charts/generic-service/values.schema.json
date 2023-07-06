@@ -879,6 +879,64 @@
           },
           "additionalProperties": false
         },
+        "custom": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "metric": {
+                "type": "string",
+                "description": "The name of the Prometheus metric exposed by the service"
+              },
+              "metricLabels": {
+                "type": "object",
+                "additionalProperties": {"type": "string"},
+                "description": "Labels to use for filtering the metric"
+              },
+              "aggregate": {
+                "type": "string",
+                "description": "The aggregate function to use to combine metric values from multiple replicas (e.g., max or sum)"
+              },
+              "increaseOver": {
+                "type": "string",
+                "description": "A sliding window in which to calculate the increase of the metric (e.g., 10m)"
+              },
+              "averageOver": {
+                "type": "string",
+                "description": "A sliding window in which to calculate the average value of the metric (e.g., 10m)"
+              },
+              "round": {
+                "type": "boolean",
+                "default": false,
+                "description": "Round the result before evaluating the predicate"
+              },
+              "predicate": {
+                "type": "string",
+                "description": "An expression that triggers the alert when the metric fulfills it"
+              },
+              "severity": {
+                "type": "string",
+                "default": "warning",
+                "description": "The severity of the alert"
+              },
+              "topic": {
+                "type": "string",
+                "description": "An optional topic label for the alert"
+              },
+              "summary": {
+                "type": "string",
+                "description": "A short summary of the alert"
+              },
+              "description": {
+                "type": "string",
+                "description": "A longer description of the alert; can include metric labels via templating"
+              }
+            },
+            "required": ["metric", "aggregate", "predicate", "summary", "description"],
+            "additionalProperties": false
+          },
+          "description": "Additional alerts based on Prometheus metrics exposed by the service"
+        },
         "additionalProperties": false
       }
     },

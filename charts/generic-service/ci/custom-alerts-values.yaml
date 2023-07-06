@@ -1,0 +1,20 @@
+# custom alerts test
+
+image:
+  repository: jwilder/whoami
+  tag: latest
+
+monitoring:
+  enabled: true
+
+alerting:
+  enabled: true
+  custom:
+    MyCustomAlert:
+      metric: some_metric
+      metricLabels:
+        someKey: someValue
+      aggregate: sum
+      predicate: '> 100'
+      summary: some metric too high
+      description: Some metric is {{ $value }}, which is too high.
