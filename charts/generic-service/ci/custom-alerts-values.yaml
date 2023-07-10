@@ -12,8 +12,7 @@ alerting:
   custom:
     MyCustomAlert:
       metric: some_metric
-      metricLabels:
-        someKey: someValue
+      labelMatchers: some_key="some_value"
       aggregate: sum
       predicate: '> 100'
       summary: some metric too high

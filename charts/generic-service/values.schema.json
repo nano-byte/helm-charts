@@ -888,10 +888,9 @@
                 "type": "string",
                 "description": "The name of the Prometheus metric exposed by the service"
               },
-              "metricLabels": {
-                "type": "object",
-                "additionalProperties": {"type": "string"},
-                "description": "Labels to use for filtering the metric"
+              "labelMatchers": {
+                "type": "string",
+                "description": "Prometheus label matchers to use for filtering the metric (e.g., some_key=\"some_value\")"
               },
               "aggregate": {
                 "type": "string",

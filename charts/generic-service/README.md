@@ -155,7 +155,7 @@ app:
 | `alerting.grpc.maxCriticalErrors`   | `0`                         | The maximum number of critical gRPC errors responses in the sample interval                              |
 | `alerting.grpc.criticalCodes`       | `[Internal, Unimplemented]` | Which gRPC status codes are considered critical errors                                                   |
 | `alerting.custom.*.metric`          | __required if used__        | The name of the Prometheus metric exposed by the service                                                 |
-| `alerting.custom.*.metricLabels`    | `{}`                        | Labels to use for filtering the metric                                                                   |
+| `alerting.custom.*.labelMatchers`   |                             | Prometheus label matchers to use for filtering the metric (e.g., `some_key="some_value"`)                |
 | `alerting.custom.*.aggregate`       | __required if used__        | The aggregate function to use to combine metric values from multiple replicas (e.g., `max` or `sum`)     |
 | `alerting.custom.*.increaseOver`    |                             | A sliding window in which to calculate the increase of the metric (e.g., `10m`)                          |
 | `alerting.custom.*.averageOver`     |                             | A sliding window in which to calculate the average value of the metric (e.g., `10m`)                     |

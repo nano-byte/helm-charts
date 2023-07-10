@@ -210,7 +210,7 @@ spec:
               {{- if $props.increaseOver }}increase({{ end }}
               {{- if $props.averageOver }}avg_over_time({{ end }}
                 {{ $props.metric | required "alert metric required" }}{
-                  namespace="{{ $.Release.Namespace }}", release="{{ $.Release.Name }}"{{ range $key, $val := $props.metricLabels }}, {{ $key }}={{ tpl $val $ | quote }}{{ end }}
+                  namespace="{{ $.Release.Namespace }}", release="{{ $.Release.Name }}"{{ if $props.labelMatchers }}, {{ tpl $props.labelMatchers $ }}{{ end }}
                 }
               {{- if $props.averageOver }}[{{ $props.averageOver }}]){{ end }}
               {{- if $props.increaseOver }}[{{ $props.increaseOver }}]){{ end }}
