@@ -21,7 +21,7 @@ jobs:
 
       # Install
       - name: Set up Kubernetes
-        uses: helm/kind-action@v1.7.0
+        uses: helm/kind-action@v1.8.0
       - name: Install CRDs
         run: |
           kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/main/example/prometheus-operator-crd/monitoring.coreos.com_podmonitors.yaml
