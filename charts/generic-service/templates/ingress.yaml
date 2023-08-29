@@ -10,6 +10,9 @@ metadata:
     nginx.ingress.kubernetes.io/backend-protocol: {{ .Values.ingress.protocol | upper }}
     {{- if .Values.ingress.timeoutSeconds }}
     nginx.ingress.kubernetes.io/proxy-read-timeout: '{{ .Values.ingress.timeoutSeconds }}'
+    {{- if eq .Values.ingress.protocol "grpc" }}
+    nginx.ingress.kubernetes.io/server-snippet: "grpc_read_timeout {{ .Values.ingress.timeoutSeconds }}s;"
+    {{- end }}
     {{- end }}
     {{- if .Values.ingress.cors.enabled }}
     nginx.ingress.kubernetes.io/enable-cors: 'true'

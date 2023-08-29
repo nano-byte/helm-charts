@@ -13,6 +13,9 @@ metadata:
     nginx.ingress.kubernetes.io/backend-protocol: {{ if $extra.port }}{{ $extra.protocol | default "http" | upper }}{{ else }}{{ $.Values.ingress.protocol | upper }}{{ end }}
     {{- if or $extra.timeoutSeconds $.Values.ingress.timeoutSeconds }}
     nginx.ingress.kubernetes.io/proxy-read-timeout: '{{ $extra.timeoutSeconds | default $.Values.ingress.timeoutSeconds }}'
+    {{- if eq $extra.protocol "grpc" }}
+    nginx.ingress.kubernetes.io/server-snippet: "grpc_read_timeout {{ $extra.timeoutSeconds | default $.Values.ingress.timeoutSeconds }}s;"
+    {{- end }}
     {{- end }}
   {{- end }}
   {{- if $extra.annotations }}
