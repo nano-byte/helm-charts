@@ -10,7 +10,7 @@ roleRef:
   name: {{ tpl . $ }}
 subjects:
   - kind: ServiceAccount
-    name: '{{ include "generic-service.fullname" $ }}'
+    name: '{{ $.Values.rbac.existingServiceAccount | default (include "generic-service.fullname" $) }}'
 ---
 {{- end }}
 
@@ -27,12 +27,12 @@ roleRef:
   name: {{ tpl . $ }}
 subjects:
   - kind: ServiceAccount
-    name: '{{ include "generic-service.fullname" $ }}'
+    name: '{{ $.Values.rbac.existingServiceAccount | default (include "generic-service.fullname" $) }}'
     namespace: '{{ $.Release.Namespace }}'
 ---
 {{- end }}
 
-{{- if or .Values.rbac.roles .Values.rbac.clusterRoles }}
+{{- if and (not .Values.rbac.existingServiceAccount) (or .Values.rbac.roles .Values.rbac.clusterRoles) }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:

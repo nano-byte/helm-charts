@@ -1,0 +1,7 @@
+# RBAC test
+
+image:
+  repository: jwilder/whoami
+  tag: latest
+rbac:
+  clusterRoles: [view]

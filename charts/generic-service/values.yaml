@@ -181,6 +181,7 @@ sidecarTemplates: []
 rbac:
   roles: []
   clusterRoles: []
+  existingServiceAccount: ''
 
 global:
   alertLabels: {}

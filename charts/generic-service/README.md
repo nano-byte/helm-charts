@@ -171,6 +171,7 @@ app:
 | `sidecarTemplates`                  | `[]`                        | Strings to be templated providing additional sidecar containers to be added to the Pod                   |
 | `rbac.roles`                        | `[]`                        | Namespace-specific Kubernetes RBAC Roles to assign to the service (supports templating)                  |
 | `rbac.clusterRoles`                 | `[]`                        | Cluster-wide Kubernetes RBAC Roles to assign to the service (supports templating)                        |
+| `rbac.existingServiceAccount`       |                             | The name of an existing service account to use (instead of automatically creating one for the service)   |
 | `global.alertLabels`                | `{}`                        | Additional labels to apply to alert rules                                                                |
 | `global.grafana.url`                |                             | The URL of a Grafana instance with access to the service's metrics                                       |
 | `global.grafana.dashboard`          | `qqsCbY5Zz`                 | The UID of the Grafana dashboard visualizing the service's metrics                                       |

@@ -1,0 +1,8 @@
+# RBAC with existing ServiceAccount test
+
+image:
+  repository: jwilder/whoami
+  tag: latest
+rbac:
+  clusterRoles: [view]
+  existingServiceAccount: default
