@@ -79,6 +79,7 @@ app:
 | `scheduling.nodeSelector`           | `{}`                        | Labels to select nodes this service may be run on                                                        |
 | `scheduling.nodePeferences`         | `{}`                        | Sets of label values to select nodes this service should be run on if possible                           |
 | `scheduling.nodeExclusions`         | `{}`                        | Sets of label values to select nodes this service must not run on                                        |
+| `scheduling.tolerations`            | `[]`                        | Taints on nodes this service can tolerate                                                                |
 | `scheduling.podAffinity`            | `{}`                        | Labels to select other pods this service should share nodes with if possible                             |
 | `scheduling.podAntiAffinity`        | `{}`                        | Labels to select other pods this service must not share nodes with                                       |
 | `scheduling.replicaSpread`          | `BestEffort`                | How to spread replicas across nodes (`BestEffort`, `Strict`, `None`)                                     |

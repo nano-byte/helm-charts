@@ -386,6 +386,11 @@
           },
           "description": "Sets of label values to select nodes this service must not run on"
         },
+        "tolerations": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Taints on nodes this service can tolerate"
+        },
         "podAffinity": {
           "type": "object",
           "additionalProperties": {"type": "string"},

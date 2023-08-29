@@ -252,11 +252,13 @@ spec:
 
       {{- if .Values.scheduling.nodeSelector }}
       nodeSelector: {{- .Values.scheduling.nodeSelector | toYaml | nindent 8 }}
+      {{- end }}
+
+      {{- if .Values.scheduling.tolerations }}
       tolerations:
-        {{- range $key, $val := .Values.scheduling.nodeSelector }}
+        {{- range $key:= .Values.scheduling.tolerations }}
         - key: {{ $key | quote }}
-          operator: Equal
-          value: {{ $val | quote }}
+          operator: Exists
         {{- end }}
       {{- end }}
 

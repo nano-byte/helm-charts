@@ -83,6 +83,7 @@ scheduling:
   nodeSelector: {}
   nodePreferences: {}
   nodeExclusions: {}
+  tolerations: []
   podAffinity: {}
   podAntiAffinity: {}
   replicaSpread: BestEffort
