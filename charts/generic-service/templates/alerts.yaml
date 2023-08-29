@@ -118,7 +118,7 @@ spec:
           labels: {{- include "generic-service.alert-labels" . | nindent 12 }} warning
             topic: quotas
           annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} insufficient CPU request quota in {{ .Release.Namespace }}
-            description: 'The remaining/unused CPU request quota in {{ .Release.Namespace }} ({{"{{ humanize1024 $value }}"}}B) may be insufficient to allow {{ include "generic-service.fullname" . }} to update or restart.'
+            description: 'The remaining/unused CPU request quota in {{ .Release.Namespace }} ({{"{{ $value }}"}} cores) may be insufficient to allow {{ include "generic-service.fullname" . }} to update or restart.'
         - alert: CpuLimitQuotaInsufficient
           expr: |
             min(kube_resourcequota{namespace="{{ .Release.Namespace }}", resource="limits.cpu", type="hard"})
@@ -128,7 +128,7 @@ spec:
           labels: {{- include "generic-service.alert-labels" . | nindent 12 }} warning
             topic: quotas
           annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} insufficient CPU limit quota in {{ .Release.Namespace }}
-            description: 'The remaining/unused CPU limit quota in {{ .Release.Namespace }} ({{"{{ humanize1024 $value }}"}}B) may be insufficient to allow {{ include "generic-service.fullname" . }} to update or restart.'
+            description: 'The remaining/unused CPU limit quota in {{ .Release.Namespace }} ({{"{{ $value }}"}} cores) may be insufficient to allow {{ include "generic-service.fullname" . }} to update or restart.'
         {{- end }}
       {{- end }}
 
@@ -141,7 +141,7 @@ spec:
           labels: {{- include "generic-service.alert-labels" . | nindent 12 }} warning
             topic: resources
           annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} CPU throttling
-            description: '{{"{{ $labels.pod }}"}} was throttled by {{"{{ humanizePercentage $value }}"}} in the last {{ .Values.alerting.cpu.sampleInterval }} because it reached its CPU limit ({{ .Values.resources.limits.cpu }}).'
+            description: '{{"{{ $labels.pod }}"}} was throttled by {{"{{ humanizePercentage $value }}"}} in the last {{ .Values.alerting.cpu.sampleInterval }} because it reached its CPU limit ({{ .Values.resources.limits.cpu }} cores). This may lead to latency spikes.'
       {{- end }}
 
       {{- if .Values.ingress.enabled }}
