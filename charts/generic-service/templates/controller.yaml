@@ -208,7 +208,10 @@ spec:
               podAffinityTerm:
                 topologyKey: kubernetes.io/hostname
                 labelSelector:
-                  matchLabels: {{- .Values.scheduling.podAffinity | toYaml | nindent 20 }}
+                  matchLabels:
+                  {{- range $key, $value := .Values.scheduling.podAffinity }}
+                    {{ $key }}: {{ tpl $value $ | quote }}
+                  {{- end }}
         {{- end }}
 
         {{- if or .Values.scheduling.nodePreferences .Values.scheduling.nodeExclusions }}
