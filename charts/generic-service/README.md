@@ -80,7 +80,7 @@ app:
 | `scheduling.nodePeferences`         | `{}`                        | Sets of label values to select nodes this service should be run on if possible                           |
 | `scheduling.nodeExclusions`         | `{}`                        | Sets of label values to select nodes this service must not run on                                        |
 | `scheduling.podAffinity`            | `{}`                        | Labels to select other pods this service should share nodes with if possible                             |
-| `scheduling.enforceReplicaSpread`   | `false`                     | Make even spread of replicas across nodes mandatory                                                      |
+| `scheduling.replicaSpread`          | `BestEffort`                | How to spread replicas across nodes (`BestEffort`, `Strict`, `None`)                                     |
 | `persistence.enabled`               | `false`                     | Enables persistent storage for the service                                                               |
 | `persistence.storageClass`          |                             | The type of disk to use for storage instead of the cluster default                                       |
 | `persistence.accessModes`           | `[ReadWriteOnce]`           | The support access modes the volume can be mounted with                                                  |

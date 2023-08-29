@@ -12,3 +12,4 @@ scheduling:
     otherKey: [otherValue1, otherValue2]
   podAffinity:
     someKey: someValue
+  replicaSpread: Strict

@@ -187,16 +187,18 @@ spec:
       priorityClassName: {{ .Values.scheduling.priority }}
       {{- end }}
 
+      {{- if ne .Values.scheduling.replicaSpread "None" }}
       topologySpreadConstraints:
         - maxSkew: 1
           topologyKey: kubernetes.io/hostname
-          whenUnsatisfiable: {{ if .Values.scheduling.enforceReplicaSpread }}DoNotSchedule{{ else }}ScheduleAnyway{{ end }}
+          whenUnsatisfiable: {{ if eq .Values.scheduling.replicaSpread "Strict" }}DoNotSchedule{{ else }}ScheduleAnyway{{ end }}
           labelSelector:
             matchLabels: {{- include "generic-service.selector-labels" . | nindent 14 }}
               {{- if or .Values.version (not (hasPrefix "@" .Values.image.tag)) }}
               # Allow rebalancing during update
               version: {{ .Values.version | default .Values.image.tag | quote }}
               {{- end }}
+      {{- end }}
 
       affinity:
         {{- if .Values.scheduling.podAffinity }}

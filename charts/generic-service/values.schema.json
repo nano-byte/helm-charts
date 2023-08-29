@@ -391,10 +391,11 @@
           "additionalProperties": {"type": "string"},
           "description": "Labels to select other pods this service should share nodes with if possible"
         },
-        "enforceReplicaSpread": {
-          "type": "boolean",
-          "default": false,
-          "description": "Make even spread of replicas across nodes mandatory"
+        "replicaSpread": {
+          "type": "string",
+          "enum": ["BestEffort", "Strict", "None"],
+          "default": "BestEffort",
+          "description": "How to spread replicas across nodes"
         }
       },
       "additionalProperties": false
