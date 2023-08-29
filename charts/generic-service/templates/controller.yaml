@@ -229,7 +229,7 @@ spec:
                 {{- range $key, $values := .Values.scheduling.nodeExclusions }}
                 - key: {{ $key | quote }}
                   operator: NotIn
-                  values: {{- $values | toYaml | nindent 22 }}
+                  values: {{- $values | toYaml | nindent 20 }}
                 {{- end }}
           {{- end }}
         {{- end }}
