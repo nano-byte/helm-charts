@@ -214,6 +214,17 @@ spec:
                   {{- end }}
         {{- end }}
 
+        {{- if .Values.scheduling.podAntiAffinity }}
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - topologyKey: topology.kubernetes.io/zone
+              labelSelector:
+                matchLabels:
+                {{- range $key, $value := .Values.scheduling.podAntiAffinity }}
+                  {{ $key }}: {{ tpl $value $ | quote }}
+                {{- end }}
+        {{- end }}
+
         {{- if or .Values.scheduling.nodePreferences .Values.scheduling.nodeExclusions }}
         nodeAffinity:
           {{- if .Values.scheduling.nodePreferences }}

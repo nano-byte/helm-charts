@@ -80,6 +80,7 @@ app:
 | `scheduling.nodePeferences`         | `{}`                        | Sets of label values to select nodes this service should be run on if possible                           |
 | `scheduling.nodeExclusions`         | `{}`                        | Sets of label values to select nodes this service must not run on                                        |
 | `scheduling.podAffinity`            | `{}`                        | Labels to select other pods this service should share nodes with if possible                             |
+| `scheduling.podAntiAffinity`        | `{}`                        | Labels to select other pods this service must not share nodes with                                       |
 | `scheduling.replicaSpread`          | `BestEffort`                | How to spread replicas across nodes (`BestEffort`, `Strict`, `None`)                                     |
 | `persistence.enabled`               | `false`                     | Enables persistent storage for the service                                                               |
 | `persistence.storageClass`          |                             | The type of disk to use for storage instead of the cluster default                                       |

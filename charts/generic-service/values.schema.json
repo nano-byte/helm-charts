@@ -391,6 +391,11 @@
           "additionalProperties": {"type": "string"},
           "description": "Labels to select other pods this service should share nodes with if possible"
         },
+        "podAntiAffinity": {
+          "type": "object",
+          "additionalProperties": {"type": "string"},
+          "description": "Labels to select other pods this service must not share nodes with"
+        },
         "replicaSpread": {
           "type": "string",
           "enum": ["BestEffort", "Strict", "None"],
