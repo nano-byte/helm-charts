@@ -42,8 +42,8 @@ app:
 | `image.tag`                         | __required__                | The tag of the image to run; start with `@` for digest instead of tag (e.g., `@sha256:abc...`)           |
 | `image.pullPolicy`                  | `IfNotPresent`              | Set to `Always` to try to pull new versions of the image                                                 |
 | `image.pullSecret`                  |                             | Name of the Kubernetes Secret providing credentials for pulling the image                                |
-| `securityContext.pod`               | `{}`                        | Security context to use for the pod                                                                      |
-| `securityContext.container`         | `{}`                        | Security context to use for the container                                                                |
+| `securityContext.pod`               | runtime default seccomp     | Security context to use for the pod                                                                      |
+| `securityContext.container`         | drop all capabilites        | Security context to use for the container                                                                |
 | `command`                           | `[]`                        | Overrides the command to launch in the image                                                             |
 | `args`                              | `[]`                        | The command-line arguments passed to the service                                                         |
 | `env`                               | `{}`                        | Environment variables passed to the service as a key-value map                                           |

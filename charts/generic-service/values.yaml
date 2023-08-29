@@ -10,8 +10,13 @@ image:
   pullSecret: ''
 
 securityContext:
-  pod: {}
-  container: {}
+  pod:
+    seccompProfile:
+      type: RuntimeDefault
+  container:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop: [ALL]
 
 command: []
 
