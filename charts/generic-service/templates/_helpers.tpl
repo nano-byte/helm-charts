@@ -1,5 +1,11 @@
 {{ define "generic-service.name" -}}
-  {{ default .Values.name | default .Release.Name }}
+  {{- if .Values.name -}}
+    {{ .Values.name }}
+  {{- else if and .Values.app .Values.app.name -}}
+    {{ .Values.app.name }}
+  {{- else -}}
+    {{ .Release.name }}
+  {{- end -}}
 {{- end }}
 
 
@@ -7,7 +13,12 @@
   {{- if .Values.fullname -}}
     {{ .Values.fullname }}
   {{- else -}}
-    {{ .Release.Name }}{{ if not (contains .Values.name .Release.Name) }}-{{ .Values.name }}{{ end }}
+    {{ .Release.Name }}
+    {{- if .Values.name -}}
+      {{- if not (contains .Values.name .Release.Name) }}-{{ .Values.name }}{{ end }}
+    {{- else if and .Values.app .Values.app.name -}}
+      {{- if not (contains .Values.app.name .Release.Name) }}-{{ .Values.app.name }}{{ end }}
+    {{- end }}
   {{- end -}}
 {{- end }}
 
