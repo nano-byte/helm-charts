@@ -14,6 +14,8 @@ jobs:
           fetch-depth: 0
           show-progress: false
       - uses: azure/setup-helm@v3
+        with:
+          token: ${{github.token}}
 
       # Release
       - name: Configure Git
