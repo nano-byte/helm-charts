@@ -16,7 +16,7 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: '3.x'
-      - uses: helm/chart-testing-action@v2.4.0
+      - uses: helm/chart-testing-action@v2.5.0
 
       # Lint
       - name: Lint charts
