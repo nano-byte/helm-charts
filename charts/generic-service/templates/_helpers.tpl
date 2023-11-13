@@ -4,7 +4,7 @@
   {{- else if and .Values.app .Values.app.name -}}
     {{ .Values.app.name }}
   {{- else -}}
-    {{ .Release.name }}
+    {{ .Release.Name }}
   {{- end -}}
 {{- end }}
 
