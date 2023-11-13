@@ -6,12 +6,15 @@ metadata:
   name: {{ include "generic-service.fullname" . }}
   labels: {{- include "generic-service.default-labels" . | nindent 4 }}
   annotations:
+  {{- if .Values.ingress.annotations }}
+    {{- .Values.ingress.annotations | toYaml | nindent 4 }}
+  {{- end }}
   {{- if eq .Values.ingress.class "nginx" }}
     nginx.ingress.kubernetes.io/backend-protocol: {{ .Values.ingress.protocol | upper }}
     {{- if .Values.ingress.timeoutSeconds }}
     nginx.ingress.kubernetes.io/proxy-read-timeout: '{{ .Values.ingress.timeoutSeconds }}'
     {{- if eq .Values.ingress.protocol "grpc" }}
-    nginx.ingress.kubernetes.io/server-snippet: "grpc_read_timeout {{ .Values.ingress.timeoutSeconds }}s;"
+    nginx.ingress.kubernetes.io/server-snippet: "grpc_read_timeout {{ .Values.ingress.timeoutSeconds }}s;{{ if .Values.ingress.annotations }} {{ get .Values.ingress.annotations "nginx.ingress.kubernetes.io/server-snippet" }}{{ end }}"
     {{- end }}
     {{- end }}
     {{- if .Values.ingress.cors.enabled }}
@@ -22,9 +25,6 @@ metadata:
     nginx.ingress.kubernetes.io/cors-allow-credentials: {{ .Values.ingress.cors.allowCredentials | quote }}
     {{ if .Values.ingress.cors.exposeHeaders }}nginx.ingress.kubernetes.io/cors-expose-headers: {{ join "," .Values.ingress.cors.exposeHeaders | quote }}{{ end }}
     {{- end }}
-  {{- end }}
-  {{- if .Values.ingress.annotations }}  
-    {{- .Values.ingress.annotations | toYaml | nindent 4 }}
   {{- end }}
 
 spec:

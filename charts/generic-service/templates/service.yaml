@@ -9,7 +9,9 @@ metadata:
     {{- if not .Values.autoscaling.enabled }}
     service.kubernetes.io/topology-aware-hints: auto
     {{- end }}
-    {{- if eq .Values.ingress.class "contour" }}
+    {{- $contour := eq .Values.ingress.class "contour" }}
+    {{- range $_, $extra := .Values.ingress.extra }}{{ if eq $extra.class "contour" }}{{ $contour = "true" }}{{ end }}{{ end }}
+    {{- if $contour }}
     projectcontour.io/upstream-protocol.h2c: grpc-ingress{{ range $name, $_ := .Values.ingress.extra }},grpc-{{ $name }}{{ end }}
     projectcontour.io/upstream-protocol.h2: grpcs-ingress{{ range $name, $_ := .Values.ingress.extra }},grpcs-{{ $name }}{{ end }}
     projectcontour.io/upstream-protocol.tls: https-ingress{{ range $name, $_ := .Values.ingress.extra }},https-{{ $name }}{{ end }}

@@ -9,24 +9,22 @@ metadata:
   name: {{ include "generic-service.fullname" $ }}-{{ $name }}
   labels: {{- include "generic-service.default-labels" $ | nindent 4 }}
   annotations:
-  {{- if eq $class "nginx" }}
-    nginx.ingress.kubernetes.io/backend-protocol: {{ if $extra.port }}{{ $extra.protocol | default "http" | upper }}{{ else }}{{ $.Values.ingress.protocol | upper }}{{ end }}
-    {{- if or $extra.timeoutSeconds $.Values.ingress.timeoutSeconds }}
-    nginx.ingress.kubernetes.io/proxy-read-timeout: '{{ $extra.timeoutSeconds | default $.Values.ingress.timeoutSeconds }}'
-    {{- if eq $extra.protocol "grpc" }}
-    nginx.ingress.kubernetes.io/server-snippet: "grpc_read_timeout {{ $extra.timeoutSeconds | default $.Values.ingress.timeoutSeconds }}s;"
-    {{- end }}
+  {{- $merged := deepCopy ($.Values.ingress.annotations | default dict) | mustMerge ($extra.annotations | default dict) }}
+  {{- range $mname, $mvalue := $merged }}
+    {{- if ne $mvalue "nil" }}
+      {{- dict $mname $mvalue | toYaml | nindent 4 }}
     {{- end }}
   {{- end }}
-  {{- if $extra.annotations }}
-    {{- $merged := deepCopy $.Values.ingress.annotations | mustMerge $extra.annotations }}
-    {{- range $mname, $mvalue := $merged }}
-      {{- if ne $mvalue "nil" }}
-        {{- dict $mname $mvalue | toYaml | nindent 4 }}
-      {{- end }}
+  {{- if eq $class "nginx" }}
+    {{- $protocol := $.Values.ingress.protocol }}
+    {{- if $extra.port }}{{ $protocol = $extra.protocol | default "http" }}{{ end }}
+    nginx.ingress.kubernetes.io/backend-protocol: {{ $protocol | upper }}
+    {{- if or $extra.timeoutSeconds $.Values.ingress.timeoutSeconds }}
+    nginx.ingress.kubernetes.io/proxy-read-timeout: '{{ $extra.timeoutSeconds | default $.Values.ingress.timeoutSeconds }}'
+    {{- if eq $protocol "grpc" }}
+    nginx.ingress.kubernetes.io/server-snippet: "grpc_read_timeout {{ $extra.timeoutSeconds | default $.Values.ingress.timeoutSeconds }}s; {{ get $merged "nginx.ingress.kubernetes.io/server-snippet" }}"
     {{- end }}
-  {{- else if $.Values.ingress.annotations }}
-    {{- $.Values.ingress.annotations | toYaml | nindent 4 }}
+    {{- end }}
   {{- end }}
 
 spec:
