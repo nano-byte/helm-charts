@@ -3,7 +3,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
   name: {{ include "generic-service.fullname" . }}
-  labels: {{- include "generic-service.default-labels" . | nindent 4 }}
+  labels: {{- include "generic-service.top-level-labels" . | nindent 4 }}
     prometheus: cluster
     role: alert-rules
 

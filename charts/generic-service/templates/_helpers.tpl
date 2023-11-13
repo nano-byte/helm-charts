@@ -35,7 +35,6 @@ release: {{ include "generic-service.fullname" . }}
 app.kubernetes.io/name: {{ include "generic-service.name" . }}
 app.kubernetes.io/instance: {{ include "generic-service.fullname" . }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-helm.sh/chart: 'generic-service-{{ .Chart.Version }}'
 
 {{- if or .Values.version (not (hasPrefix "@" .Values.image.tag)) }}
 version: {{ .Values.version | default .Values.image.tag | quote }}
@@ -46,6 +45,12 @@ app.kubernetes.io/version: {{ .Values.version | default .Values.image.tag | quot
 {{ .Values.labels | toYaml }}
 {{- end }}
 
+{{- end }}
+
+
+{{ define "generic-service.top-level-labels" -}}
+{{ include "generic-service.default-labels" . }}
+helm.sh/chart: 'generic-service-{{ .Chart.Version }}'
 {{- end }}
 
 

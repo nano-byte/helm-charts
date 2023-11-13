@@ -8,7 +8,7 @@ kind: {{ .Values.rollout.controller }}
 
 metadata:
   name: {{ include "generic-service.fullname" . }}
-  labels: {{- include "generic-service.default-labels" . | nindent 4 }}
+  labels: {{- include "generic-service.top-level-labels" . | nindent 4 }}
   annotations:
   {{- if .Values.tracing.enabled }}
     sidecar.jaegertracing.io/inject: {{ .Values.tracing.class | default "true" | quote }}
