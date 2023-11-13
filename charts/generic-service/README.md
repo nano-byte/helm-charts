@@ -154,6 +154,7 @@ app:
 | `alerting.grpc.sampleInterval`      | `20m`                       | The time interval in which to measure gRPC responses                                                     |
 | `alerting.grpc.referenceInterval`   | `1w`                        | The time interval to to compare with the sample interval to detect changes                               |
 | `alerting.grpc.maxErrorRatio`       | `2.5`                       | The maximum gRPC error ratio increase in the sample interval compared to the reference interval          |
+| `alerting.grpc.errorDuration`       |                             | The duration for which the gRPC error rate has to remain elevated before triggering an alert             |
 | `alerting.grpc.maxCriticalErrors`   | `0`                         | The maximum number of critical gRPC errors responses in the sample interval                              |
 | `alerting.grpc.criticalCodes`       | `[Internal, Unimplemented]` | Which gRPC status codes are considered critical errors                                                   |
 | `alerting.custom.*.metric`          | __required if used__        | The name of the Prometheus metric exposed by the service                                                 |

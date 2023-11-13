@@ -184,6 +184,9 @@ spec:
             (sum(rate({{ .Values.alerting.grpc.requestsMetric }}{namespace="{{ .Release.Namespace }}",release="{{ .Release.Name }}",grpc_code!="OK"}[{{ .Values.alerting.grpc.sampleInterval }}])) / sum(rate({{ .Values.alerting.grpc.requestsMetric }}{namespace="{{ .Release.Namespace }}",release="{{ .Release.Name }}"}[{{ .Values.alerting.grpc.sampleInterval }}]))) /
             (sum(rate({{ .Values.alerting.grpc.requestsMetric }}{namespace="{{ .Release.Namespace }}",release="{{ .Release.Name }}",grpc_code!="OK"}[{{ .Values.alerting.grpc.referenceInterval }}])) / sum(rate({{ .Values.alerting.grpc.requestsMetric }}{namespace="{{ .Release.Namespace }}",release="{{ .Release.Name }}"}[{{ .Values.alerting.grpc.referenceInterval }}])))
             > {{ .Values.alerting.grpc.maxErrorRatio }}
+          {{- if .Values.alerting.grpc.errorDuration }}
+          for: {{ .Values.alerting.grpc.errorDuration }}
+          {{- end }}
           labels: {{- include "generic-service.alert-labels" . | nindent 12 }} warning
             topic: ingress
           annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} higher gRPC error rate

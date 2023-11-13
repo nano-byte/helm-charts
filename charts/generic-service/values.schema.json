@@ -876,6 +876,11 @@
               "default": 2.5,
               "description": "The maximum gRPC error ratio increase in the sample interval compared to the reference interval"
             },
+            "errorDuration" : {
+                "type": "string",
+                "default": "",
+                "description": "The duration for which the gRPC error rate has to remain elevated before triggering an alert"
+            },
             "maxCriticalErrors": {
               "type": "integer",
               "default": 0,
