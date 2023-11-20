@@ -29,6 +29,15 @@ config: {}
 configMountPath: /config/config.yaml
 additionalConfigs: []
 
+# dnsConfig:
+#   nameservers:
+#     - 192.0.2.1
+#   searches:
+#     - my.dns.search.suffix
+#   options:
+#     - name: ndots
+#       value: "2"
+
 # startupProbe:
 #   httpGet:
 #     port: http-ingress

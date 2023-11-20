@@ -113,6 +113,10 @@
       "items": {"type": "string"},
       "description": "Additional ConfigMaps with key named data.yaml to be mounted (paths appended to $CONFIG_FILE)"
     },
+    "dnsConfig": {
+      "type": "object",
+      "description": "DNS configuration for the containers of the service"
+    },
     "startupProbe": {
       "type": "object",
       "description": "Probe that waits for the service to initially start",
