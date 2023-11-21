@@ -115,7 +115,7 @@
     },
     "dnsConfig": {
       "type": "object",
-      "description": "DNS configuration for the containers of the service"
+      "description": "DNS config for the pod (https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/"
     },
     "startupProbe": {
       "type": "object",
