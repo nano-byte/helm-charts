@@ -29,6 +29,8 @@ config: {}
 configMountPath: /config/config.yaml
 additionalConfigs: []
 
+dnsConfig: {}
+
 # startupProbe:
 #   httpGet:
 #     port: http-ingress

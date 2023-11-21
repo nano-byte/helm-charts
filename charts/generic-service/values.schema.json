@@ -113,6 +113,15 @@
       "items": {"type": "string"},
       "description": "Additional ConfigMaps with key named data.yaml to be mounted (paths appended to $CONFIG_FILE)"
     },
+    "dnsConfig": {
+      "type": "object",
+      "properties": {
+        "nameservers": {"type": "array", "items": {"type": "string"}},
+        "searches": {"type": "array", "items": {"type": "string"}},
+        "options": {"type": "array", "items": {"type": "object"}}
+      },
+      "description": "DNS config for the pod (https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/"
+    },
     "startupProbe": {
       "type": "object",
       "description": "Probe that waits for the service to initially start",
