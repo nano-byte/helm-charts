@@ -175,6 +175,10 @@ alerting:
     maxErrorRatio: 2.5
     maxCriticalErrors: 0
     criticalCodes: [Internal, Unimplemented]
+  logs:
+    countInterval: 5m
+    levelLabel: level
+    levels: {}
   custom: {}
 
 sidecars: []

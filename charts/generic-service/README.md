@@ -4,6 +4,7 @@ This Helm chart simplifies deploying a typical "80% case" service on Kubernetes.
 
 - [nginx Ingress Controller](https://kubernetes.github.io/ingress-nginx/), [Contour](https://projectcontour.io/) or [Istio](https://istio.io/) for routing
 - [Prometheus Operator](https://github.com/prometheus-operator/prometheus-operator) for monitoring
+- [Loki Rule Operator](https://github.com/opsgy/loki-rule-operator) for logging
 - [OpenTelemetry Operator](https://github.com/open-telemetry/opentelemetry-operator) or [Jaeger Operator](https://www.jaegertracing.io/docs/latest/operator/) for tracing
 - [Flagger](https://flagger.app/) and [Argo Rollouts](https://argoproj.github.io/argo-rollouts/) for canary and blue-green deployments
 
@@ -158,6 +159,10 @@ app:
 | `alerting.grpc.errorDuration`       |                             | The duration for which the gRPC error rate has to remain elevated before triggering an alert             |
 | `alerting.grpc.maxCriticalErrors`   | `0`                         | The maximum number of critical gRPC errors responses in the sample interval                              |
 | `alerting.grpc.criticalCodes`       | `[Internal, Unimplemented]` | Which gRPC status codes are considered critical errors                                                   |
+| `alerting.logs.countInterval`       | `5m`                        | The time interval in which to count the number of messages per log level                                 |
+| `alerting.logs.levelLabel`          | `level`                     | The Loki label containing the log level                                                                  |
+| `alerting.logs.levels.*.maxCount`   | `0`                         | The maximum number of messages of a specific log level in the interval to allow before alerting          |
+| `alerting.logs.levels.*.severity`   | `warning`                   | The severity of the alert when the maximum count of a messages of a specific log level is exceeded       |
 | `alerting.custom.*.metric`          | __required if used__        | The name of the Prometheus metric exposed by the service                                                 |
 | `alerting.custom.*.labelMatchers`   |                             | Prometheus label matchers to use for filtering the metric (e.g., `some_key="some_value"`)                |
 | `alerting.custom.*.aggregate`       | __required if used__        | The aggregate function to use to combine metric values from multiple replicas (e.g., `max` or `sum`)     |

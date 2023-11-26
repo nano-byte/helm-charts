@@ -904,6 +904,42 @@
           },
           "additionalProperties": false
         },
+        "logs": {
+          "type": "object",
+          "properties": {
+            "countInterval": {
+              "type": "string",
+              "default": "5m",
+              "description": "The time interval in which to count the number of messages per log level"    
+            },
+            "levelLabel": {
+              "type": "string",
+              "default": "level",
+              "description": "The Loki label containing the log level"    
+            },
+            "levels": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "maxCount": {
+                    "type": "integer",
+                    "default": 0,
+                    "description": "The maximum number of messages in the interval to allow before alerting"
+                  },
+                  "severity": {
+                    "type": "string",
+                    "default": "warning",
+                    "description": "The severity of the alert when the maximum count of a messages is exceeded"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "description": "Alerts for messages of specific log levels"
+            }
+          },
+          "additionalProperties": false
+        },
         "custom": {
           "type": "object",
           "additionalProperties": {
