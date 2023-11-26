@@ -65,9 +65,9 @@ severity:
 
 
 {{ define "generic-service.alert-annotations" -}}
-{{ if and .Values.global.grafana.url .Values.global.grafana.dashboard -}}
+{{- if and .Values.global.grafana.url .Values.global.grafana.dashboard -}}
 dashboard: '{{ .Values.global.grafana.url }}/d/{{ .Values.global.grafana.dashboard }}?var-namespace={{ .Release.Namespace }}&var-service={{ include "generic-service.fullname" . }}'
-{{- end }}
+{{ end -}}
 summary: {{ .Release.Namespace }}/{{ include "generic-service.fullname" . }}
 {{- end }}
 
