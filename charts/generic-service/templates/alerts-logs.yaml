@@ -1,4 +1,4 @@
-{{- if .Values.alerting.logs.levels }}
+{{- if and .Values.alerting.enabled .Values.alerting.logs.levels }}
 apiVersion: logging.opsgy.com/v1beta1
 kind: LokiRule
 metadata:
