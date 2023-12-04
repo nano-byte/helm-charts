@@ -40,7 +40,7 @@ spec:
 
   rules:
     {{- range $extra.domains }}
-    - host: {{ . | quote }}
+    - host: {{ tpl . $ | quote }}
       http:
         paths:
           {{- range ($extra.paths | default (list "/")) }}

@@ -40,7 +40,7 @@ spec:
 
   rules:
     {{- range .Values.ingress.domains }}
-    - host: {{ . | quote }}
+    - host: {{ tpl . $ | quote }}
       http:
         paths:
           {{- range ($.Values.ingress.paths | default (list "/")) }}
