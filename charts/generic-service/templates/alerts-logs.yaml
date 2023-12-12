@@ -12,6 +12,7 @@ spec:
         {{- range $level, $options := .Values.alerting.logs.levels }}
         - alert: LogMessages{{ $level | title }}
           expr: count_over_time(({namespace="{{ $.Release.Namespace }}", container="{{ include "generic-service.fullname" $ }}", {{ $.Values.alerting.logs.levelLabel }}="{{ $level }}"})[{{ $.Values.alerting.logs.countInterval }}]) > {{ $options.maxCount | default 0 }}
+          for: 1s
           labels: {{- include "generic-service.alert-labels" $ | nindent 12 }} {{ $options.severity | default "warning" }}
             topic: logs
           annotations: {{- include "generic-service.alert-annotations" $ | nindent 12 }} {{ $level }} logs
