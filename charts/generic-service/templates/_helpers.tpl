@@ -77,6 +77,11 @@ summary: {{ .Release.Namespace }}/{{ include "generic-service.fullname" . }}
 {{- end }}
 
 
+{{ define "generic-service.normalize-app-protocol" -}}
+{{ if or (eq . "h2c") (eq . "grpc") }}kubernetes.io/h2c{{ else if or (or (eq . "http2") (eq . "h2")) (eq . "grpcs") }}https{{ else }}{{ . | default "http" }}{{ end }}
+{{- end }}
+
+
 {{ define "generic-service.istio" -}}
 
 {{- if .Values.ingress.istio.gateways }}
