@@ -647,7 +647,8 @@
               "protocol": {
                 "type": "string",
                 "default": "http",
-                "description": "The protocol used for the port (e.g., http or grpc)"
+                "enum": ["http", "https", "grpc", "grpcs"],
+                "description": "The protocol used for the port"
               },
               "timeoutSeconds": {
                 "type": ["integer", "null"],
@@ -685,7 +686,7 @@
             },
             "additionalProperties": false
           },
-          "description": "Additional container ports ingress traffic is routed to (not applicable if `ingress.istio.enabled`)"
+          "description": "Additional container ports ingress traffic is routed to (not applicable if ingress.istio.enabled)"
         }
       },
       "additionalProperties": false
@@ -910,12 +911,12 @@
             "countInterval": {
               "type": "string",
               "default": "5m",
-              "description": "The time interval in which to count the number of messages per log level"    
+              "description": "The time interval in which to count the number of messages per log level"
             },
             "levelLabel": {
               "type": "string",
               "default": "level",
-              "description": "The Loki label containing the log level"    
+              "description": "The Loki label containing the log level"
             },
             "levels": {
               "type": "object",
