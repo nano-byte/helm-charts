@@ -72,6 +72,11 @@ summary: {{ .Release.Namespace }}/{{ include "generic-service.fullname" . }}
 {{- end }}
 
 
+{{ define "generic-service.normalize-protocol" -}}
+{{ if eq . "h2c" }}grpc{{ else if or (eq . "http2") (eq . "h2") }}grpcs{{ else }}{{ . | default "http" }}{{ end }}
+{{- end }}
+
+
 {{ define "generic-service.istio" -}}
 
 {{- if .Values.ingress.istio.gateways }}
