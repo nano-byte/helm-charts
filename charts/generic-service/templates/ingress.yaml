@@ -13,7 +13,7 @@ metadata:
     nginx.ingress.kubernetes.io/backend-protocol: {{ .Values.ingress.protocol | upper }}
     {{- if .Values.ingress.timeoutSeconds }}
     nginx.ingress.kubernetes.io/proxy-read-timeout: '{{ .Values.ingress.timeoutSeconds }}'
-    {{- if eq .Values.ingress.protocol "grpc" }}
+    {{- if or (eq .Values.ingress.protocol "grpc") (eq .Values.ingress.protocol "grpcs") }}
     nginx.ingress.kubernetes.io/server-snippet: "grpc_read_timeout {{ .Values.ingress.timeoutSeconds }}s;{{ if .Values.ingress.annotations }} {{ get .Values.ingress.annotations "nginx.ingress.kubernetes.io/server-snippet" }}{{ end }}"
     {{- end }}
     {{- end }}

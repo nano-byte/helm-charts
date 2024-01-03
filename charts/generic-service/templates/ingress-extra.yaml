@@ -21,7 +21,7 @@ metadata:
     nginx.ingress.kubernetes.io/backend-protocol: {{ $protocol | upper }}
     {{- if or $extra.timeoutSeconds $.Values.ingress.timeoutSeconds }}
     nginx.ingress.kubernetes.io/proxy-read-timeout: '{{ $extra.timeoutSeconds | default $.Values.ingress.timeoutSeconds }}'
-    {{- if eq $protocol "grpc" }}
+    {{- if or (eq $protocol "grpc") (eq $protocol "grpcs") }}
     nginx.ingress.kubernetes.io/server-snippet: "grpc_read_timeout {{ $extra.timeoutSeconds | default $.Values.ingress.timeoutSeconds }}s; {{ get $merged "nginx.ingress.kubernetes.io/server-snippet" }}"
     {{- end }}
     {{- end }}
