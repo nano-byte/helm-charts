@@ -38,7 +38,7 @@ spec:
 
   service:
     port: {{ .Values.ingress.port }}
-    targetPort: 'ingress-{{ .Values.ingress.protocol }}'
+    targetPort: 'ingress-{{ include "generic-service.normalize-protocol" .Values.ingress.protocol }}'
 
     {{- if and (eq .Values.rollout.strategy "Canary") .Values.ingress.istio.enabled }}
 {{ include "generic-service.istio" . | indent 4 }}

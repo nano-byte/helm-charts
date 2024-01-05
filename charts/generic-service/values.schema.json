@@ -506,7 +506,7 @@
         "protocol": {
           "type": "string",
           "default": "http",
-          "enum": ["http", "https", "grpc", "grpcs"],
+          "enum": ["http", "https", "h2c", "grpc", "http2", "h2", "grpcs"],
           "description": "The internal protocol used for ingress"
         },
         "timeoutSeconds": {
@@ -647,7 +647,8 @@
               "protocol": {
                 "type": "string",
                 "default": "http",
-                "description": "The protocol used for the port (e.g., http or grpc)"
+                "enum": ["http", "https", "h2c", "grpc", "http2", "h2", "grpcs"],
+                "description": "The protocol used for the port"
               },
               "timeoutSeconds": {
                 "type": ["integer", "null"],
@@ -685,7 +686,7 @@
             },
             "additionalProperties": false
           },
-          "description": "Additional container ports ingress traffic is routed to (not applicable if `ingress.istio.enabled`)"
+          "description": "Additional container ports ingress traffic is routed to (not applicable if ingress.istio.enabled)"
         }
       },
       "additionalProperties": false

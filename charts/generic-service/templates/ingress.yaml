@@ -10,10 +10,10 @@ metadata:
     {{- .Values.ingress.annotations | toYaml | nindent 4 }}
   {{- end }}
   {{- if eq .Values.ingress.class "nginx" }}
-    nginx.ingress.kubernetes.io/backend-protocol: {{ .Values.ingress.protocol | upper }}
+    nginx.ingress.kubernetes.io/backend-protocol: {{ include "generic-service.normalize-protocol" .Values.ingress.protocol | upper }}
     {{- if .Values.ingress.timeoutSeconds }}
     nginx.ingress.kubernetes.io/proxy-read-timeout: '{{ .Values.ingress.timeoutSeconds }}'
-    {{- if eq .Values.ingress.protocol "grpc" }}
+    {{- if or (eq .Values.ingress.protocol "grpc") (eq .Values.ingress.protocol "grpcs") }}
     nginx.ingress.kubernetes.io/server-snippet: "grpc_read_timeout {{ .Values.ingress.timeoutSeconds }}s;{{ if .Values.ingress.annotations }} {{ get .Values.ingress.annotations "nginx.ingress.kubernetes.io/server-snippet" }}{{ end }}"
     {{- end }}
     {{- end }}
@@ -50,7 +50,7 @@ spec:
               service:
                 name: {{ include "generic-service.fullname" $ }}
                 port:
-                  name: {{ $.Values.ingress.protocol }}-ingress
+                  name: {{ include "generic-service.normalize-protocol" $.Values.ingress.protocol }}-ingress
           {{- end }}
     {{- end }}
 

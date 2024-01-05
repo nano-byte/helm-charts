@@ -177,7 +177,7 @@ spec:
             description: '{{ include "generic-service.fullname" . }} gave {{"{{ $value }}"}} HTTP 5xx responses in the last {{ .Values.alerting.http.sampleInterval }}.'
         {{- end }}
 
-        {{- if eq .Values.ingress.protocol "grpc" }}
+        {{- if or (eq .Values.ingress.protocol "grpc") (eq .Values.ingress.protocol "grpcs") }}
         {{- if .Values.alerting.grpc.referenceInterval }}
         - alert: GrpcErrors
           expr: |

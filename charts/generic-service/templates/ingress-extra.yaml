@@ -17,11 +17,11 @@ metadata:
   {{- end }}
   {{- if eq $class "nginx" }}
     {{- $protocol := $.Values.ingress.protocol }}
-    {{- if $extra.port }}{{ $protocol = $extra.protocol | default "http" }}{{ end }}
-    nginx.ingress.kubernetes.io/backend-protocol: {{ $protocol | upper }}
+    {{- if $extra.port }}{{ $protocol = $extra.protocol }}{{ end }}
+    nginx.ingress.kubernetes.io/backend-protocol: {{ include "generic-service.normalize-protocol" $protocol | upper }}
     {{- if or $extra.timeoutSeconds $.Values.ingress.timeoutSeconds }}
     nginx.ingress.kubernetes.io/proxy-read-timeout: '{{ $extra.timeoutSeconds | default $.Values.ingress.timeoutSeconds }}'
-    {{- if eq $protocol "grpc" }}
+    {{- if or (eq $protocol "grpc") (eq $protocol "grpcs") }}
     nginx.ingress.kubernetes.io/server-snippet: "grpc_read_timeout {{ $extra.timeoutSeconds | default $.Values.ingress.timeoutSeconds }}s; {{ get $merged "nginx.ingress.kubernetes.io/server-snippet" }}"
     {{- end }}
     {{- end }}
@@ -51,7 +51,7 @@ spec:
                 name: {{ include "generic-service.fullname" $ }}
                 port:
                 {{- if $extra.port }}
-                  name: {{ $extra.protocol | default "http" }}-{{ $name }}
+                  name: {{ include "generic-service.normalize-protocol" $extra.protocol }}-{{ $name }}
                 {{- else }}
                   {{- if $extra.protocol }}
                     {{ fail "ingress.extra.*.protocol may not be set if ingress.extra.*.port is not set" }}

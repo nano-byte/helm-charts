@@ -24,12 +24,14 @@ spec:
   {{- end }}
 
   ports:
-    - name: '{{ .Values.ingress.protocol }}-ingress'
+    - name: '{{ include "generic-service.normalize-protocol" .Values.ingress.protocol }}-ingress'
+      appProtocol: '{{ include "generic-service.normalize-app-protocol" .Values.ingress.protocol }}'
       port: 80
       targetPort: {{ .Values.ingress.port }}
     {{- range $name, $extra := .Values.ingress.extra }}
     {{- if $extra.port }}
-    - name: {{ $extra.protocol | default "http" }}-{{ $name }}
+    - name: {{ include "generic-service.normalize-protocol" $extra.protocol }}-{{ $name }}
+      appProtocol: '{{ include "generic-service.normalize-app-protocol" $extra.protocol }}'
       port: {{ $extra.port }}
     {{- end }}
     {{- end }}
@@ -52,11 +54,13 @@ spec:
   publishNotReadyAddresses: {{ .Values.ingress.headlessExposesAll }}
 
   ports:
-    - name: '{{ .Values.ingress.protocol }}-ingress'
+    - name: '{{ include "generic-service.normalize-protocol" .Values.ingress.protocol }}-ingress'
+      appProtocol: '{{ include "generic-service.normalize-app-protocol" .Values.ingress.protocol }}'
       port: {{ .Values.ingress.port }}
     {{- range $name, $extra := .Values.ingress.extra }}
     {{- if $extra.port }}
-    - name: {{ $extra.protocol | default "http" }}-{{ $name }}
+    - name: {{ include "generic-service.normalize-protocol" $extra.protocol }}-{{ $name }}
+      appProtocol: '{{ include "generic-service.normalize-app-protocol" $extra.protocol }}'
       port: {{ $extra.port }}
     {{- end }}
     {{- end }}
@@ -76,12 +80,14 @@ spec:
   internalTrafficPolicy: Local
 
   ports:
-    - name: '{{ .Values.ingress.protocol }}-ingress'
+    - name: '{{ include "generic-service.normalize-protocol" .Values.ingress.protocol }}-ingress'
+      appProtocol: '{{ include "generic-service.normalize-app-protocol" .Values.ingress.protocol }}'
       port: 80
       targetPort: {{ .Values.ingress.port }}
     {{- range $name, $extra := .Values.ingress.extra }}
     {{- if $extra.port }}
-    - name: {{ $extra.protocol | default "http" }}-{{ $name }}
+    - name: {{ include "generic-service.normalize-protocol" $extra.protocol }}-{{ $name }}
+      appProtocol: '{{ include "generic-service.normalize-app-protocol" $extra.protocol }}'
       port: {{ $extra.port }}
     {{- end }}
     {{- end }}
@@ -106,12 +112,14 @@ spec:
   {{- end }}
 
   ports:
-    - name: '{{ .Values.ingress.protocol }}-ingress'
+    - name: '{{ include "generic-service.normalize-protocol" .Values.ingress.protocol }}-ingress'
+      appProtocol: '{{ include "generic-service.normalize-app-protocol" .Values.ingress.protocol }}'
       port: 80
       targetPort: {{ .Values.ingress.port }}
     {{- range $name, $extra := .Values.ingress.extra }}
     {{- if $extra.port }}
-    - name: {{ $extra.protocol | default "http" }}-{{ $name }}
+    - name: {{ include "generic-service.normalize-protocol" $extra.protocol }}-{{ $name }}
+      appProtocol: '{{ include "generic-service.normalize-app-protocol" $extra.protocol }}'
       port: {{ $extra.port }}
     {{- end }}
     {{- end }}

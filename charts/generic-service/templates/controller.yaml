@@ -311,7 +311,7 @@ spec:
 
           ports:
           {{- if .Values.ingress.enabled }}
-            - name: '{{ .Values.ingress.protocol }}-ingress'
+            - name: '{{ include "generic-service.normalize-protocol" .Values.ingress.protocol }}-ingress'
               containerPort: {{ .Values.ingress.port }}
           {{- end }}
           {{- if (and .Values.monitoring.enabled (or (not .Values.ingress.enabled) (ne .Values.monitoring.port .Values.ingress.port))) }}
@@ -321,7 +321,7 @@ spec:
           {{- $monitoring := .Values.monitoring }}
           {{- range $name, $extra := .Values.ingress.extra }}
             {{- if and $extra.port (or (not $monitoring.enabled) (ne $extra.port $monitoring.port)) }}
-            - name: {{ $extra.protocol | default "http" }}-{{ $name }}
+            - name: {{ include "generic-service.normalize-protocol" $extra.protocol }}-{{ $name }}
               containerPort: {{ $extra.port }}
             {{- end }}
           {{- end }}
