@@ -910,12 +910,12 @@
             "countInterval": {
               "type": "string",
               "default": "5m",
-              "description": "The time interval in which to count the number of messages per log level"    
+              "description": "The time interval in which to count the number of messages per log level"
             },
             "levelLabel": {
               "type": "string",
               "default": "level",
-              "description": "The Loki label containing the log level"    
+              "description": "The Loki label containing the log level"
             },
             "levels": {
               "type": "object",
@@ -936,6 +936,22 @@
                 "additionalProperties": false
               },
               "description": "Alerts for messages of specific log levels"
+            },
+            "lokiSideCar": {
+              "type": "object",
+              "properties": {
+                "configMapLabel": {
+                  "type": "string",
+                  "default": "loki_rules",
+                  "description": "The label attached to the configMap holding the Loki Rules."
+                },
+                "configMapLabelValue": {
+                  "type": "string",
+                  "default": "",
+                  "description": "The value of the label attached to the Loki Rule configMap."
+                }
+              },
+              "additionalProperties": false
             }
           },
           "additionalProperties": false
