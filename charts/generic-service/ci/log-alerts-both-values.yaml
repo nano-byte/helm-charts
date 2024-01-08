@@ -12,3 +12,7 @@ alerting:
         severity: Warning
         maxCount: 10
       error: {}
+    lokiSideCar:
+      configMapLabel: "loki_rules"
+      configMapLabelValue: ""
+    createLokiRule: true
