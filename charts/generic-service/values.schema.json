@@ -953,6 +953,11 @@
                 }
               },
               "additionalProperties": false
+            },
+            "createLokiRule": {
+              "type": "boolean",
+              "default": true,
+              "description": "Whether to create a LokiRule CR for log alerting or not."
             }
           },
           "additionalProperties": false

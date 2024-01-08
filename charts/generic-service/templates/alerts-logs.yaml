@@ -22,7 +22,7 @@ data:
               description: '{{ $.Release.Name }} reported {{"{{ $value }}"}} {{ $level }} log messages in the last {{ $.Values.alerting.logs.countInterval }}.'
           {{- end }}
 {{- end }}
-{{- if not .Values.alerting.logs.lokiSideCar }}
+{{- if .Values.alerting.logs.createLokiRule }}
 ---
 apiVersion: logging.opsgy.com/v1beta1
 kind: LokiRule
