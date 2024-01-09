@@ -15,3 +15,4 @@ alerting:
     lokiSideCar:
       configMapLabel: "loki_rules"
       configMapLabelValue: ""
+    createLokiRule: false

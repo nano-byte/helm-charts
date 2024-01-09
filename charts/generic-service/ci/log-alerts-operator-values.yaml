@@ -12,4 +12,3 @@ alerting:
         severity: Warning
         maxCount: 10
       error: {}
-    createLokiRule: true
