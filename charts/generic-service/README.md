@@ -163,7 +163,7 @@ app:
 | `alerting.logs.levelLabel`                             | `level`                     | The Loki label containing the log level                                                                  |
 | `alerting.logs.levels.*.maxCount`                      | `0`                         | The maximum number of messages of a specific log level in the interval to allow before alerting          |
 | `alerting.logs.levels.*.severity`                      | `warning`                   | The severity of the alert when the maximum count of a messages of a specific log level is exceeded       |
-| `alerting.logs.levels.lokiSideCar.configMapLabel`      | `loki_rules`                | The label attached to the configMap holding the Loki Rules                                               |
+| `alerting.logs.levels.lokiSideCar.configMapLabel`      | `loki_rule`                 | The label attached to the configMap holding the Loki Rules                                               |
 | `alerting.logs.levels.lokiSideCar.configMapLabelValue` | `""`                        | The value of the label attached to the Loki Rule configMap                                               |
 | `alerting.logs.levels.createLokiRule`                  | `true`                      | Whether to create a LokiRule CR or not (useful when transitioning from loki-rule-operator)               |
 | `alerting.custom.*.metric`                             | __required if used__        | The name of the Prometheus metric exposed by the service                                                 |

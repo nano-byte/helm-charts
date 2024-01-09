@@ -13,6 +13,6 @@ alerting:
         maxCount: 10
       error: {}
     lokiSideCar:
-      configMapLabel: "loki_rules"
+      configMapLabel: "loki_rule"
       configMapLabelValue: ""
     createLokiRule: false

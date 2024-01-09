@@ -181,7 +181,7 @@ alerting:
     levels: {}
     createLokiRule: true
     lokiSideCar:
-      configMapLabel: "loki_rules"
+      configMapLabel: "loki_rule"
       configMapLabelValue: ""
   custom: {}
 

@@ -943,7 +943,7 @@
               "properties": {
                 "configMapLabel": {
                   "type": "string",
-                  "default": "loki_rules",
+                  "default": "loki_rule",
                   "description": "The label attached to the configMap holding the Loki Rules."
                 },
                 "configMapLabelValue": {
