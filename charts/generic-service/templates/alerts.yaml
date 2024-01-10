@@ -15,7 +15,14 @@ spec:
         {{- if gt .Values.replicas 0.0 }}
         - alert: Down
           expr: kube_{{ .Values.rollout.controller | lower }}_status_{{ if eq .Values.rollout.controller "DaemonSet" }}number{{ else }}replicas{{ end }}_ready{namespace="{{ .Release.Namespace }}", {{ .Values.rollout.controller | lower }}="{{ include "generic-service.fullname" . }}"} == 0
-          for: '{{ if .Values.ingress.enabled }}1m{{ else }}5m{{ end }}'
+          for: '
+            {{- if and (eq .Values.replicas 1.0) (or (eq .Values.rollout.strategy "Recreate") (eq .Values.rollout.controller "StatefulSet")) -}}
+              {{ .Values.alerting.pod.maxStartupSeconds | int }}s
+            {{- else if .Values.ingress.enabled -}}
+              1m
+            {{- else -}}
+              5m
+            {{- end }}'
           labels: {{- include "generic-service.alert-labels" . | nindent 12 }} critical
             topic: availability
           annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} down
