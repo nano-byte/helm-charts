@@ -1,12 +1,12 @@
 {{- if and .Values.alerting.enabled .Values.alerting.logs.levels }}
-{{- if .Values.alerting.logs.lokiSideCar }}
+{{- if .Values.alerting.logs.lokiConfigMap }}
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ include "generic-service.fullname" . }}-loki-rules
   labels: {{- include "generic-service.top-level-labels" . | nindent 4 }}
-    {{ .Values.alerting.logs.lokiSideCar.configMapLabel }}: {{ .Values.alerting.logs.lokiSideCar.configMapLabelValue | quote }}
+    {{ .Values.alerting.logs.lokiConfigMap.label }}: {{ .Values.alerting.logs.lokiConfigMap.labelValue | quote }}
 
 data:
   {{ include "generic-service.fullname" . }}.yaml: |

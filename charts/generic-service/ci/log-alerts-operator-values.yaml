@@ -12,3 +12,5 @@ alerting:
         severity: Warning
         maxCount: 10
       error: {}
+    # setting this to an empty object (`{}`) will not suppress cm creation, use `null` instead
+    lokiConfigMap: null

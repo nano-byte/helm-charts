@@ -180,9 +180,9 @@ alerting:
     levelLabel: level
     levels: {}
     createLokiRule: true
-    lokiSideCar:
-      configMapLabel: "loki_rule"
-      configMapLabelValue: ""
+    lokiConfigMap:
+      label: "loki_rule"
+      labelValue: ""
   custom: {}
 
 sidecars: []

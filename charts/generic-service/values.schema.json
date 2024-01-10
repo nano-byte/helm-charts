@@ -938,18 +938,18 @@
               },
               "description": "Alerts for messages of specific log levels"
             },
-            "lokiSideCar": {
+            "lokiConfigMap": {
               "type": "object",
               "properties": {
-                "configMapLabel": {
+                "label": {
                   "type": "string",
                   "default": "loki_rule",
-                  "description": "The label attached to the configMap holding the Loki Rules."
+                  "description": "The label attached to the ConfigMap holding the Loki Rules."
                 },
-                "configMapLabelValue": {
+                "labelValue": {
                   "type": "string",
                   "default": "",
-                  "description": "The value of the label attached to the Loki Rule configMap."
+                  "description": "The value of the label attached to the Loki Rule ConfigMap."
                 }
               },
               "additionalProperties": false
