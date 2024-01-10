@@ -179,6 +179,10 @@ alerting:
     countInterval: 5m
     levelLabel: level
     levels: {}
+    createLokiRule: true
+    lokiConfigMap:
+      label: "loki_rule"
+      labelValue: ""
   custom: {}
 
 sidecars: []
