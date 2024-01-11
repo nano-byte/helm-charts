@@ -9,7 +9,7 @@ metadata:
     {{ .Values.alerting.logs.lokiConfigMap.label }}: {{ .Values.alerting.logs.lokiConfigMap.labelValue | quote }}
 
 data:
-  {{ include "generic-service.fullname" . }}.yaml: |
+  '{{ .Release.Namespace }}.{{ .Release.Name }}.yaml': |
     groups:
       - name: {{ include "generic-service.fullname" . }}.logs
         rules:
