@@ -165,7 +165,7 @@ app:
 | `alerting.logs.levels.*.severity`               | `warning`                   | The severity of the alert when the maximum count of a messages of a specific log level is exceeded       |
 | `alerting.logs.levels.lokiConfigMap.label`      | `loki_rule`                 | The label attached to the ConfigMap holding the Loki Rules                                               |
 | `alerting.logs.levels.lokiConfigMap.labelValue` | `""`                        | The value of the label attached to the Loki Rule ConfigMap                                               |
-| `alerting.logs.levels.createLokiRule`           | `true`                      | Whether to create a LokiRule CR or not (useful when transitioning from loki-rule-operator)               |
+| `alerting.logs.levels.createLokiRule`           | `false`                     | Whether to create a LokiRule CR or not (useful when transitioning from loki-rule-operator)               |
 | `alerting.custom.*.metric`                      | __required if used__        | The name of the Prometheus metric exposed by the service                                                 |
 | `alerting.custom.*.labelMatchers`               |                             | Prometheus label matchers to use for filtering the metric (e.g., `some_key="some_value"`)                |
 | `alerting.custom.*.aggregate`                   | __required if used__        | The aggregate function to use to combine metric values from multiple replicas (e.g., `max` or `sum`)     |

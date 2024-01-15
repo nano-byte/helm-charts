@@ -15,4 +15,3 @@ alerting:
     lokiConfigMap:
       label: "loki_rule"
       labelValue: ""
-    createLokiRule: false

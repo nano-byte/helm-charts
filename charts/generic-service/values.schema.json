@@ -956,7 +956,7 @@
             },
             "createLokiRule": {
               "type": "boolean",
-              "default": true,
+              "default": false,
               "description": "Whether to create a LokiRule CR for log alerting or not."
             }
           },

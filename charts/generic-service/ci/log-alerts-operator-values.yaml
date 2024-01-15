@@ -14,3 +14,4 @@ alerting:
       error: {}
     # setting this to an empty object (`{}`) will not suppress cm creation, use `null` instead
     lokiConfigMap: null
+    createLokiRule: true

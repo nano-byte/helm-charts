@@ -179,7 +179,7 @@ alerting:
     countInterval: 5m
     levelLabel: level
     levels: {}
-    createLokiRule: true
+    createLokiRule: false
     lokiConfigMap:
       label: "loki_rule"
       labelValue: ""
