@@ -154,6 +154,8 @@ alerting:
   pod:
     maxStartupSeconds: 120
     maxAgeSeconds:
+  restarts:
+    enabled: true
   memory:
     enabled: true
     maxUsageFactor: 0.9

@@ -45,6 +45,7 @@ spec:
         {{- end }}
       {{- end }}
 
+      {{- if .Values.alerting.restarts.enabled }}
         - alert: ContainerRestart
           # Avoid constantly retriggering during crash loops by comparing over interval slightly longer than CrashLoopBackOff upper limit (5m).
           # Don't trigger during startup grace period (service might just be waiting for dependencies).
@@ -56,6 +57,7 @@ spec:
             topic: availability
           annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} crash/restart
             description: '{{"{{ $labels.pod }}"}} has crashed/restarted.'
+      {{- end }}
 
       {{- if .Values.alerting.pod.maxAgeSeconds }}
         - alert: PodTooOld

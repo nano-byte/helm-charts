@@ -784,6 +784,16 @@
           },
           "additionalProperties": false
         },
+        "restarts": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": true,
+              "description": "Deploys Prometheus alert rule for unexpected container restarts"
+            }
+          }
+        },
         "memory": {
           "type": "object",
           "properties": {

@@ -141,6 +141,7 @@ app:
 | `alerting.enabled`                              | `false`                     | Deploys Prometheus alert rule for issues like like unavailable pods or high memory use                   |
 | `alerting.pod.maxStartupSeconds`                | `120`                       | The maximum amount of time a Pod is allowed to take for startup                                          |
 | `alerting.pod.maxAgeSeconds`                    |                             | The maximum allowed age of a `Pod` in seconds (useful to ensure regular deployments)                     |
+| `alerting.restarts.enabled`                     | `true`                      | Deploys Prometheus alert rule for unexpected container restarts                                          |
 | `alerting.memory.enabled`                       | `true`                      | Enables alerts relating to memory usage                                                                  |
 | `alerting.memory.maxUsageFactor`                | `0.9`                       | The maximum usage factor of the memory limit (between `0` and `1`)                                       |
 | `alerting.memory.quotaBufferFactor`             | `1.0`                       | Multiplied with `resources.*.memory` to determine minimum allowed unused memory quota in namespace       |
