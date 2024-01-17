@@ -198,3 +198,4 @@ global:
   grafana:
     url: ''
     dashboard: qqsCbY5Zz
+    queryVariables: {}

@@ -1076,6 +1076,12 @@
               "type": "string",
               "default": "qqsCbY5Zz",
               "description": "The UID of the Grafana dashboard visualizing the service's metrics"
+            },
+            "queryVariables": {
+              "type": "object",
+              "default": {},
+              "additionalProperties": {"type": "string"},
+              "description": "Additional variables to be used in the to parametrize the service's Grafana dashboard"
             }
           }
         }

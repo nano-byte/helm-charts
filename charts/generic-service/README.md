@@ -185,6 +185,7 @@ app:
 | `global.alertLabels`                            | `{}`                        | Additional labels to apply to alert rules                                                                |
 | `global.grafana.url`                            |                             | The URL of a Grafana instance with access to the service's metrics                                       |
 | `global.grafana.dashboard`                      | `qqsCbY5Zz`                 | The UID of the Grafana dashboard visualizing the service's metrics                                       |
+| `global.grafana.queryVariables`                 | `{}`                        | Additional variables to be used in the to parametrize the service's Grafana dashboard                    |
 
 ## Environment variables
 
