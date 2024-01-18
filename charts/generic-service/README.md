@@ -17,7 +17,7 @@ This chart is most commonly used as a dependency instead of installing it direct
 ```yaml
 dependencies:
   - name: generic-service
-    version: ~1.9.0
+    version: ~1.10.0
     repository: https://helm.nano-byte.net
     alias: app
 ```
