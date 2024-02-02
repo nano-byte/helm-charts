@@ -1042,6 +1042,16 @@
       "items": {"type": "string"},
       "description": "Strings to be templated providing additional sidecar containers to be added to the Pod"
     },
+    "initContainers": {
+      "type": "array",
+      "items": {"type": "object"},
+      "description": "Additional init containers to be added to the Pod"
+    },
+    "initContainerTemplates": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Strings to be templated providing additional init containers to be added to the Pod"
+    },
     "rbac": {
       "type": "object",
       "properties": {
