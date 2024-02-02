@@ -12,10 +12,3 @@ initContainers:
     image: docker/whalesay
     command: ["cowsay"]
     args: ["hi"]
-
-initContainerTemplates:
-  - |
-      name: init2
-      image: docker/whalesay:{{ .Values.image.tag }}
-      command: ["cowsay"]
-      args: ["hi"]
