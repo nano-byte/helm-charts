@@ -447,7 +447,7 @@ spec:
         - securityContext: {{- $.Values.securityContext.container | toYaml | nindent 12 }}
           {{- $spec | nindent 10 }}
       {{- end }}
-      {{- end}}
+      {{- end }}
 
       {{ if .Values.initContainers }}
       initContainers:
