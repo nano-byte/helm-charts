@@ -1,0 +1,21 @@
+# InitContainer test
+
+name: test
+fullname: my-test
+
+image:
+  repository: docker/whalesay
+  tag: latest
+
+initContainers:
+  - name: init1
+    image: docker/whalesay
+    command: ["cowsay"]
+    args: ["works!"]
+
+initContainers:
+  - |
+      name: init2
+      image: {{ .Values.image.repository }}
+      command: ["cowsay"]
+      args: ["works!"]
