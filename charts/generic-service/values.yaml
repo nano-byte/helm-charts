@@ -187,6 +187,9 @@ alerting:
       labelValue: ""
   custom: {}
 
+initContainers: []
+initContainerTemplates: []
+
 sidecars: []
 sidecarTemplates: []
 
