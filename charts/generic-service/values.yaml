@@ -4,8 +4,8 @@ version: ''
 
 image:
   registry: docker.io
-  # repository: required
-  # tag: required
+  repository: required
+  tag: required
   pullPolicy: IfNotPresent
   pullSecret: ''
 
