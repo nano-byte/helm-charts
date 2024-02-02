@@ -442,7 +442,7 @@ spec:
       {{- end }}
       {{- end }}
 
-      {{ if .Values.initContainers }}
+      {{ if or .Values.initContainers .Values.initContainerTemplates }}
       initContainers:
       {{- range .Values.initContainers }}
         - securityContext: {{- $.Values.securityContext.container | toYaml | nindent 12 }}

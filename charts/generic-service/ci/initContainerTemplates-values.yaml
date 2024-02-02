@@ -1,0 +1,15 @@
+# InitContainer test
+
+name: test
+fullname: my-test
+
+image:
+  repository: jwilder/whoami
+  tag: latest
+
+initContainerTemplates:
+  - |
+      name: init2
+      image: docker/whalesay:{{ .Values.image.tag }}
+      command: ["cowsay"]
+      args: ["hi"]
