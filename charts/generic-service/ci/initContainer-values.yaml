@@ -13,7 +13,7 @@ initContainers:
     command: ["cowsay"]
     args: ["works!"]
 
-initContainers:
+initContainerTemplates:
   - |
       name: init2
       image: {{ .Values.image.repository }}
