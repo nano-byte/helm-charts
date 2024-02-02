@@ -4,18 +4,18 @@ name: test
 fullname: my-test
 
 image:
-  repository: docker/whalesay
+  repository: jwilder/whoami
   tag: latest
 
 initContainers:
   - name: init1
     image: docker/whalesay
     command: ["cowsay"]
-    args: ["works!"]
+    args: ["hi"]
 
 initContainerTemplates:
   - |
       name: init2
-      image: {{ .Values.image.repository }}
+      image: docker/whalesay:{{ .Values.image.tag }}
       command: ["cowsay"]
-      args: ["works!"]
+      args: ["hi"]
