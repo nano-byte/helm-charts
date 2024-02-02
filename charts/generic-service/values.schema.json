@@ -32,11 +32,7 @@
         },
         "pullPolicy": {
           "type": "string",
-          "enum": [
-            "Never",
-            "IfNotPresent",
-            "Always"
-          ],
+          "enum": ["Never", "IfNotPresent", "Always"],
           "default": "IfNotPresent",
           "description": "Set to Always to try to pull new versions of the image"
         },
@@ -59,27 +55,17 @@
           "type": "object",
           "description": "Security context to use for the pod",
           "properties": {
-            "runAsUser": {
-              "type": "integer"
-            },
-            "runAsGroup": {
-              "type": "integer"
-            },
-            "fsGroup": {
-              "type": "integer"
-            }
+            "runAsUser": {"type": "integer"},
+            "runAsGroup": {"type": "integer"},
+            "fsGroup": {"type": "integer"}
           }
         },
         "container": {
           "type": "object",
           "description": "Security context to use for running containers",
           "properties": {
-            "allowPrivilegeEscalation": {
-              "type": "boolean"
-            },
-            "readOnlyRootFilesystem": {
-              "type": "boolean"
-            }
+            "allowPrivilegeEscalation": {"type": "boolean"},
+            "readOnlyRootFilesystem": {"type": "boolean"}
           }
         }
       },
@@ -87,23 +73,17 @@
     },
     "command": {
       "type": "array",
-      "items": {
-        "type": "string"
-      },
+      "items": {"type": "string"},
       "description": "Overrides the command to launch in the image"
     },
     "args": {
       "type": "array",
-      "items": {
-        "type": "string"
-      },
+      "items": {"type": "string"},
       "description": "The command-line arguments passed to the service"
     },
     "env": {
       "type": "object",
-      "additionalProperties": {
-        "type": "string"
-      },
+      "additionalProperties": {"type": "string"},
       "description": "Environment variables passed to the service as a key-value map"
     },
     "envFrom": {
@@ -111,18 +91,10 @@
       "additionalProperties": {
         "type": "object",
         "properties": {
-          "fieldRef": {
-            "type": "object"
-          },
-          "resourceFieldRef": {
-            "type": "object"
-          },
-          "configMapKeyRef": {
-            "type": "object"
-          },
-          "secretKeyRef": {
-            "type": "object"
-          }
+          "fieldRef": {"type": "object"},
+          "resourceFieldRef": {"type": "object"},
+          "configMapKeyRef": {"type": "object"},
+          "secretKeyRef": {"type": "object"}
         }
       },
       "description": "Environment variables passed to the service from other sources (e.g., secretKeyRef)"
@@ -138,32 +110,15 @@
     },
     "additionalConfigs": {
       "type": "array",
-      "items": {
-        "type": "string"
-      },
+      "items": {"type": "string"},
       "description": "Additional ConfigMaps with key named data.yaml to be mounted (paths appended to $CONFIG_FILE)"
     },
     "dnsConfig": {
       "type": "object",
       "properties": {
-        "nameservers": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "searches": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "options": {
-          "type": "array",
-          "items": {
-            "type": "object"
-          }
-        }
+        "nameservers": {"type": "array", "items": {"type": "string"}},
+        "searches": {"type": "array", "items": {"type": "string"}},
+        "options": {"type": "array", "items": {"type": "object"}}
       },
       "description": "DNS config for the pod (https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/"
     },
@@ -171,50 +126,29 @@
       "type": "object",
       "description": "Probe that waits for the service to initially start",
       "properties": {
-        "initialDelaySeconds": {
-          "type": "integer"
-        },
-        "periodSeconds": {
-          "type": "integer"
-        },
+        "initialDelaySeconds": {"type": "integer"},
+        "periodSeconds": {"type": "integer"},
         "httpGet": {
-          "type": [
-            "object",
-            "null"
-          ],
+          "type": ["object", "null"],
           "properties": {
-            "port": {
-              "type": "string"
-            },
-            "path": {
-              "type": "string"
-            }
+            "port": {"type": "string"},
+            "path": {"type": "string"}
           },
           "additionalProperties": true
         },
         "grpc": {
-          "type": [
-            "object",
-            "null"
-          ],
+          "type": ["object", "null"],
           "properties": {
-            "port": {
-              "type": "integer"
-            }
+            "port": {"type": "integer"}
           },
           "additionalProperties": true
         },
         "exec": {
-          "type": [
-            "object",
-            "null"
-          ],
+          "type": ["object", "null"],
           "properties": {
             "command": {
               "type": "array",
-              "items": {
-                "type": "string"
-              }
+              "items": {"type": "string"}
             },
             "additionalProperties": true
           }
@@ -226,50 +160,29 @@
       "type": "object",
       "description": "Probe that causes the service to be restarted when failing",
       "properties": {
-        "initialDelaySeconds": {
-          "type": "integer"
-        },
-        "periodSeconds": {
-          "type": "integer"
-        },
+        "initialDelaySeconds": {"type": "integer"},
+        "periodSeconds": {"type": "integer"},
         "httpGet": {
-          "type": [
-            "object",
-            "null"
-          ],
+          "type": ["object", "null"],
           "properties": {
-            "port": {
-              "type": "string"
-            },
-            "path": {
-              "type": "string"
-            }
+            "port": {"type": "string"},
+            "path": {"type": "string"}
           },
           "additionalProperties": true
         },
         "grpc": {
-          "type": [
-            "object",
-            "null"
-          ],
+          "type": ["object", "null"],
           "properties": {
-            "port": {
-              "type": "integer"
-            }
+            "port": {"type": "integer"}
           },
           "additionalProperties": true
         },
         "exec": {
-          "type": [
-            "object",
-            "null"
-          ],
+          "type": ["object", "null"],
           "properties": {
             "command": {
               "type": "array",
-              "items": {
-                "type": "string"
-              }
+              "items": {"type": "string"}
             }
           },
           "additionalProperties": true
@@ -281,50 +194,29 @@
       "type": "object",
       "description": "Probe that prevents the service from receiving traffic when failing",
       "properties": {
-        "initialDelaySeconds": {
-          "type": "integer"
-        },
-        "periodSeconds": {
-          "type": "integer"
-        },
+        "initialDelaySeconds": {"type": "integer"},
+        "periodSeconds": {"type": "integer"},
         "httpGet": {
-          "type": [
-            "object",
-            "null"
-          ],
+          "type": ["object", "null"],
           "properties": {
-            "port": {
-              "type": "string"
-            },
-            "path": {
-              "type": "string"
-            }
+            "port": {"type": "string"},
+            "path": {"type": "string"}
           },
           "additionalProperties": true
         },
         "grpc": {
-          "type": [
-            "object",
-            "null"
-          ],
+          "type": ["object", "null"],
           "properties": {
-            "port": {
-              "type": "integer"
-            }
+            "port": {"type": "integer"}
           },
           "additionalProperties": true
         },
         "exec": {
-          "type": [
-            "object",
-            "null"
-          ],
+          "type": ["object", "null"],
           "properties": {
             "command": {
               "type": "array",
-              "items": {
-                "type": "string"
-              }
+              "items": {"type": "string"}
             }
           },
           "additionalProperties": true
@@ -339,16 +231,12 @@
     },
     "labels": {
       "type": "object",
-      "additionalProperties": {
-        "type": "string"
-      },
+      "additionalProperties": {"type": "string"},
       "description": "Additional labels to set on all generated resources"
     },
     "annotations": {
       "type": "object",
-      "additionalProperties": {
-        "type": "string"
-      },
+      "additionalProperties": {"type": "string"},
       "description": "Additional annotations to set on the Pod controller and Pods"
     },
     "resources": {
@@ -392,24 +280,13 @@
       "properties": {
         "controller": {
           "type": "string",
-          "enum": [
-            "Deployment",
-            "StatefulSet",
-            "DaemonSet",
-            "ArgoRollout"
-          ],
+          "enum": ["Deployment", "StatefulSet", "DaemonSet", "ArgoRollout"],
           "default": "Deployment",
           "description": "The type of Pod controller to create"
         },
         "strategy": {
           "type": "string",
-          "enum": [
-            "RollingUpdate",
-            "Recreate",
-            "OnDelete",
-            "Canary",
-            "BlueGreen"
-          ],
+          "enum": ["RollingUpdate", "Recreate", "OnDelete", "Canary", "BlueGreen"],
           "default": "RollingUpdate",
           "description": "The rollout strategy"
         },
@@ -452,12 +329,7 @@
           "properties": {
             "type": {
               "type": "string",
-              "enum": [
-                "Resource",
-                "Pods",
-                "Object",
-                "External"
-              ],
+              "enum": ["Resource", "Pods", "Object", "External"],
               "default": "Resource",
               "description": "The type of metric to use for scaling"
             },
@@ -467,33 +339,18 @@
               "description": "The name of the metric to use for scaling"
             },
             "object": {
-              "type": [
-                "object",
-                "null"
-              ],
+              "type": ["object", "null"],
               "properties": {
-                "apiVersion": {
-                  "type": "string"
-                },
-                "kind": {
-                  "type": "string"
-                },
-                "name": {
-                  "type": "string"
-                }
+                "apiVersion": {"type": "string"},
+                "kind": {"type": "string"},
+                "name": {"type": "string"}
               },
-              "required": [
-                "apiVersion",
-                "kind",
-                "name"
-              ],
+              "required": ["apiVersion", "kind", "name"],
               "description": "Reference to the Kubernetes object the metric describes (required if type = Object)"
             },
             "selector": {
               "type": "object",
-              "additionalProperties": {
-                "type": "string"
-              },
+              "additionalProperties": {"type": "string"},
               "description": "Labels for selecting the metric"
             }
           }
@@ -519,18 +376,14 @@
         },
         "nodeSelector": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          },
+          "additionalProperties": {"type": "string"},
           "description": "Labels to select nodes this service may be run on"
         },
         "nodePreferences": {
           "type": "object",
           "additionalProperties": {
             "type": "array",
-            "items": {
-              "type": "string"
-            }
+            "items": {"type": "string"}
           },
           "description": "Sets of label values to select nodes this service should be run on if possible"
         },
@@ -538,40 +391,28 @@
           "type": "object",
           "additionalProperties": {
             "type": "array",
-            "items": {
-              "type": "string"
-            }
+            "items": {"type": "string"}
           },
           "description": "Sets of label values to select nodes this service must not run on"
         },
         "tolerations": {
           "type": "array",
-          "items": {
-            "type": "string"
-          },
+          "items": {"type": "string"},
           "description": "Taints on nodes this service can tolerate"
         },
         "podAffinity": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          },
+          "additionalProperties": {"type": "string"},
           "description": "Labels to select other pods this service should share nodes with if possible"
         },
         "podAntiAffinity": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          },
+          "additionalProperties": {"type": "string"},
           "description": "Labels to select other pods this service must not share nodes with"
         },
         "replicaSpread": {
           "type": "string",
-          "enum": [
-            "BestEffort",
-            "Strict",
-            "None"
-          ],
+          "enum": ["BestEffort", "Strict", "None"],
           "default": "BestEffort",
           "description": "How to spread replicas across nodes"
         }
@@ -592,12 +433,8 @@
         },
         "accessModes": {
           "type": "array",
-          "default": [
-            "ReadWriteOnce"
-          ],
-          "items": {
-            "type": "string"
-          },
+          "default": ["ReadWriteOnce"],
+          "items": {"type": "string"},
           "description": "The support access modes the volume can be mounted with"
         },
         "size": {
@@ -614,7 +451,8 @@
     },
     "secrets": {
       "type": "object",
-      "additionalProperties": {
+      "additionalProperties":
+      {
         "type": "object",
         "properties": {
           "mountPath": {
@@ -627,9 +465,7 @@
           },
           "files": {
             "type": "object",
-            "additionalProperties": {
-              "type": "string"
-            },
+            "additionalProperties": {"type": "string"},
             "description": "Map of file names to base64-encoded content; leave empty to reference existing Secret"
           }
         },
@@ -649,9 +485,7 @@
             "description": "The name of the volume"
           }
         },
-        "required": [
-          "name"
-        ],
+        "required": ["name"],
         "additionalProperties": true
       },
       "description": "A map of mount paths inside the container to volumes"
@@ -672,36 +506,21 @@
         "protocol": {
           "type": "string",
           "default": "http",
-          "enum": [
-            "http",
-            "https",
-            "h2c",
-            "grpc",
-            "http2",
-            "h2",
-            "grpcs"
-          ],
+          "enum": ["http", "https", "h2c", "grpc", "http2", "h2", "grpcs"],
           "description": "The internal protocol used for ingress"
         },
         "timeoutSeconds": {
-          "type": [
-            "integer",
-            "null"
-          ],
+          "type": ["integer", "null"],
           "description": "Number of seconds after which to timeout waiting for response from service"
         },
         "domains": {
           "type": "array",
-          "items": {
-            "type": "string"
-          },
+          "items": {"type": "string"},
           "description": "The public domain names under which the service is exposed (leave empty for cluster-internal only)"
         },
         "paths": {
           "type": "array",
-          "items": {
-            "type": "string"
-          },
+          "items": {"type": "string"},
           "description": "HTTP path prefixes to accept ingress traffic for (leave empty to accept traffic for any path)"
         },
         "tls": {
@@ -730,29 +549,19 @@
             },
             "allowOrigin": {
               "type": "array",
-              "items": {
-                "type": "string"
-              },
+              "items": {"type": "string"},
               "description": "List of origins allowed to access the ingress via CORS; leave empty to allow any"
             },
             "allowMethods": {
               "type": "array",
-              "items": {
-                "type": "string"
-              },
-              "default": [
-                "GET"
-              ],
+              "items": {"type": "string"},
+              "default": ["GET"],
               "description": "List of HTTP methods allowed to access the ingress via CORS"
             },
             "allowHeaders": {
               "type": "array",
-              "items": {
-                "type": "string"
-              },
-              "default": [
-                "Content-Type"
-              ],
+              "items": {"type": "string"},
+              "default": ["Content-Type"],
               "description": "List of HTTP headers that can be used when requesting the ingress via CORS"
             },
             "allowCredentials": {
@@ -762,9 +571,7 @@
             },
             "exposeHeaders": {
               "type": "array",
-              "items": {
-                "type": "string"
-              },
+              "items": {"type": "string"},
               "description": "List of HTTP headers that the browsers are allowed to access"
             }
           },
@@ -776,9 +583,7 @@
         },
         "annotations": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          },
+          "additionalProperties": {"type": "string"},
           "description": "Annotations for Ingress resource (not applicable if ingress.istio.enabled)"
         },
         "headless": {
@@ -798,9 +603,7 @@
         },
         "additionalSelectors": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          },
+          "additionalProperties": {"type": "string"},
           "description": "Additional label selectors used to restrict the Pods selected by the Service."
         },
         "istio": {
@@ -813,16 +616,12 @@
             },
             "gateways": {
               "type": "array",
-              "items": {
-                "type": "string"
-              },
+              "items": {"type": "string"},
               "description": "The names of the Istio Gateways to use"
             },
             "httpHeaders": {
               "type": "object",
-              "additionalProperties": {
-                "type": "string"
-              },
+              "additionalProperties": {"type": "string"},
               "description": "Custom HTTP response headers"
             },
             "retries": {
@@ -848,36 +647,21 @@
               "protocol": {
                 "type": "string",
                 "default": "http",
-                "enum": [
-                  "http",
-                  "https",
-                  "h2c",
-                  "grpc",
-                  "http2",
-                  "h2",
-                  "grpcs"
-                ],
+                "enum": ["http", "https", "h2c", "grpc", "http2", "h2", "grpcs"],
                 "description": "The protocol used for the port"
               },
               "timeoutSeconds": {
-                "type": [
-                  "integer",
-                  "null"
-                ],
+                "type": ["integer", "null"],
                 "description": "Number of seconds after which to timeout waiting for response from service"
               },
               "domains": {
                 "type": "array",
-                "items": {
-                  "type": "string"
-                },
+                "items": {"type": "string"},
                 "description": "The public domain names under which the port is exposed (leave empty for cluster-internal only)"
               },
               "paths": {
                 "type": "array",
-                "items": {
-                  "type": "string"
-                },
+                "items": {"type": "string"},
                 "description": "HTTP path prefixes to accept ingress traffic for (leave empty to accept traffic for any path)"
               },
               "tls": {
@@ -896,9 +680,7 @@
               },
               "annotations": {
                 "type": "object",
-                "additionalProperties": {
-                  "type": "string"
-                },
+                "additionalProperties": {"type": "string"},
                 "description": "Additional annotations, merged with ingress.annotations (use string 'nil' to unset existing values)"
               }
             },
@@ -919,16 +701,12 @@
         },
         "ingress": {
           "type": "array",
-          "items": {
-            "type": "object"
-          },
+          "items": {"type": "object"},
           "description": "Ingress network policy rules to apply"
         },
         "egress": {
           "type": "array",
-          "items": {
-            "type": "object"
-          },
+          "items": {"type": "object"},
           "description": "Ingress network policy rules to apply"
         }
       },
@@ -1000,10 +778,7 @@
               "description": "The maximum amount of time a Pod is allowed to take for startup"
             },
             "maxAgeSeconds": {
-              "type": [
-                "integer",
-                "null"
-              ],
+              "type": ["integer", "null"],
               "description": "The maximum allowed age of a Pod in seconds (useful to ensure regular deployments)"
             }
           },
@@ -1022,10 +797,10 @@
         "memory": {
           "type": "object",
           "properties": {
-            "enabled": {
-              "type": "boolean",
-              "default": true,
-              "description": "Enables alerts relating to memory usage"
+            "enabled" : {
+                "type": "boolean",
+                "default": true,
+                "description": "Enables alerts relating to memory usage"
             },
             "maxUsageFactor": {
               "type": "number",
@@ -1121,10 +896,10 @@
               "default": 2.5,
               "description": "The maximum gRPC error ratio increase in the sample interval compared to the reference interval"
             },
-            "errorDuration": {
-              "type": "string",
-              "default": "",
-              "description": "The duration for which the gRPC error rate has to remain elevated before triggering an alert"
+            "errorDuration" : {
+                "type": "string",
+                "default": "",
+                "description": "The duration for which the gRPC error rate has to remain elevated before triggering an alert"
             },
             "maxCriticalErrors": {
               "type": "integer",
@@ -1133,13 +908,8 @@
             },
             "criticalCodes": {
               "type": "array",
-              "items": {
-                "type": "string"
-              },
-              "default": [
-                "Internal",
-                "Unimplemented"
-              ],
+              "items": {"type": "string"},
+              "default": ["Internal", "Unimplemented"],
               "description": "Which gRPC status codes are considered critical errors"
             }
           },
@@ -1254,13 +1024,7 @@
                 "description": "A longer description of the alert; can include metric labels via templating"
               }
             },
-            "required": [
-              "metric",
-              "aggregate",
-              "predicate",
-              "summary",
-              "description"
-            ],
+            "required": ["metric", "aggregate", "predicate", "summary", "description"],
             "additionalProperties": false
           },
           "description": "Additional alerts based on Prometheus metrics exposed by the service"
@@ -1270,30 +1034,22 @@
     },
     "sidecars": {
       "type": "array",
-      "items": {
-        "type": "object"
-      },
+      "items": {"type": "object"},
       "description": "Additional sidecar containers to be added to the Pod"
     },
     "sidecarsTemplates": {
       "type": "array",
-      "items": {
-        "type": "string"
-      },
+      "items": {"type": "string"},
       "description": "Strings to be templated providing additional sidecar containers to be added to the Pod"
     },
     "initContainers": {
       "type": "array",
-      "items": {
-        "type": "object"
-      },
+      "items": {"type": "object"},
       "description": "Additional init containers to be added to the Pod"
     },
     "initContainerTemplates": {
       "type": "array",
-      "items": {
-        "type": "string"
-      },
+      "items": {"type": "string"},
       "description": "Strings to be templated providing additional init containers to be added to the Pod"
     },
     "rbac": {
@@ -1301,16 +1057,12 @@
       "properties": {
         "roles": {
           "type": "array",
-          "items": {
-            "type": "string"
-          },
+          "items": {"type": "string"},
           "description": "Namespace-specific Kubernetes RBAC Roles to assign to the service (supports templating)"
         },
         "clusterRoles": {
           "type": "array",
-          "items": {
-            "type": "string"
-          },
+          "items": {"type": "string"},
           "description": "Cluster-wide Kubernetes RBAC Roles to assign to the service (supports templating)"
         },
         "existingServiceAccount": {
@@ -1328,9 +1080,7 @@
           "properties": {
             "labels": {
               "type": "object",
-              "additionalProperties": {
-                "type": "string"
-              },
+              "additionalProperties": {"type": "string"},
               "description": "Additional labels to apply to alert rules"
             }
           }
@@ -1350,9 +1100,7 @@
             "queryVariables": {
               "type": "object",
               "default": {},
-              "additionalProperties": {
-                "type": "string"
-              },
+              "additionalProperties": {"type": "string"},
               "description": "Additional variables to be used in the to parametrize the service's Grafana dashboard"
             }
           }
