@@ -180,8 +180,8 @@ app:
 | `alerting.custom.*.description`                 | __required if used__        | A longer description of the alert; can include metric labels via templating                              |
 | `sidecars`                                      | `[]`                        | Additional sidecar containers to be added to the `Pod`                                                   |
 | `sidecarTemplates`                              | `[]`                        | Strings to be templated providing additional sidecar containers to be added to the Pod                   |
-| `initContainerss`                                      | `[]`                        | Additional init containers to be added to the `Pod`                                                   |
-| `initContainersTemplates`                              | `[]`                        | Strings to be templated providing additional init containers to be added to the Pod   
+| `initContainers`                                      | `[]`                        | Additional init containers to be added to the `Pod`                                                   |
+| `initContainerTemplates`                              | `[]`                        | Strings to be templated providing additional init containers to be added to the Pod   
 | `rbac.roles`                                    | `[]`                        | Namespace-specific Kubernetes RBAC Roles to assign to the service (supports templating)                  |
 | `rbac.clusterRoles`                             | `[]`                        | Cluster-wide Kubernetes RBAC Roles to assign to the service (supports templating)                        |
 | `rbac.existingServiceAccount`                   |                             | The name of an existing service account to use (instead of automatically creating one for the service)   |
