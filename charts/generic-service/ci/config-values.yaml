@@ -6,6 +6,7 @@ image:
 
 env:
   SOME_KEY: some-value
+  SOME_NUMERIC_KEY: 1234
 
 config:
   some-key: some-value
