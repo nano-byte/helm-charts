@@ -83,6 +83,7 @@
     },
     "env": {
       "type": "object",
+      "additionalProperties": {"type": ["string", "number", "boolean"]},
       "description": "Environment variables passed to the service as a key-value map"
     },
     "envFrom": {
