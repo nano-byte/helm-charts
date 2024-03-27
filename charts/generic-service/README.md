@@ -103,6 +103,7 @@ app:
 | `ingress.paths`                                 | `[]`                        | HTTP path prefixes to accept ingress traffic for (leave empty to accept traffic for any path)            |
 | `ingress.tls.enabled`                           | `false`                     | Enables TLS termination at the ingress (not applicable if `ingress.istio.enabled`)                       |
 | `ingress.tls.secret`                            | `{{ .Release.Name }}-tls`   | The name of the `Secret` holding the TLS private key (not applicable if `ingress.istio.enabled`)         |
+| `ingress.tls.secretNamespace`                   |                             | The Kubernetes namespace containing the `Secret` (only applicable if `ingress.class` is `contour`)       |
 | `ingress.cors.enabled`                          | `false`                     | Enables CORS (only applicable if `ingress.class` is `nginx` or `ingress.istio.enabled` is `true`)        |
 | `ingress.cors.allowOrigin`                      | `[]`                        | List of origins allowed to access the ingress via CORS; leave empty to allow any                         |
 | `ingress.cors.allowMethods`                     | `[GET]`                     | List of HTTP methods allowed to access the ingress via CORS                                              |
@@ -127,6 +128,7 @@ app:
 | `ingress.extra.*.paths`                         | `[]`                        | HTTP path prefixes to accept ingress traffic for (leave empty to accept traffic for any path)            |
 | `ingress.extra.*.tls.enabled`                   | `false`                     | Enables TLS termination at the ingress                                                                   |
 | `ingress.extra.*.tls.secret`                    | Release Name + `*` + `-tls` | The name of the `Secret` holding the TLS private key                                                     |
+| `ingress.extra.*.tls.secretNamespace`           |                             | The Kubernetes namespace containing the `Secret` (only applicable if `class` is `contour`)               |
 | `ingress.extra.*.annotations`                   | `{}`                        | Additional annotations, merged with `ingress.annotations` (use string `nil` to unset existing values)    |
 | `netpol.enabled`                                | `false`                     | Apply network policies for the `Pod`s                                                                    |
 | `netpol.ingress`                                | Allow from same namespace   | Ingress network policy rules to apply                                                                    |

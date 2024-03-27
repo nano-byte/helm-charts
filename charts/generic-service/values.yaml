@@ -111,6 +111,7 @@ ingress:
   tls:
     enabled: false
     secret: '{{ .Release.Name }}-tls'
+    secretNamespace: ''
   cors:
     enabled: false
     allowOrigin: []

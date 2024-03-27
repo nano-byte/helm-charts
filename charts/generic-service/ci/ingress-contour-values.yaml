@@ -12,3 +12,9 @@ ingress:
     timeout:
       domains: ['timeout.example.com']
       timeoutSeconds: -1  # infinte
+    tls:
+      domains: ['tls.example.com']
+      tls:
+        enabled: true
+        secretNamespace: secret-namespace
+        secret: secret-name

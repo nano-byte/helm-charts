@@ -31,6 +31,9 @@ metadata:
     {{- if $timeout }}
     projectcontour.io/response-timeout: '{{ if eq (int $timeout) -1 }}infinity{{ else }}{{ $timeout }}s{{ end }}'
     {{- end }}
+    {{- if and $extra.tls (and $extra.tls.enabled $extra.tls.secretNamespace) }}
+    projectcontour.io/tls-cert-namespace: {{ $extra.tls.secretNamespace }}
+    {{- end }}
   {{- end }}
 
 spec:

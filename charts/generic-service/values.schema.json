@@ -535,6 +535,10 @@
               "type": "string",
               "default": "{{ .Release.Name }}-tls",
               "description": "The name of the Secret holding the TLS private key (not applicable if ingress.istio.enabled)"
+            },
+            "secretNamespace": {
+              "type": "string",
+              "description": "The Kubernetes namespace containing the Secret (only applicable if ingress.class is contour)"
             }
           },
           "additionalProperties": false
@@ -675,6 +679,10 @@
                   "secret": {
                     "type": "string",
                     "description": "The name of the Secret holding the TLS private key"
+                  },
+                  "secretNamespace": {
+                    "type": "string",
+                    "description": "The Kubernetes namespace containing the Secret (only applicable if class is contour)"
                   }
                 }
               },
