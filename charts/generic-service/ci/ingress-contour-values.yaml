@@ -1,0 +1,14 @@
+# Contour ingress test
+
+image:
+  repository: jwilder/whoami
+  tag: latest
+
+ingress:
+  enabled: true
+  port: 8000
+  class: contour
+  extra:
+    timeout:
+      domains: ['timeout.example.com']
+      timeoutSeconds: -1  # infinte

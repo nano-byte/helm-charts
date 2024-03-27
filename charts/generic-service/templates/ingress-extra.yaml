@@ -2,6 +2,7 @@
 {{- range $name, $extra := .Values.ingress.extra }}
 {{- if $extra.domains }}
 {{ $class := $extra.class | default $.Values.ingress.class }}
+{{ $timeout := $extra.timeoutSeconds | default $.Values.ingress.timeoutSeconds }}
 
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -20,10 +21,15 @@ metadata:
     {{- if $extra.port }}{{ $protocol = $extra.protocol }}{{ end }}
     nginx.ingress.kubernetes.io/backend-protocol: {{ include "generic-service.normalize-protocol" $protocol | upper }}
     {{- if or $extra.timeoutSeconds $.Values.ingress.timeoutSeconds }}
-    nginx.ingress.kubernetes.io/proxy-read-timeout: '{{ $extra.timeoutSeconds | default $.Values.ingress.timeoutSeconds }}'
+    nginx.ingress.kubernetes.io/proxy-read-timeout: '{{ $timeout }}'
     {{- if or (eq $protocol "grpc") (eq $protocol "grpcs") }}
-    nginx.ingress.kubernetes.io/server-snippet: "grpc_read_timeout {{ $extra.timeoutSeconds | default $.Values.ingress.timeoutSeconds }}s; {{ get $merged "nginx.ingress.kubernetes.io/server-snippet" }}"
+    nginx.ingress.kubernetes.io/server-snippet: "grpc_read_timeout {{ $timeout }}s; {{ get $merged "nginx.ingress.kubernetes.io/server-snippet" }}"
     {{- end }}
+    {{- end }}
+  {{- end }}
+  {{- if eq $class "contour" }}
+    {{- if $timeout }}
+    projectcontour.io/response-timeout: '{{ if eq (int $timeout) -1 }}infinity{{ else }}{{ $timeout }}s{{ end }}'
     {{- end }}
   {{- end }}
 

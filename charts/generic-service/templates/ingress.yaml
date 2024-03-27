@@ -26,6 +26,11 @@ metadata:
     {{ if .Values.ingress.cors.exposeHeaders }}nginx.ingress.kubernetes.io/cors-expose-headers: {{ join "," .Values.ingress.cors.exposeHeaders | quote }}{{ end }}
     {{- end }}
   {{- end }}
+  {{- if eq .Values.ingress.class "contour" }}
+    {{- if .Values.ingress.timeoutSeconds }}
+    projectcontour.io/response-timeout: '{{ if eq (int .Values.ingress.timeoutSeconds) -1 }}infinity{{ else }}{{ .Values.ingress.timeoutSeconds }}s{{ end }}'
+    {{- end }}
+  {{- end }}
 
 spec:
   {{- if .Values.ingress.class }}
