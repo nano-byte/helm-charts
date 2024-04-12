@@ -220,7 +220,7 @@ spec:
         {{- if .Values.scheduling.podAntiAffinity }}
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
-            - topologyKey: topology.kubernetes.io/zone
+            - topologyKey: kubernetes.io/hostname
               labelSelector:
                 matchLabels:
                 {{- range $key, $value := .Values.scheduling.podAntiAffinity }}
