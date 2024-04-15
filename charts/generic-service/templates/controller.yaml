@@ -22,6 +22,13 @@ spec:
   replicas: {{ .Values.replicas | int }}
   {{- end }}
 
+  {{- if (ne .Values.rollout.revisionHistoryLimit nil) }}
+  {{- if (and (ne .Values.rollout.controller "Deployment") (ne .Values.rollout.controller "ArgoRollout")) }}
+    {{ fail "rollout.revisionHistoryLimit cannot be non-null if rollout.controller is not Deployment or ArgoRollout" }}
+  {{- end }}
+  revisionHistoryLimit: {{ .Values.rollout.revisionHistoryLimit | int }}
+  {{- end }}
+
   selector:
     matchLabels: {{- include "generic-service.selector-labels" . | nindent 6 }}
 

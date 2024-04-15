@@ -302,6 +302,10 @@
         },
         "analysis": {
           "description": "Flagger or Argo Rollouts analysis for automatic Canary or BlueGreen promotion"
+        },
+        "revisionHistoryLimit": {
+          "type": ["integer", "null"],
+          "description": "Number of old ReplicaSets to retain (rollout.controller must be Deployment or ArgoRollout)"
         }
       },
       "additionalProperties": false

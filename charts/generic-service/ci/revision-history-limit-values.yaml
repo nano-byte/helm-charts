@@ -1,0 +1,8 @@
+# revisionHistoryLimit test
+
+image:
+  repository: jwilder/whoami
+  tag: latest
+
+rollout:
+  revisionHistoryLimit: 3
