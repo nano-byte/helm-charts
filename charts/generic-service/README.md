@@ -112,7 +112,7 @@ app:
 | `ingress.cors.allowCredentials`                 | `true`                      | Indicates whether the caller is allowed to send the actual request (not the preflight) using credentials |
 | `ingress.cors.exposeHeaders`                    | `[]`                        | List of HTTP headers that the browsers are allowed to access                                             |
 | `ingress.class`                                 |                             | The ingress controller to use (not applicable if `ingress.istio.enabled`)                                |
-| `ingress.annotations`                           | `{}`                        | Annotations for `Ingress` resource (not applicable if `ingress.istio.enabled`)                           |
+| `ingress.annotations`                           | `{}`                        | Annotations for `Ingress` or `VirtualService` resource                                                   |
 | `ingress.headless`                              | `false`                     | Creates an additional `Service` with the suffix `-headless` that directly exposes Pod IPs                |
 | `ingress.headlessExposesAll`                    | `false`                     | Exposes all replicas, including unready ones, via the `-headless` `Service`                              |
 | `ingress.nodeLocal`                             | `false`                     | Creates an additional `Service` with the suffix `-local` that only routes to pods on the same node       |

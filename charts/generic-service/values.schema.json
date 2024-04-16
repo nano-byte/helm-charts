@@ -592,7 +592,7 @@
         "annotations": {
           "type": "object",
           "additionalProperties": {"type": "string"},
-          "description": "Annotations for Ingress resource (not applicable if ingress.istio.enabled)"
+          "description": "Annotations for Ingress or VirtualService resource"
         },
         "headless": {
           "type": "boolean",

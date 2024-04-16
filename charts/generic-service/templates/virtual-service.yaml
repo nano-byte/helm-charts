@@ -5,6 +5,7 @@ kind: VirtualService
 metadata:
   name: {{ include "generic-service.fullname" . }}
   labels: {{- include "generic-service.top-level-labels" . | nindent 4 }}
+  annotations: {{ .Values.ingress.annotations | toYaml | nindent 4 }}
 
 spec:
 {{ include "generic-service.istio" . | indent 2 }}
