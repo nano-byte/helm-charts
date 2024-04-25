@@ -1,7 +1,7 @@
 {{- if and .Values.ingress.enabled .Values.ingress.gateway.name }}
 
 apiVersion: gateway.networking.k8s.io/v1beta1
-kind: HTTPRoute
+kind: {{ if eq .Values.ingress.protocol "http" }}HTTP{{ else if or (eq .Values.ingress.protocol "grpc") (eq .Values.ingress.protocol "h2c") }}GRPC{{ else }}{{ end }}Route
 metadata:
   name: {{ include "generic-service.fullname" . }}
   labels: {{- include "generic-service.top-level-labels" . | nindent 4 }}
@@ -13,6 +13,7 @@ spec:
 
   hostnames: {{ .Values.ingress.domains | toYaml | nindent 4 }}
 
+  {{- if eq .Values.ingress.protocol "http" }}
   rules:
     {{- range ($.Values.ingress.paths | default (list "/")) }}
     - matches:
@@ -26,5 +27,6 @@ spec:
         - name: {{ include "generic-service.fullname" $ }}
           port: {{ $.Values.ingress.port }}
     {{- end }}
+  {{- end }}
 
 {{- end }}

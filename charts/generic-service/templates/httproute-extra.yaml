@@ -2,9 +2,11 @@
 {{- range $name, $extra := .Values.ingress.extra }}
 {{- $gateway := deepCopy $.Values.ingress.gateway | mustMerge ($extra.gateway | default dict) }}
 {{- if $gateway.name }}
+{{- $protocol := $.Values.ingress.protocol }}
+{{- if $extra.port }}{{ $protocol = $extra.protocol }}{{ end }}
 
 apiVersion: gateway.networking.k8s.io/v1beta1
-kind: HTTPRoute
+kind: {{ if eq $protocol "http" }}HTTP{{ else if or (eq $protocol "grpc") (eq $protocol "h2c") }}GRPC{{ else }}{{ end }}Route
 metadata:
   name: {{ include "generic-service.fullname" $ }}-{{ $name }}
   labels: {{- include "generic-service.default-labels" $ | nindent 4 }}
@@ -22,6 +24,7 @@ spec:
 
   hostnames: {{ $extra.domains | toYaml | nindent 4 }}
 
+  {{- if eq $protocol "http" }}
   rules:
     {{- range ($extra.paths | default (list "/")) }}
     - matches:
@@ -35,6 +38,7 @@ spec:
         - name: {{ include "generic-service.fullname" $ }}
           port: {{ $extra.port | default $.Values.ingress.port }}
     {{- end }}
+  {{- end }}
 ---
 {{- end }}
 {{- end }}
