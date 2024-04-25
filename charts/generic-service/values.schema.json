@@ -1087,15 +1087,10 @@
     "global": {
       "type": "object",
       "properties": {
-        "alerting": {
+        "alertLabels": {
           "type": "object",
-          "properties": {
-            "labels": {
-              "type": "object",
-              "additionalProperties": {"type": "string"},
-              "description": "Additional labels to apply to alert rules"
-            }
-          }
+          "additionalProperties": {"type": "string"},
+          "description": "Additional labels to apply to alert rules"
         },
         "grafana": {
           "type": "object",
