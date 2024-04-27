@@ -23,7 +23,5 @@ jobs:
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
       - uses: helm/chart-releaser-action@v1.6.0
-        with:
-          charts_repo_url: https://helm.nano-byte.net
         env:
           CR_TOKEN: ${{github.token}}
