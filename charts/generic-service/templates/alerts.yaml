@@ -154,7 +154,7 @@ spec:
       {{- end }}
 
       {{- if .Values.ingress.enabled }}
-        {{- if or .Values.ingress.istio.enabled (eq .Values.ingress.class "nginx") }}
+        {{- if or .Values.ingress.istio.enabled (contains "nginx" .Values.ingress.class) }}
         {{- if .Values.alerting.http.referenceInterval }}
         - alert: HttpSlowdown
           expr: |

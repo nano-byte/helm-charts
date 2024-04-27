@@ -8,7 +8,7 @@ metadata:
 
 spec:
   {{- if eq .Values.rollout.strategy "Canary" }}
-  provider: {{ if .Values.ingress.istio.enabled }}istio{{ else if eq .Values.ingress.class "nginx" }}nginx{{ else }}{{ fail "Ingress must use Istio or nginx if rollout.strategy is Canary" }}{{ end }}
+  provider: {{ if .Values.ingress.istio.enabled }}istio{{ else if contains "nginx" .Values.ingress.class }}nginx{{ else }}{{ fail "Ingress must use Istio or nginx if rollout.strategy is Canary" }}{{ end }}
   {{- else if eq .Values.rollout.strategy "BlueGreen" }}
   {{- else }}
       {{ fail "rollout.strategy must be Canary or BlueGreen if rollout.flagger is true" }}

@@ -73,7 +73,7 @@ spec:
         istio:
           virtualService:
             name: {{ include "generic-service.fullname" . }}
-        {{- else if eq .Values.ingress.class "nginx" }}
+        {{- else if contains "nginx" .Values.ingress.class }}
         nginx:
           stableIngress: {{ include "generic-service.fullname" . }}
         {{- else }}

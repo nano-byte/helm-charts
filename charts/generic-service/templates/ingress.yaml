@@ -9,7 +9,7 @@ metadata:
   {{- if .Values.ingress.annotations }}
     {{- .Values.ingress.annotations | toYaml | nindent 4 }}
   {{- end }}
-  {{- if eq .Values.ingress.class "nginx" }}
+  {{- if contains "nginx" .Values.ingress.class }}
     nginx.ingress.kubernetes.io/backend-protocol: {{ include "generic-service.normalize-protocol" .Values.ingress.protocol | upper }}
     {{- if .Values.ingress.timeoutSeconds }}
     nginx.ingress.kubernetes.io/proxy-read-timeout: '{{ .Values.ingress.timeoutSeconds }}'
@@ -26,7 +26,7 @@ metadata:
     {{ if .Values.ingress.cors.exposeHeaders }}nginx.ingress.kubernetes.io/cors-expose-headers: {{ join "," .Values.ingress.cors.exposeHeaders | quote }}{{ end }}
     {{- end }}
   {{- end }}
-  {{- if eq .Values.ingress.class "contour" }}
+  {{- if contains "contour" .Values.ingress.class }}
     {{- if .Values.ingress.timeoutSeconds }}
     projectcontour.io/response-timeout: '{{ if eq (int .Values.ingress.timeoutSeconds) -1 }}infinity{{ else }}{{ .Values.ingress.timeoutSeconds }}s{{ end }}'
     {{- end }}
