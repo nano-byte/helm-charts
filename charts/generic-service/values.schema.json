@@ -514,7 +514,7 @@
           "description": "The internal protocol used for ingress"
         },
         "timeoutSeconds": {
-          "type": ["number", "null"],
+          "type": ["integer", "null"],
           "description": "Number of seconds after which to timeout waiting for response from service; -1 for infinite"
         },
         "domains": {
@@ -659,7 +659,7 @@
                 "description": "The protocol used for the port"
               },
               "timeoutSeconds": {
-                "type": ["number", "null"],
+                "type": ["integer", "null"],
                 "description": "Number of seconds after which to timeout waiting for response from service; -1 for infinite"
               },
               "domains": {
