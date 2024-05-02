@@ -1,0 +1,48 @@
+# Argo Rollout controller Canary test
+
+image:
+  repository: jwilder/whoami
+  tag: latest
+
+ingress:
+  enabled: true
+  port: 8000
+
+replicas: 2
+
+rollout:
+  controller: ArgoRollout
+  strategy: Canary
+  analysis:
+    templates:
+      - templateName: success-rate
+    args:
+      - name: service-name
+        value: canary-demo
+  steps:
+    - setWeight: 20
+    - analysis:
+        templates:
+        - templateName: success-rate
+        args:
+        - name: service-name
+          value: canary-demo
+    - pause:
+        duration: 1h
+    - setWeight: 40
+  analysisTemplates:
+    - name: success-rate
+      args:
+        - name: service-name
+      metrics:
+        - name: success-rate
+          interval: 5m
+          count: 10
+          successCondition: "result[0] >= 0.95"
+          query: |
+            sum(irate(
+              istio_requests_total{reporter="source",destination_service=~"{{args.service-name}}",response_code!~"5.*"}[5m]
+            )) /
+            sum(irate(
+              istio_requests_total{reporter="source",destination_service=~"{{args.service-name}}"}[5m]
+            ))

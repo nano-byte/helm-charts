@@ -1,0 +1,20 @@
+# Argo Rollout controller BlueGreen test
+
+image:
+  repository: jwilder/whoami
+  tag: latest
+
+ingress:
+  enabled: true
+  port: 8000
+
+rollout:
+  controller: ArgoRollout
+  strategy: BlueGreen
+  autoPromotion: true
+  analysis:
+    templates:
+      - templateName: success-rate
+    args:
+      - name: service-name
+        value: canary-demo

@@ -68,7 +68,11 @@ app:
 | `rollout.autoPromotion`                         | `true`                      | Automatically promote rollouts (if `rollout.strategy` is `BlueGreen` and `rollout.flagger` if `false`)   |
 | `rollout.flagger`                               | `false`                     | Use Flagger to control rollouts (`rollout.controller` must be `Deployment` or `StatefulSet`)             |
 | `rollout.analysis`                              | req. for Canary or Flagger  | Flagger or Argo Rollouts analysis for automatic `Canary` or `BlueGreen` promotion                        |
-| `rollout.revisionHistoryLimit`                  | `null`                      | Number of old ReplicaSets to retain (`rollout.controller` must be `Deployment` or `ArgoRollout`)         |
+| `rollout.revisionHistoryLimit`                  | `600`                       | Number of old ReplicaSets to retain (`rollout.controller` must be `Deployment` or `ArgoRollout`)         |
+| `rollout.progressDeadlineSeconds`               | `null`                      | The maximum time in seconds for a deployment to make progress before it is considered to be failed       |
+| `rollout.minReadySeconds`                       | `0`                         | Minimum number of seconds for which a new pod should be ready for it to be considered available          |
+| `rollout.progressDeadlineAbort`                 | `false`                     | Whether to abort the update when `rollout.progressDeadlineSeconds` is exceeded (`rollout.controller` must be `ArgoRollout` and `rollout.strategy` `Canary`) |
+| `rollout.notifications`                         | `{}`                        | Option to subscribe to argo rollout events and send slack notifications                                  |
 | `replicas`                                      | `1`                         | The number of instances of the service to run (set at least `2` for Pod Disruption Budget)               |
 | `autoscaling.enabled`                           | `false`                     | Enables automatic starting of additional instances                                                       |
 | `autoscaling.maxReplicas`                       | `3`                         | The maximum number of instances to run (must be larger than `replicas`)                                  |
