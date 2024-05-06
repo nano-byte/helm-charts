@@ -10,7 +10,7 @@ ingress:
   domains: ['example.com']
   class: nginx
   annotations:
-    nginx.ingress.kubernetes.io/server-snippet: dummy-config;
+    nginx.ingress.kubernetes.io/configuration-snippet: dummy-config;
   extra:
     additional-annotation:
       domains: ['custom-annotation.example.com']
@@ -20,6 +20,6 @@ ingress:
       port: 1337
       domains: ['custom-port.example.com']
       annotations:
-        nginx.ingress.kubernetes.io/server-snippet: other-dummy-config;
+        nginx.ingress.kubernetes.io/configuration-snippet: other-dummy-config;
       protocol: grpc
       timeoutSeconds: 5

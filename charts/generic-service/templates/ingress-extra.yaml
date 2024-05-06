@@ -23,7 +23,7 @@ metadata:
     {{- if or $extra.timeoutSeconds $.Values.ingress.timeoutSeconds }}
     nginx.ingress.kubernetes.io/proxy-read-timeout: '{{ $timeout }}'
     {{- if or (eq $protocol "grpc") (eq $protocol "grpcs") }}
-    nginx.ingress.kubernetes.io/server-snippet: "grpc_read_timeout {{ $timeout }}s; {{ get $merged "nginx.ingress.kubernetes.io/server-snippet" }}"
+    nginx.ingress.kubernetes.io/configuration-snippet: "grpc_read_timeout {{ $timeout }}s; {{ get $merged "nginx.ingress.kubernetes.io/configuration-snippet" }}"
     {{- end }}
     {{- end }}
   {{- end }}
