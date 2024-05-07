@@ -20,10 +20,12 @@ metadata:
     {{- $protocol := $.Values.ingress.protocol }}
     {{- if $extra.port }}{{ $protocol = $extra.protocol }}{{ end }}
     nginx.ingress.kubernetes.io/backend-protocol: {{ include "generic-service.normalize-protocol" $protocol | upper }}
-    {{- if or $extra.timeoutSeconds $.Values.ingress.timeoutSeconds }}
+    {{- if $timeout }}
     nginx.ingress.kubernetes.io/proxy-read-timeout: '{{ $timeout }}'
     {{- if or (eq $protocol "grpc") (eq $protocol "grpcs") }}
-    nginx.ingress.kubernetes.io/configuration-snippet: "grpc_read_timeout {{ $timeout }}s; {{ get $merged "nginx.ingress.kubernetes.io/configuration-snippet" }}"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      grpc_read_timeout {{ $timeout }}s;
+      {{- get $merged "nginx.ingress.kubernetes.io/configuration-snippet" | nindent 6 }}
     {{- end }}
     {{- end }}
   {{- end }}

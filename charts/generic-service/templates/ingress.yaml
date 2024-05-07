@@ -14,7 +14,9 @@ metadata:
     {{- if .Values.ingress.timeoutSeconds }}
     nginx.ingress.kubernetes.io/proxy-read-timeout: '{{ .Values.ingress.timeoutSeconds }}'
     {{- if or (eq .Values.ingress.protocol "grpc") (eq .Values.ingress.protocol "grpcs") }}
-    nginx.ingress.kubernetes.io/configuration-snippet: "grpc_read_timeout {{ .Values.ingress.timeoutSeconds }}s;{{ if .Values.ingress.annotations }} {{ get .Values.ingress.annotations "nginx.ingress.kubernetes.io/configuration-snippet" }}{{ end }}"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      grpc_read_timeout {{ .Values.ingress.timeoutSeconds }}s;
+      {{- get .Values.ingress.annotations "nginx.ingress.kubernetes.io/configuration-snippet" | nindent 6 }}
     {{- end }}
     {{- end }}
     {{- if .Values.ingress.cors.enabled }}
