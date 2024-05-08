@@ -9,7 +9,7 @@ metadata:
     {{- if not .Values.autoscaling.enabled }}
     service.kubernetes.io/topology-aware-hints: auto
     {{- end }}
-    {{- $contour := contains "contour" .Values.ingress.class }}
+    {{- $contour := eq .Values.ingress.class "contour" }}
     {{- range $_, $extra := .Values.ingress.extra }}{{ if eq $extra.class "contour" }}{{ $contour = "true" }}{{ end }}{{ end }}
     {{- if $contour }}
     projectcontour.io/upstream-protocol.h2c: grpc-ingress{{ range $name, $_ := .Values.ingress.extra }},grpc-{{ $name }}{{ end }}
@@ -33,9 +33,6 @@ spec:
     - name: {{ include "generic-service.normalize-protocol" $extra.protocol }}-{{ $name }}
       appProtocol: '{{ include "generic-service.normalize-app-protocol" $extra.protocol }}'
       port: {{ $extra.port }}
-      {{- if $extra.targetPort }}
-      targetPort: {{ $extra.targetPort }}
-      {{- end }}
     {{- end }}
     {{- end }}
 
@@ -65,9 +62,6 @@ spec:
     - name: {{ include "generic-service.normalize-protocol" $extra.protocol }}-{{ $name }}
       appProtocol: '{{ include "generic-service.normalize-app-protocol" $extra.protocol }}'
       port: {{ $extra.port }}
-      {{- if $extra.targetPort }}
-      targetPort: {{ $extra.targetPort}}
-      {{- end }}
     {{- end }}
     {{- end }}
 {{- end }}
@@ -95,9 +89,6 @@ spec:
     - name: {{ include "generic-service.normalize-protocol" $extra.protocol }}-{{ $name }}
       appProtocol: '{{ include "generic-service.normalize-app-protocol" $extra.protocol }}'
       port: {{ $extra.port }}
-      {{- if $extra.targetPort }}
-      targetPort: {{ $extra.targetPort}}
-      {{- end }}
     {{- end }}
     {{- end }}
 {{- end }}
@@ -130,9 +121,6 @@ spec:
     - name: {{ include "generic-service.normalize-protocol" $extra.protocol }}-{{ $name }}
       appProtocol: '{{ include "generic-service.normalize-app-protocol" $extra.protocol }}'
       port: {{ $extra.port }}
-      {{- if $extra.targetPort }}
-      targetPort: {{ $extra.targetPort}}
-      {{- end }}
     {{- end }}
     {{- end }}
 {{- end }}

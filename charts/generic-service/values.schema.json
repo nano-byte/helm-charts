@@ -860,9 +860,9 @@
                 "type": "integer",
                 "description": "The service port ingress traffic is routed to; defaults to value of ingress.port if not set"
               },
-              "targetPort": {
-                "type": "integer",
-                "description": "The container port the service traffic is routed to; defaults to value of extra.port if not set"
+              "portRef": {
+                "type": "string",
+                "description": "Reference to an existing extra ingress to replicate its port configuration."
               },
               "protocol": {
                 "type": "string",

@@ -61,12 +61,11 @@ spec:
               service:
                 name: {{ include "generic-service.fullname" $ }}
                 port:
-                {{- if $extra.port }}
-                  name: {{ include "generic-service.normalize-protocol" $extra.protocol }}-{{ $name }}
+                {{- if $extra.portRef }}
+                  name: {{ $extra.protocol }}-{{ $extra.portRef }}
+                {{- else if $extra.port }}
+                  name: {{ $extra.protocol }}-{{ $name }}
                 {{- else }}
-                  {{- if $extra.protocol }}
-                    {{ fail "ingress.extra.*.protocol may not be set if ingress.extra.*.port is not set" }}
-                  {{- end }}
                   name: {{ $.Values.ingress.protocol }}-ingress
                 {{- end }}
             {{- end }}
