@@ -33,6 +33,9 @@ spec:
     - name: {{ include "generic-service.normalize-protocol" $extra.protocol }}-{{ $name }}
       appProtocol: '{{ include "generic-service.normalize-app-protocol" $extra.protocol }}'
       port: {{ $extra.port }}
+      {{- if $extra.targetPort }}
+      targetPort {{ $extra.targetPort}}
+      {{ - end }}
     {{- end }}
     {{- end }}
 
@@ -62,6 +65,9 @@ spec:
     - name: {{ include "generic-service.normalize-protocol" $extra.protocol }}-{{ $name }}
       appProtocol: '{{ include "generic-service.normalize-app-protocol" $extra.protocol }}'
       port: {{ $extra.port }}
+      {{- if $extra.targetPort }}
+      targetPort {{ $extra.targetPort}}
+      {{ - end }}
     {{- end }}
     {{- end }}
 {{- end }}
@@ -89,6 +95,9 @@ spec:
     - name: {{ include "generic-service.normalize-protocol" $extra.protocol }}-{{ $name }}
       appProtocol: '{{ include "generic-service.normalize-app-protocol" $extra.protocol }}'
       port: {{ $extra.port }}
+      {{- if $extra.targetPort }}
+      targetPort {{ $extra.targetPort}}
+      {{ - end }}
     {{- end }}
     {{- end }}
 {{- end }}
@@ -121,6 +130,9 @@ spec:
     - name: {{ include "generic-service.normalize-protocol" $extra.protocol }}-{{ $name }}
       appProtocol: '{{ include "generic-service.normalize-app-protocol" $extra.protocol }}'
       port: {{ $extra.port }}
+      {{- if $extra.targetPort }}
+      targetPort {{ $extra.targetPort}}
+      {{ - end }}
     {{- end }}
     {{- end }}
 {{- end }}
