@@ -858,11 +858,11 @@
               },
               "port": {
                 "type": "integer",
-                "description": "The service port ingress traffic is routed to; defaults to value of ingress.port if not set"
+                "description": "The container port ingress traffic is routed to; defaults to value of ingress.port if not set"
               },
               "portRef": {
                 "type": "string",
-                "description": "Reference to an existing extra ingress to replicate its port configuration."
+                "description": "Reference to the name of another extra ingress to share its container port"
               },
               "protocol": {
                 "type": "string",
