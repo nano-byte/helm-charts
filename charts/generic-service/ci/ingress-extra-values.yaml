@@ -24,8 +24,8 @@ ingress:
       protocol: grpc
       timeoutSeconds: 5
     other-target-port:
-      port: 1337
-      targetPort: 1338
+      port: 1338
+      targetPort: 1337
       domains: ['custom-port.example.com']
       annotations:
         nginx.ingress.kubernetes.io/server-snippet: other-dummy-config;
