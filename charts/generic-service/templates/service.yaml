@@ -35,7 +35,7 @@ spec:
       port: {{ $extra.port }}
       {{- if $extra.targetPort }}
       targetPort: {{ $extra.targetPort }}
-      {{ - end }}
+      {{- end }}
     {{- end }}
     {{- end }}
 
