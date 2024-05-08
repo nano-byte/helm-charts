@@ -123,7 +123,7 @@ app:
 | `ingress.istio.retries`                         | `{}`                        | [Istio retry policy](https://istio.io/docs/reference/config/networking/virtual-service/#HTTPRetry)       |
 | `ingress.extra.*.class`                         | same as `ingress.class`     | Additional ingress controller to use (not applicable if `ingress.istio.enabled`)                         |
 | `ingress.extra.*.port`                          | same as `ingress.port`      | Additional service port ingress traffic is routed to (not applicable if `ingress.istio.enabled`)       |
-| `ingress.extra.*.targetPort`                    | same as `ingress.extra.targetPort`  | Additional container port service traffic is routed to (not applicable if `ingress.extra.port` is not set)       |
+| `ingress.extra.*.targetPort`                    | same as `ingress.extra.port`| Additional container port service traffic is routed to (not applicable if `ingress.extra.port` is not set)       |
 | `ingress.extra.*.protocol`                      | `http`                      | The protocol used for the port (e.g., `http`, `https`, `h2c`, `grpc`, `http2`/`h2` or `grpcs`)           |
 | `ingress.extra.*.timeoutSeconds`                |                             | Number of seconds after which to timeout waiting for response from service; -1 for infinite              |
 | `ingress.extra.*.domains`                       | `[]`                        | The public domain names under which the port is exposed (leave empty for cluster-internal only)          |
