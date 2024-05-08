@@ -34,7 +34,7 @@ spec:
       appProtocol: '{{ include "generic-service.normalize-app-protocol" $extra.protocol }}'
       port: {{ $extra.port }}
       {{- if $extra.targetPort }}
-      targetPort {{ $extra.targetPort}}
+      targetPort: {{ $extra.targetPort }}
       {{ - end }}
     {{- end }}
     {{- end }}
