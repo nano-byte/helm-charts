@@ -66,8 +66,8 @@ spec:
       appProtocol: '{{ include "generic-service.normalize-app-protocol" $extra.protocol }}'
       port: {{ $extra.port }}
       {{- if $extra.targetPort }}
-      targetPort {{ $extra.targetPort}}
-      {{ - end }}
+      targetPort: {{ $extra.targetPort}}
+      {{- end }}
     {{- end }}
     {{- end }}
 {{- end }}
@@ -96,8 +96,8 @@ spec:
       appProtocol: '{{ include "generic-service.normalize-app-protocol" $extra.protocol }}'
       port: {{ $extra.port }}
       {{- if $extra.targetPort }}
-      targetPort {{ $extra.targetPort}}
-      {{ - end }}
+      targetPort: {{ $extra.targetPort}}
+      {{- end }}
     {{- end }}
     {{- end }}
 {{- end }}
@@ -131,8 +131,8 @@ spec:
       appProtocol: '{{ include "generic-service.normalize-app-protocol" $extra.protocol }}'
       port: {{ $extra.port }}
       {{- if $extra.targetPort }}
-      targetPort {{ $extra.targetPort}}
-      {{ - end }}
+      targetPort: {{ $extra.targetPort}}
+      {{- end }}
     {{- end }}
     {{- end }}
 {{- end }}
