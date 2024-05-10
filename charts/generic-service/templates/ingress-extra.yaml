@@ -66,6 +66,9 @@ spec:
                 {{- else if $extra.port }}
                   name: {{ include "generic-service.normalize-protocol" $extra.protocol }}-{{ $name }}
                 {{- else }}
+                  {{- if $extra.protocol }}
+                    {{ fail "ingress.extra.*.protocol may not be set if ingress.extra.*.port is not set" }}
+                  {{- end }}
                   name: {{ $.Values.ingress.protocol }}-ingress
                 {{- end }}
             {{- end }}
