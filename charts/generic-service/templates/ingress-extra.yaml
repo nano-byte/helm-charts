@@ -61,7 +61,9 @@ spec:
               service:
                 name: {{ include "generic-service.fullname" $ }}
                 port:
-                {{- if $extra.port }}
+                {{- if $extra.portRef }}
+                  name: {{ include "generic-service.normalize-protocol" $extra.protocol }}-{{ $extra.portRef }}
+                {{- else if $extra.port }}
                   name: {{ include "generic-service.normalize-protocol" $extra.protocol }}-{{ $name }}
                 {{- else }}
                   {{- if $extra.protocol }}

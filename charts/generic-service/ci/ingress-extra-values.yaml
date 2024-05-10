@@ -23,3 +23,10 @@ ingress:
         nginx.ingress.kubernetes.io/configuration-snippet: other-dummy-config;
       protocol: grpc
       timeoutSeconds: 5
+    extra-port:
+      portRef: other-port
+      domains: ['custom-port.example.com']
+      annotations:
+        nginx.ingress.kubernetes.io/configuration-snippet: other-dummy-config;
+      protocol: grpc
+      timeoutSeconds: 5
