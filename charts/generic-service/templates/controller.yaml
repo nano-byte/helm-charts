@@ -448,21 +448,7 @@ spec:
           {{- $spec | nindent 10 }}
       {{- end }}
       {{- end }}
-
-      {{ if or .Values.initContainers .Values.initContainerTemplates }}
-      initContainers:
-      {{- range .Values.initContainers }}
-        - securityContext: {{- $.Values.securityContext.container | toYaml | nindent 12 }}
-          {{- toYaml . | nindent 10 }}
-      {{- end }}
-      {{- range .Values.initContainerTemplates }}
-      {{- $spec := tpl . $ }}
-      {{- if $spec }}
-        - securityContext: {{- $.Values.securityContext.container | toYaml | nindent 12 }}
-          {{- $spec | nindent 10 }}
-      {{- end }}
-      {{- end }}
-
+      
       {{ if or .Values.initContainers .Values.initContainerTemplates }}
       initContainers:
       {{- range .Values.initContainers }}
