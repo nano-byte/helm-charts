@@ -448,7 +448,7 @@ spec:
           {{- $spec | nindent 10 }}
       {{- end }}
       {{- end }}
-      
+
       {{ if or .Values.initContainers .Values.initContainerTemplates }}
       initContainers:
       {{- range .Values.initContainers }}
