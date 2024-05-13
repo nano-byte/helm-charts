@@ -144,6 +144,7 @@ tracing:
   enabled: false
   probability: 1
   class: ''
+  insecure: true
 
 monitoring:
   enabled: false

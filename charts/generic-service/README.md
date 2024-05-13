@@ -138,6 +138,7 @@ app:
 | `tracing.enabled`                               | `false`                     | Enables tracing with OpenTelemetry or Jaeger agent (injected as sidecar)                                 |
 | `tracing.probability`                           | `1`                         | Probability of any single trace being sampled; can be overridden for incoming requests e.g. via Istio    |
 | `tracing.class`                                 |                             | Custom value to set for tracing sidecar injection annotations                                            |
+| `tracing.insecure`                              | `true`                      | Use insecure connections (without TLS) to tracing endpoints in local sidecar container                   |  
 | `monitoring.enabled`                            | `false`                     | Use Prometheus for monitoring / metrics scraping                                                         |
 | `monitoring.port`                               | `9100`                      | The port to be scraped for monitoring data                                                               |
 | `monitoring.path`                               | `/metrics`                  | The path to be scraped for monitoring data                                                               |

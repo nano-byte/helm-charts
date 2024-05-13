@@ -400,6 +400,8 @@ spec:
             - name: JAEGER_SERVICE_NAME
               value: {{ include "generic-service.fullname" . }}
             {{- end }}
+            - name: OTEL_EXPORTER_OTLP_INSECURE
+              value: {{ .Values.tracing.insecure | quote }}
             - name: OTEL_RESOURCE_ATTRIBUTES
               value: 'service.namespace={{ .Release.Namespace }},service.version={{ .Values.version | default .Values.image.tag }},service.instance.id=$(POD_NAME),k8s.node.name=$(NODE_NAME)'
             {{- if ne (float64 .Values.tracing.probability) 1.0 }}

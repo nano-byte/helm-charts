@@ -747,6 +747,11 @@
           "type": "string",
           "default": "true",
           "description": "Custom value to set for tracing sidecar injection annotations"
+        },
+        "insecure": {
+          "type": "boolean",
+          "default": true,
+          "description": "By default if tracing is enabled, a sidecar is injected without TLS. Set this to false, if the sidecar serves the tracing endpoints via TLS."
         }
       },
       "additionalProperties": false
