@@ -144,6 +144,8 @@ tracing:
   enabled: false
   probability: 1
   class: ''
+  # By default if tracing is enabled, a sidecar is injected without TLS. 
+  insecure: 'true'
 
 monitoring:
   enabled: false
