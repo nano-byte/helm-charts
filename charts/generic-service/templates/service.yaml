@@ -7,7 +7,7 @@ metadata:
   labels: {{- include "generic-service.top-level-labels" . | nindent 4 }}
   annotations:
     {{- if not .Values.autoscaling.enabled }}
-    service.kubernetes.io/topology-aware-hints: auto
+    service.kubernetes.io/topology-mode: Auto
     {{- end }}
     {{- $contour := contains "contour" .Values.ingress.class }}
     {{- range $_, $extra := .Values.ingress.extra }}{{ if eq $extra.class "contour" }}{{ $contour = "true" }}{{ end }}{{ end }}
