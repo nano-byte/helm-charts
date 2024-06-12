@@ -1,8 +1,8 @@
 {{- if and (and .Values.ingress.enabled .Values.ingress.extra) (not .Values.ingress.istio.enabled) }}
 {{- range $name, $extra := .Values.ingress.extra }}
-{{- if $extra.domains }}
-{{ $class := $extra.class | default $.Values.ingress.class }}
+{{- $class := $extra.class | default $.Values.ingress.class }}
 {{ $timeout := $extra.timeoutSeconds | default $.Values.ingress.timeoutSeconds }}
+{{- if and $extra.domains (or $class (and (not $extra.gateway) (not $.Values.ingress.gateway.name))) }}
 
 apiVersion: networking.k8s.io/v1
 kind: Ingress

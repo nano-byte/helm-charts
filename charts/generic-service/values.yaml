@@ -121,6 +121,7 @@ ingress:
     allowCredentials: true
     exposeHeaders: []
   class: ''
+  gateway: {}
   annotations: {}
   headless: false
   headlessExposesAll: false

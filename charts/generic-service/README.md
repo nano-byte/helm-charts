@@ -112,7 +112,9 @@ app:
 | `ingress.cors.allowCredentials`                 | `true`                      | Indicates whether the caller is allowed to send the actual request (not the preflight) using credentials |
 | `ingress.cors.exposeHeaders`                    | `[]`                        | List of HTTP headers that the browsers are allowed to access                                             |
 | `ingress.class`                                 |                             | The ingress controller to use (not applicable if `ingress.istio.enabled`)                                |
-| `ingress.annotations`                           | `{}`                        | Annotations for `Ingress` or `VirtualService` resource                                                   |
+| `ingress.gateway.namespace`                     |                             | The namespace containing the `Gateway` to use                                                            |
+| `ingress.gateway.name`                          |                             | The name of the `Gateway` to use (creates an `HTTPRoute` instead of an `Ingress` when set)               |
+| `ingress.annotations`                           | `{}`                        | Annotations for `Ingress`, `HTTPRoute` or `VirtualService` resource                                      |
 | `ingress.headless`                              | `false`                     | Creates an additional `Service` with the suffix `-headless` that directly exposes Pod IPs                |
 | `ingress.headlessExposesAll`                    | `false`                     | Exposes all replicas, including unready ones, via the `-headless` `Service`                              |
 | `ingress.nodeLocal`                             | `false`                     | Creates an additional `Service` with the suffix `-local` that only routes to pods on the same node       |
@@ -122,6 +124,8 @@ app:
 | `ingress.istio.httpHeaders`                     | `{}`                        | Custom HTTP response headers                                                                             |
 | `ingress.istio.retries`                         | `{}`                        | [Istio retry policy](https://istio.io/docs/reference/config/networking/virtual-service/#HTTPRetry)       |
 | `ingress.extra.*.class`                         | same as `ingress.class`     | Additional ingress controller to use (not applicable if `ingress.istio.enabled`)                         |
+| `ingress.extra.*.gateway.namespace`             |                             | The namespace containing the `Gateway` to use                                                            |
+| `ingress.extra.*.gateway.name`                  |                             | The name of the `Gateway` to use (creates an `HTTPRoute` instead of an `Ingress` when set)               |
 | `ingress.extra.*.port`                          | same as `ingress.port`      | Additional container port ingress traffic is routed to (not applicable if `ingress.istio.enabled`)       |
 | `ingress.extra.*.portRef`                       |                             | Reference to the name of another extra ingress to share its container port                               |
 | `ingress.extra.*.protocol`                      | `http`                      | The protocol used for the port (e.g., `http`, `https`, `h2c`, `grpc`, `http2`/`h2` or `grpcs`)           |

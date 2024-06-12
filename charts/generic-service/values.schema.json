@@ -589,10 +589,23 @@
           "type": "string",
           "description": "The ingress controller to use (not applicable if ingress.istio.enabled)"
         },
+        "gateway": {
+          "type": "object",
+          "properties": {
+            "namespace": {
+              "type": "string",
+              "description": "The namespace containing the Gateway to use"
+            },
+            "name": {
+              "type": "string",
+              "description": "The name of the Gateway to use (creates an HTTPRoute instead of an Ingress when set)"
+            }
+          }
+        },
         "annotations": {
           "type": "object",
           "additionalProperties": {"type": "string"},
-          "description": "Annotations for Ingress or VirtualService resource"
+          "description": "Annotations for Ingress, HTTPRoute or VirtualService resource"
         },
         "headless": {
           "type": "boolean",
@@ -647,6 +660,19 @@
               "class": {
                 "type": "string",
                 "description": "Additional ingress controller to use (not applicable if ingress.istio.enabled)"
+              },
+              "gateway": {
+                "type": "object",
+                "properties": {
+                  "namespace": {
+                    "type": "string",
+                    "description": "The namespace containing the Gateway to use"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "The name of the Gateway to use (creates an HTTPRoute instead of an Ingress when set)"
+                  }
+                }
               },
               "port": {
                 "type": "integer",

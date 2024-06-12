@@ -1,0 +1,21 @@
+# Ingress gateway test
+
+image:
+  repository: jwilder/whoami
+  tag: latest
+
+ingress:
+  enabled: true
+  port: 8000
+  timeoutSeconds: 5
+  domains: ['example.com']
+  gateway:
+    name: my-gateway
+  extra:
+    other-port:
+      port: 1337
+      domains: ['custom-port.example.com']
+      annotations:
+        key: value
+      protocol: grpc
+      timeoutSeconds: 5
