@@ -16,9 +16,18 @@ metadata:
       {{- dict $mname $mvalue | toYaml | nindent 4 }}
     {{- end }}
   {{- end }}
+  {{- $protocol := $.Values.ingress.protocol }}
+  {{- if $extra.port }}
+    {{- if $extra.portRef }}
+      {{ fail "ingress.extra.*.port and ingress.extra.*.portRef are mutually exclusive" }}
+    {{- end }}
+    {{ $protocol = $extra.protocol }}
+  {{- else if $extra.portRef }}
+    {{- $protocol = (get $.Values.ingress.extra $extra.portRef).protocol | default "http" }}
+  {{- else if $extra.protocol }}
+    {{ fail "ingress.extra.*.protocol may only be set if ingress.extra.*.port is also set" }}
+  {{- end }}
   {{- if contains "nginx" $class }}
-    {{- $protocol := $.Values.ingress.protocol }}
-    {{- if $extra.port }}{{ $protocol = $extra.protocol }}{{ end }}
     nginx.ingress.kubernetes.io/backend-protocol: {{ include "generic-service.normalize-protocol" $protocol | upper }}
     {{- if $timeout }}
     nginx.ingress.kubernetes.io/proxy-read-timeout: '{{ $timeout }}'
@@ -61,16 +70,7 @@ spec:
               service:
                 name: {{ include "generic-service.fullname" $ }}
                 port:
-                {{- if $extra.portRef }}
-                  name: {{ include "generic-service.normalize-protocol" $extra.protocol }}-{{ $extra.portRef }}
-                {{- else if $extra.port }}
-                  name: {{ include "generic-service.normalize-protocol" $extra.protocol }}-{{ $name }}
-                {{- else }}
-                  {{- if $extra.protocol }}
-                    {{ fail "ingress.extra.*.protocol may not be set if ingress.extra.*.port is not set" }}
-                  {{- end }}
-                  name: {{ $.Values.ingress.protocol }}-ingress
-                {{- end }}
+                  name: {{ include "generic-service.normalize-protocol" $protocol }}-{{ if $extra.portRef }}{{ $extra.portRef }}{{ else if $extra.port }}{{ $name }}{{ else }}ingress{{ end }}
             {{- end }}
       {{- end }}
 ---
