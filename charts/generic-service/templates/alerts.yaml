@@ -184,7 +184,6 @@ spec:
             topic: ingress
           annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} HTTP 5xx responses
             description: '{{ include "generic-service.fullname" . }} gave {{"{{ $value }}"}} HTTP 5xx responses in the last {{ .Values.alerting.http.sampleInterval }}.'
-        {{- end }}
 
         - alert: HttpTimeout
           expr: |
