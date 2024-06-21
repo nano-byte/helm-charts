@@ -889,7 +889,12 @@
             "max5xxCount": {
               "type": "number",
               "default": 0,
-              "description": "The maximum number of HTTP 5xx responses in the sample interval"
+              "description": "The maximum number of HTTP 5xx responses (except 504) in the sample interval"
+            },
+            "maxTimeoutCount": {
+              "type": "number",
+              "default": 0,
+              "description": "The maximum number of HTTP gateway timeout responses (504) in the sample interval"
             }
           },
           "additionalProperties": false
