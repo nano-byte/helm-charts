@@ -178,12 +178,22 @@ spec:
 
         - alert: Http5xx
           expr: |
-            sum(round(increase({{ include "generic-service.request-code-count-metric" . }}"5.."}[{{ .Values.alerting.http.sampleInterval }}])))
+            sum(round(increase({{ include "generic-service.request-code-count-metric" . }}"5.[^4]"}[{{ .Values.alerting.http.sampleInterval }}])))
             > {{ .Values.alerting.http.max5xxCount }}
           labels: {{- include "generic-service.alert-labels" . | nindent 12 }} critical
             topic: ingress
           annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} HTTP 5xx responses
             description: '{{ include "generic-service.fullname" . }} gave {{"{{ $value }}"}} HTTP 5xx responses in the last {{ .Values.alerting.http.sampleInterval }}.'
+        {{- end }}
+
+        - alert: HttpTimeout
+          expr: |
+            sum(round(increase({{ include "generic-service.request-code-count-metric" . }}"504"}[{{ .Values.alerting.http.sampleInterval }}])))
+            > {{ .Values.alerting.http.maxTimoutCount }}
+          labels: {{- include "generic-service.alert-labels" . | nindent 12 }} critical
+            topic: ingress
+          annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} HTTP gateway timeout responses
+            description: '{{ include "generic-service.fullname" . }} gave {{"{{ $value }}"}} HTTP gateway timout responses in the last {{ .Values.alerting.http.sampleInterval }}.'
         {{- end }}
 
         {{- if or (eq .Values.ingress.protocol "grpc") (eq .Values.ingress.protocol "grpcs") }}
