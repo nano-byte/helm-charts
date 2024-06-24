@@ -63,10 +63,16 @@ resources:
 rollout:
   controller: Deployment
   strategy: RollingUpdate
+  useTrafficRouting: false
   autoPromotion: true
   flagger: false
-  analysis: null
+  analysis: {}
+  steps: []
+  analysisTemplates: []
   revisionHistoryLimit: null
+  progressDeadlineSeconds: 600
+  minReadySeconds: 0
+  progressDeadlineAbort: false
 
 replicas: 1
 

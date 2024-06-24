@@ -32,5 +32,6 @@ jobs:
           kubectl apply -f https://raw.githubusercontent.com/opsgy/loki-rule-operator/main/chart/crds/logging.opsgy.com_lokirules.yaml
           kubectl apply -f https://raw.githubusercontent.com/istio/istio/master/manifests/charts/base/crds/crd-all.gen.yaml
           kubectl apply -f https://raw.githubusercontent.com/argoproj/argo-rollouts/master/manifests/crds/rollout-crd.yaml
+          kubectl apply -f https://raw.githubusercontent.com/argoproj/argo-rollouts/master/manifests/crds/analysis-template-crd.yaml
       - name: Install charts
         run: ct install --all

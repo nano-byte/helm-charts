@@ -301,11 +301,38 @@
           "description": "Use Flagger to control rollouts (rollout.controller must be Deployment or StatefulSet)"
         },
         "analysis": {
-          "description": "Flagger or Argo Rollouts analysis for automatic Canary or BlueGreen promotion"
+          "type": "object",
+          "description": "Flagger or Argo Rollouts analysis for automatic Canary promotion"
+        },
+        "steps": {
+          "type": "array",
+          "description": "Argo Rollouts list of steps to perform during a canary rollout"
+        },
+        "analysisTemplates": {
+          "type": "array",
+          "description": "List of analysis templates to create (only applicable if rollout.controller is ArgoRollout)"
+        },
+        "useTrafficRouting": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to use Argo Rollouts traffig routing feature"
         },
         "revisionHistoryLimit": {
           "type": ["integer", "null"],
           "description": "Number of old ReplicaSets to retain (rollout.controller must be Deployment or ArgoRollout)"
+        },
+        "progressDeadlineSeconds": {
+          "type": ["integer"],
+          "description": "The maximum time in seconds for a deployment to make progress before it is considered to be failed"
+        },
+        "minReadySeconds": {
+          "type": ["integer"],
+          "description": "Minimum number of seconds for which a new pod should be ready for it to be considered available"
+        },
+        "progressDeadlineAbort": {
+          "type": ["boolean"],
+          "default": false,
+          "description": "Whether to abort the update when progressDeadlineSeconds is exceeded (rollout.controller must be ArgoRollout and rollout.strategy Canary)"
         }
       },
       "additionalProperties": false

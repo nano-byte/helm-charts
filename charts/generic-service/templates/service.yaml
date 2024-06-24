@@ -93,7 +93,7 @@ spec:
     {{- end }}
 {{- end }}
 
-{{- if eq .Values.rollout.controller "ArgoRollout" }}
+{{- if and (eq .Values.rollout.controller "ArgoRollout") (or (eq .Values.rollout.strategy "BlueGreen") (eq .Values.rollout.useTrafficRouting true)) }}
 ---
 apiVersion: v1
 kind: Service

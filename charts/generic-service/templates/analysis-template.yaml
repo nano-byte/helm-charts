@@ -1,0 +1,55 @@
+{{- if eq .Values.rollout.controller "ArgoRollout" }}
+{{- range .Values.rollout.analysisTemplates }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: {{ include "generic-service.fullname" $ }}-{{ .name }}
+spec:
+  {{- if .args }}
+  args:
+    {{- toYaml .args | nindent 4 }}
+  {{- end }}
+  {{- if .dryRun }}
+  dryRun:
+    {{- toYaml .dryRun | nindent 4 }}
+  {{- end }}
+  {{- if .measurementRetention }}
+  measurementRetention:
+    {{- toYaml .measurementRetention | nindent 4 }}
+  {{- end }}
+  metrics:
+    {{- range .metrics }}
+    - name: {{ .name }}
+      {{- if .consecutiveErrorLimit }}
+      consecutiveErrorLimit: {{ .consecutiveErrorLimit }}
+      {{- end }}
+      {{- if .count }}
+      count: {{ .count }}
+      {{- end }}
+      {{- if .failureCondition }}
+      failureCondition: {{ .failureCondition }}
+      {{- end }}
+      {{- if .successCondition }}
+      successCondition: {{ .successCondition }}
+      {{- end }}
+      {{- if .failureLimit }}
+      failureLimit: {{ .failureLimit }}
+      {{- end }}
+      {{- if .inconclusiveLimit }}
+      inconclusiveLimit: {{ .inconclusiveLimit }}
+      {{- end }}
+      {{- if .initialDelay }}
+      initialDelay: {{ .initialDelay }}
+      {{- end }}
+      {{- if .interval }}
+      interval: {{ .interval }}
+      {{- end }}
+      provider:
+        prometheus:
+          address: {{ .prometheusAddress | default "http://prometheus-prometheus.monitoring:9090" }}
+          query: |
+            {{ .query | nindent 12 }}
+    {{- end }}
+{{- end }}
+{{- end }}
