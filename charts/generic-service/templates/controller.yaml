@@ -32,7 +32,6 @@ spec:
   selector:
     matchLabels: {{- include "generic-service.selector-labels" . | nindent 6 }}
 
-  strategy:
   {{- if eq .Values.rollout.strategy "RollingUpdate" }}
     {{- if eq .Values.rollout.controller "ArgoRollout" }}
       {{ fail "rollout.strategy cannot be RollingUpdate if rollout.controller is ArgoRollout, must be Canary or BlueGreen" }}
@@ -44,11 +43,13 @@ spec:
     {{- if eq .Values.rollout.controller "ArgoRollout" }}
       {{ fail "rollout.strategy cannot be Recreate if rollout.controller is ArgoRollout, must be Canary or BlueGreen" }}
     {{- end }}
+  strategy:
     type: Recreate
   {{- else if eq .Values.rollout.strategy "OnDelete" }}
     {{- if and (ne .Values.rollout.controller "StatefulSet") (ne .Values.rollout.controller "DaemonSet") }}
       {{ fail "rollout.strategy may only be OnDelete if rollout.controller is StatefulSet or DaemonSet" }}
     {{- end }}
+  strategy:
     type: OnDelete
   {{- else if eq .Values.rollout.strategy "Canary" }}
     {{- if not .Values.ingress.enabled }}
@@ -58,6 +59,7 @@ spec:
       {{ fail "ingress.domains must not be empty if rollout.strategy is Canary" }}
     {{- end }}
     {{- if eq .Values.rollout.controller "ArgoRollout" }}
+  strategy:
     canary:
       stableService: {{ include "generic-service.fullname" . }}
       stableMetadata:
@@ -87,6 +89,7 @@ spec:
       {{ fail "ingress.enabled must be true if rollout.strategy is BlueGreen" }}
     {{- end }}
     {{- if eq .Values.rollout.controller "ArgoRollout" }}
+  strategy:
     blueGreen:
       activeService: {{ include "generic-service.fullname" . }}
       activeMetadata:
