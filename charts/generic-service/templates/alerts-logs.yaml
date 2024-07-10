@@ -1,4 +1,4 @@
-{{- if and (and .Values.alerting.enabled .Values.alerting.logs.levels) (or .Values.alerting.logs.createLokiRule .Values.alerting.logs.lokiConfigMap) }}
+{{- if and (and .Values.alerting.enabled (or .Values.alerting.logs.levels .Values.alerting.logs.custom)) (or .Values.alerting.logs.createLokiRule .Values.alerting.logs.lokiConfigMap) }}
 
 {{- if .Values.alerting.logs.createLokiRule }}
 apiVersion: logging.opsgy.com/v1beta1
@@ -31,4 +31,22 @@ data:
             annotations: {{- include "generic-service.alert-annotations" $ | nindent 14 }} {{ $level }} logs
               description: '{{ $.Release.Name }} reported {{"{{ $value }}"}} {{ $level }} log messages in the last {{ $.Values.alerting.logs.countInterval }}.'
           {{- end }}
+
+        {{- range $name, $props := .Values.alerting.logs.custom }}
+          - alert: {{ $name | quote }}
+            expr: |
+              sum(
+                count_over_time(
+                  ({
+                    namespace="{{ $.Release.Namespace }}", container="{{ include "generic-service.fullname" $ }}"{{ if $props.labelMatchers }}, {{ tpl $props.labelMatchers $ }}{{ end }}
+                  } |~ {{ $props.regex | quote }})
+                [{{ $props.countInterval | default $.Values.alerting.logs.countInterval }}])
+              )
+              {{ $props.predicate | required "alert predicate required" }}
+            for: 1s
+            labels: {{- include "generic-service.alert-labels" $ | nindent 14 }} {{ $props.severity | default "warning" }}
+              topic: {{ $props.topic | default "logs" }}
+            annotations: {{- include "generic-service.alert-annotations" $ | nindent 14 }} {{ $props.summary | required "alert summary required" }}
+              description: {{ $props.description | required "alert description required" | quote }}
+        {{- end }}
 {{- end }}

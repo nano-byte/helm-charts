@@ -190,6 +190,7 @@ alerting:
     lokiConfigMap:
       label: "loki_rule"
       labelValue: ""
+    custom: {}
 
 initContainers: []
 initContainerTemplates: []

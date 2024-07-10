@@ -17,3 +17,16 @@ alerting:
       predicate: '> 100'
       summary: some metric too high
       description: Some metric is {{ $value }}, which is too high.
+  logs:
+    custom:
+      ForbiddenLogLine:
+        regex: evil
+        predicate: '> 0'
+        summary: Forbidden log line seen
+        description: A forbidden log line was seen.
+      RequiredLogLine:
+        regex: good
+        predicate: '== 0'
+        countInterval: 24h
+        summary: Required log line missing
+        description: A required log line was not seen within the last 24h.

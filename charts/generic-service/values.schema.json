@@ -1051,6 +1051,51 @@
               "type": "boolean",
               "default": false,
               "description": "Whether to create a LokiRule custom resource instead of a ConfigMap for log alerting"
+            },
+            "custom": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "regex": {
+                    "type": "string",
+                    "description": "Regular expression to use for matching log lines"
+                  },
+                  "labelMatchers": {
+                    "type": "string",
+                    "description": "Loki label matchers to use for matching log lines (e.g., some_key=\"some_value\")"
+                  },
+                  "countInterval": {
+                    "type": "string",
+                    "description": "The time interval in which to count the number of matching log lines"
+                  },
+                  "predicate": {
+                    "type": "string",
+                    "description": "An expression that triggers the alert when the number of matching log lines fulfills it"
+                  },
+                  "severity": {
+                    "type": "string",
+                    "default": "warning",
+                    "description": "The severity of the alert"
+                  },
+                  "topic": {
+                    "type": "string",
+                    "default": "logs",
+                    "description": "The topic label for the alert"
+                  },
+                  "summary": {
+                    "type": "string",
+                    "description": "A short summary of the alert"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "A longer description of the alert; can include log labels via templating"
+                  }
+                },
+                "required": ["predicate", "summary", "description"],
+                "additionalProperties": false
+              },
+              "description": "Additional alerts based on Prometheus metrics exposed by the service"
             }
           },
           "additionalProperties": false

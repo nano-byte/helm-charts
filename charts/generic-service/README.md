@@ -184,6 +184,14 @@ app:
 | `alerting.logs.levels.lokiConfigMap.label`      | `loki_rule`                 | The label attached to the ConfigMap holding the Loki Rules                                               |
 | `alerting.logs.levels.lokiConfigMap.labelValue` | `""`                        | The value of the label attached to the Loki Rule ConfigMap                                               |
 | `alerting.logs.createLokiRule`                  | `false`                     | Whether to create a `LokiRule` custom resource of a ConfigMap for log alerting                           |
+| `alerting.logs.custom.*.regex`                  |                             | Regular expression to use for matching log lines                                                         |
+| `alerting.logs.custom.*.labelMatchers`          |                             | Loki label matchers to use for matching log lines (e.g., `some_key="some_value"`)                        |
+| `alerting.logs.custom.*.countInterval`          |                             | The time interval in which to count the number of matching log lines                                     |
+| `alerting.logs.custom.*.predicate`              | __required if used__        | An expression that triggers the alert when the number of matching log lines fulfills it                  |
+| `alerting.logs.custom.*.severity`               | `warning`                   | The severity of the alert                                                                                |
+| `alerting.logs.custom.*.topic`                  | `logs`                      | The `topic` label for the alert                                                                          |
+| `alerting.logs.custom.*.summary`                | __required if used__        | A short summary of the alert                                                                             |
+| `alerting.logs.custom.*.description`            | __required if used__        | A longer description of the alert; can include log labels via templating                                 |
 | `sidecars`                                      | `[]`                        | Additional sidecar containers to be added to the `Pod`                                                   |
 | `sidecarTemplates`                              | `[]`                        | Strings to be templated providing additional sidecar containers to be added to the Pod                   |
 | `initContainers`                                | `[]`                        | Additional init containers to be added to the `Pod`                                                      |
