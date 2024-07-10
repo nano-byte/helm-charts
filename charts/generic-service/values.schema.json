@@ -980,12 +980,12 @@
                 "label": {
                   "type": "string",
                   "default": "loki_rule",
-                  "description": "The label attached to the ConfigMap holding the Loki Rules."
+                  "description": "The label attached to the ConfigMap holding the Loki Rules"
                 },
                 "labelValue": {
                   "type": "string",
                   "default": "",
-                  "description": "The value of the label attached to the Loki Rule ConfigMap."
+                  "description": "The value of the label attached to the Loki Rule ConfigMap"
                 }
               },
               "additionalProperties": false
@@ -993,7 +993,7 @@
             "createLokiRule": {
               "type": "boolean",
               "default": false,
-              "description": "Whether to create a LokiRule CR for log alerting or not."
+              "description": "Whether to create a LokiRule custom resource for log alerting"
             }
           },
           "additionalProperties": false
@@ -1039,7 +1039,7 @@
               },
               "topic": {
                 "type": "string",
-                "description": "An optional topic label for the alert"
+                "description": "The topic label for the alert"
               },
               "summary": {
                 "type": "string",

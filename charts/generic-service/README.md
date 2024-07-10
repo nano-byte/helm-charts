@@ -34,7 +34,7 @@ app:
 ## Values
 
 | Value                                           | Default                     | Description                                                                                              |
-|-------------------------------------------------|-----------------------------|----------------------------------------------------------------------------------------------------------|
+| ----------------------------------------------- | --------------------------- | -------------------------------------------------------------------------------------------------------- |
 | `name`                                          | Release Name                | The name of the service (used for `app.kubernetes.io/name` label)                                        |
 | `fullname`                                      | Release Name (+ `name`)     | The name of the service instance (used for resource names and `app.kubernetes.io/instance` label)        |
 | `version`                                       | same as `image.tag`         | The version of the service (used for `app.kubernetes.io/version` label)                                  |
@@ -138,7 +138,7 @@ app:
 | `tracing.enabled`                               | `false`                     | Enables tracing with OpenTelemetry or Jaeger agent (injected as sidecar)                                 |
 | `tracing.probability`                           | `1`                         | Probability of any single trace being sampled; can be overridden for incoming requests e.g. via Istio    |
 | `tracing.class`                                 |                             | Custom value to set for tracing sidecar injection annotations                                            |
-| `tracing.insecure`                              | `true`                      | Use insecure connections (without TLS) to tracing endpoints in local sidecar container                   |  
+| `tracing.insecure`                              | `true`                      | Use insecure connections (without TLS) to tracing endpoints in local sidecar container                   |
 | `monitoring.enabled`                            | `false`                     | Use Prometheus for monitoring / metrics scraping                                                         |
 | `monitoring.port`                               | `9100`                      | The port to be scraped for monitoring data                                                               |
 | `monitoring.path`                               | `/metrics`                  | The path to be scraped for monitoring data                                                               |
@@ -172,7 +172,7 @@ app:
 | `alerting.logs.levels.*.severity`               | `warning`                   | The severity of the alert when the maximum count of a messages of a specific log level is exceeded       |
 | `alerting.logs.levels.lokiConfigMap.label`      | `loki_rule`                 | The label attached to the ConfigMap holding the Loki Rules                                               |
 | `alerting.logs.levels.lokiConfigMap.labelValue` | `""`                        | The value of the label attached to the Loki Rule ConfigMap                                               |
-| `alerting.logs.levels.createLokiRule`           | `false`                     | Whether to create a LokiRule CR or not (useful when transitioning from loki-rule-operator)               |
+| `alerting.logs.createLokiRule`                  | `false`                     | Whether to create a `LokiRule` custom resource for log alerting                                          |
 | `alerting.custom.*.metric`                      | __required if used__        | The name of the Prometheus metric exposed by the service                                                 |
 | `alerting.custom.*.labelMatchers`               |                             | Prometheus label matchers to use for filtering the metric (e.g., `some_key="some_value"`)                |
 | `alerting.custom.*.aggregate`                   | __required if used__        | The aggregate function to use to combine metric values from multiple replicas (e.g., `max` or `sum`)     |
@@ -181,7 +181,7 @@ app:
 | `alerting.custom.*.round`                       | `false`                     | Round the result before evaluating the predicate                                                         |
 | `alerting.custom.*.predicate`                   | __required if used__        | An expression that triggers the alert when the metric fulfills it                                        |
 | `alerting.custom.*.severity`                    | `warning`                   | The severity of the alert                                                                                |
-| `alerting.custom.*.topic`                       |                             | The severity of the alert                                                                                |
+| `alerting.custom.*.topic`                       |                             | The `topic` label for the alert                                                                          |
 | `alerting.custom.*.summary`                     | __required if used__        | A short summary of the alert                                                                             |
 | `alerting.custom.*.description`                 | __required if used__        | A longer description of the alert; can include metric labels via templating                              |
 | `sidecars`                                      | `[]`                        | Additional sidecar containers to be added to the `Pod`                                                   |
