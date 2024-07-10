@@ -176,6 +176,7 @@ alerting:
     maxTimeoutCount: 0
   grpc:
     requestsMetric: grpc_server_handled_total
+    ignoreErrorCodes: []
     sampleInterval: 20m
     referenceInterval: 1w
     maxErrorRatio: 2.5
