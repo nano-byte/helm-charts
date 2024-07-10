@@ -993,7 +993,7 @@
             "createLokiRule": {
               "type": "boolean",
               "default": false,
-              "description": "Whether to create a LokiRule custom resource for log alerting"
+              "description": "Whether to create a LokiRule custom resource instead of a ConfigMap for log alerting"
             }
           },
           "additionalProperties": false

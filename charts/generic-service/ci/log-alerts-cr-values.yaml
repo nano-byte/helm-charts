@@ -13,6 +13,3 @@ alerting:
         maxCount: 10
       error: {}
     createLokiRule: true
-    lokiConfigMap:
-      label: "loki_rule"
-      labelValue: ""

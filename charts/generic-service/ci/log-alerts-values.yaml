@@ -12,6 +12,3 @@ alerting:
         severity: Warning
         maxCount: 10
       error: {}
-    lokiConfigMap:
-      label: "loki_rule"
-      labelValue: ""
