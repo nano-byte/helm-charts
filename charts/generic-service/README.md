@@ -166,13 +166,6 @@ app:
 | `alerting.grpc.errorDuration`                   |                             | The duration for which the gRPC error rate has to remain elevated before triggering an alert             |
 | `alerting.grpc.maxCriticalErrors`               | `0`                         | The maximum number of critical gRPC errors responses in the sample interval                              |
 | `alerting.grpc.criticalCodes`                   | `[Internal, Unimplemented]` | Which gRPC status codes are considered critical errors                                                   |
-| `alerting.logs.countInterval`                   | `5m`                        | The time interval in which to count the number of messages per log level                                 |
-| `alerting.logs.levelLabel`                      | `level`                     | The Loki label containing the log level                                                                  |
-| `alerting.logs.levels.*.maxCount`               | `0`                         | The maximum number of messages of a specific log level in the interval to allow before alerting          |
-| `alerting.logs.levels.*.severity`               | `warning`                   | The severity of the alert when the maximum count of a messages of a specific log level is exceeded       |
-| `alerting.logs.levels.lokiConfigMap.label`      | `loki_rule`                 | The label attached to the ConfigMap holding the Loki Rules                                               |
-| `alerting.logs.levels.lokiConfigMap.labelValue` | `""`                        | The value of the label attached to the Loki Rule ConfigMap                                               |
-| `alerting.logs.createLokiRule`                  | `false`                     | Whether to create a `LokiRule` custom resource of a ConfigMap for log alerting                           |
 | `alerting.custom.*.metric`                      | __required if used__        | The name of the Prometheus metric exposed by the service                                                 |
 | `alerting.custom.*.labelMatchers`               |                             | Prometheus label matchers to use for filtering the metric (e.g., `some_key="some_value"`)                |
 | `alerting.custom.*.aggregate`                   | __required if used__        | The aggregate function to use to combine metric values from multiple replicas (e.g., `max` or `sum`)     |
@@ -184,6 +177,13 @@ app:
 | `alerting.custom.*.topic`                       |                             | The `topic` label for the alert                                                                          |
 | `alerting.custom.*.summary`                     | __required if used__        | A short summary of the alert                                                                             |
 | `alerting.custom.*.description`                 | __required if used__        | A longer description of the alert; can include metric labels via templating                              |
+| `alerting.logs.countInterval`                   | `5m`                        | The time interval in which to count the number of messages per log level                                 |
+| `alerting.logs.levelLabel`                      | `level`                     | The Loki label containing the log level                                                                  |
+| `alerting.logs.levels.*.maxCount`               | `0`                         | The maximum number of messages of a specific log level in the interval to allow before alerting          |
+| `alerting.logs.levels.*.severity`               | `warning`                   | The severity of the alert when the maximum count of a messages of a specific log level is exceeded       |
+| `alerting.logs.levels.lokiConfigMap.label`      | `loki_rule`                 | The label attached to the ConfigMap holding the Loki Rules                                               |
+| `alerting.logs.levels.lokiConfigMap.labelValue` | `""`                        | The value of the label attached to the Loki Rule ConfigMap                                               |
+| `alerting.logs.createLokiRule`                  | `false`                     | Whether to create a `LokiRule` custom resource of a ConfigMap for log alerting                           |
 | `sidecars`                                      | `[]`                        | Additional sidecar containers to be added to the `Pod`                                                   |
 | `sidecarTemplates`                              | `[]`                        | Strings to be templated providing additional sidecar containers to be added to the Pod                   |
 | `initContainers`                                | `[]`                        | Additional init containers to be added to the `Pod`                                                      |
