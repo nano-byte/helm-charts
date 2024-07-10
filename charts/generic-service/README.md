@@ -154,7 +154,7 @@ app:
 | `alerting.cpu.maxThrottleFactor`                | `0.01`                      | The maximum fraction of the container's execution time during which it experiences CPU throttling        |
 | `alerting.cpu.quotaBufferFactor`                | `1.0`                       | Multiplied with `resources.*.cpu` to determine minimum allowed unused CPU quota in namespace             |
 | `alerting.http.sampleInterval`                  | `20m`                       | The time interval in which to measure HTTP responses for triggering alerts                               |
-| `alerting.http.referenceInterval`               | `1w`                        | The time interval to to compare with the sample interval to detect changes                               |
+| `alerting.http.referenceInterval`               | `1w`                        | The time interval to compare with the sample interval to detect changes                                  |
 | `alerting.http.maxSlowdown`                     | `2.5`                       | The maximum HTTP response slowdown in the sample interval compared to the reference interval             |
 | `alerting.http.max4xxRatio`                     | `2.5`                       | The maximum HTTP 4xx ratio increase in the sample interval compared to the reference interval            |
 | `alerting.http.max5xxCount`                     | `0`                         | The maximum number of HTTP 5xx responses (except 504) in the sample interval                             |
@@ -162,7 +162,7 @@ app:
 | `alerting.grpc.requestsMetric`                  | `grpc_server_handled_total` | The name of the Prometheus metric counting gRPC requests                                                 |
 | `alerting.grpc.ignoreErrorCodes`                | `[]`                        | Which non-successful gRPC status codes will be ignored for triggering alerts                             |
 | `alerting.grpc.sampleInterval`                  | `20m`                       | The time interval in which to measure gRPC responses                                                     |
-| `alerting.grpc.referenceInterval`               | `1w`                        | The time interval to to compare with the sample interval to detect changes                               |
+| `alerting.grpc.referenceInterval`               | `1w`                        | The time interval to compare with the sample interval to detect changes                                  |
 | `alerting.grpc.maxErrorRatio`                   | `2.5`                       | The maximum gRPC error ratio increase in the sample interval compared to the reference interval          |
 | `alerting.grpc.errorDuration`                   |                             | The duration for which the gRPC error rate has to remain elevated before triggering an alert             |
 | `alerting.grpc.maxCriticalErrors`               | `0`                         | The maximum number of critical gRPC errors responses in the sample interval                              |
