@@ -197,10 +197,11 @@ spec:
 
         {{- if or (eq .Values.ingress.protocol "grpc") (eq .Values.ingress.protocol "grpcs") }}
         {{- if .Values.alerting.grpc.referenceInterval }}
+        {{ $ignoreCodes := prepend .Values.alerting.grpc.ignoreErrorCodes "OK" }}
         - alert: GrpcErrors
           expr: |
-            (sum(rate({{ .Values.alerting.grpc.requestsMetric }}{namespace="{{ .Release.Namespace }}",release="{{ .Release.Name }}",grpc_code!="OK"}[{{ .Values.alerting.grpc.sampleInterval }}])) / sum(rate({{ .Values.alerting.grpc.requestsMetric }}{namespace="{{ .Release.Namespace }}",release="{{ .Release.Name }}"}[{{ .Values.alerting.grpc.sampleInterval }}]))) /
-            (sum(rate({{ .Values.alerting.grpc.requestsMetric }}{namespace="{{ .Release.Namespace }}",release="{{ .Release.Name }}",grpc_code!="OK"}[{{ .Values.alerting.grpc.referenceInterval }}])) / sum(rate({{ .Values.alerting.grpc.requestsMetric }}{namespace="{{ .Release.Namespace }}",release="{{ .Release.Name }}"}[{{ .Values.alerting.grpc.referenceInterval }}])))
+            (sum(rate({{ .Values.alerting.grpc.requestsMetric }}{namespace="{{ .Release.Namespace }}",release="{{ .Release.Name }}",grpc_code!~"{{ $ignoreCodes | join "|" }}"}[{{ .Values.alerting.grpc.sampleInterval }}])) / sum(rate({{ .Values.alerting.grpc.requestsMetric }}{namespace="{{ .Release.Namespace }}",release="{{ .Release.Name }}"}[{{ .Values.alerting.grpc.sampleInterval }}]))) /
+            (sum(rate({{ .Values.alerting.grpc.requestsMetric }}{namespace="{{ .Release.Namespace }}",release="{{ .Release.Name }}",grpc_code!~"{{ $ignoreCodes | join "|" }}"}[{{ .Values.alerting.grpc.referenceInterval }}])) / sum(rate({{ .Values.alerting.grpc.requestsMetric }}{namespace="{{ .Release.Namespace }}",release="{{ .Release.Name }}"}[{{ .Values.alerting.grpc.referenceInterval }}])))
             > {{ .Values.alerting.grpc.maxErrorRatio }}
           {{- if .Values.alerting.grpc.errorDuration }}
           for: {{ .Values.alerting.grpc.errorDuration }}
