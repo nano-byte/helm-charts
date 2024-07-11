@@ -907,12 +907,6 @@
               "default": "grpc_server_handled_total",
               "description": "The name of the Prometheus metric counting gRPC requests"
             },
-            "ignoreErrorCodes": {
-              "type": "array",
-              "items": {"type": "string"},
-              "default": [],
-              "description": "Which non-successful gRPC status codes will be ignored for triggering alerts"
-            },
             "sampleInterval": {
               "type": "string",
               "default": "15m",
@@ -932,6 +926,12 @@
                 "type": "string",
                 "default": "",
                 "description": "The duration for which the gRPC error rate has to remain elevated before triggering an alert"
+            },
+            "ignoreErrorCodes": {
+              "type": "array",
+              "items": {"type": "string"},
+              "default": [],
+              "description": "Which non-OK gRPC status codes will be ignored for triggering alerts"
             },
             "maxCriticalErrors": {
               "type": "integer",
