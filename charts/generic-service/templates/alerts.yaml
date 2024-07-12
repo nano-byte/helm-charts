@@ -66,8 +66,8 @@ spec:
             > {{ .Values.alerting.pod.maxAgeSeconds | int }}
           labels: {{- include "generic-service.alert-labels" . | nindent 12 }} warning
             topic: updates
-          annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} Pods too old
-            description: 'The Pod {{"{{ $labels.pod }}"}} has not been updated for {{"{{ humanizeDuration $value }}"}}.'
+          annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} too old
+            description: '{{"{{ $labels.pod }}"}} has not been updated for {{"{{ humanizeDuration $value }}"}}. Consider building and deploying a new version to get the latest security updates in your dependencies.'
       {{- end }}
 
 
