@@ -886,6 +886,11 @@
               "default": 2.5,
               "description": "The maximum HTTP 4xx ratio increase in the sample interval compared to the reference interval"
             },
+            "maxClientCancellationRatio": {
+              "type": "number",
+              "default": 2.5,
+              "description": "The maximum client cancellation (HTTP 499) ratio increase in the sample interval compared to the reference interval"
+            },
             "max5xxCount": {
               "type": "number",
               "default": 0,
