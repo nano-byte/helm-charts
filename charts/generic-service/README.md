@@ -158,7 +158,6 @@ app:
 | `alerting.http.maxSlowdown`                     | `2.5`                       | The maximum HTTP response slowdown in the sample interval compared to the reference interval             |
 | `alerting.http.max4xxRatio`                     | `2.5`                       | The maximum HTTP 4xx ratio increase (except 499) in the sample interval compared to the reference interval            |
 | `alerting.http.maxClientCancellationRatio`      | `0`                         | The maximum client cancellation (HTTP 499) ratio increase in the sample interval compared to the reference interval            |
-| `alerting.http.maxTimeoutCount`                 | `0`                         | The maximum number of HTTP gateway timeout responses (504) in the sample interval  
 | `alerting.http.max5xxCount`                     | `0`                         | The maximum number of HTTP 5xx responses (except 504) in the sample interval                             |
 | `alerting.http.maxTimeoutCount`                 | `0`                         | The maximum number of HTTP gateway timeout responses (504) in the sample interval                        |
 | `alerting.grpc.requestsMetric`                  | `grpc_server_handled_total` | The name of the Prometheus metric counting gRPC requests                                                 |
