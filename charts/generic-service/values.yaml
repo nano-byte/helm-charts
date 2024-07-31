@@ -172,6 +172,7 @@ alerting:
     referenceInterval: 1w
     maxSlowdown: 2.5
     max4xxRatio: 2.5
+    maxClientCancellationRatio: 2.5
     max5xxCount: 0
     maxTimeoutCount: 0
   grpc:

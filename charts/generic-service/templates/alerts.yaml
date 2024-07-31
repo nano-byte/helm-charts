@@ -165,15 +165,20 @@ spec:
             topic: ingress
           annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} HTTP responses slower than usual
             description: '{{ include "generic-service.fullname" . }} HTTP responses are {{"{{ $value }}"}}x slower in the last {{ .Values.alerting.http.sampleInterval }} than in the last {{ .Values.alerting.http.referenceInterval }}.'
-
         - alert: Http4xx
           expr: |
-            (sum(rate({{ include "generic-service.request-code-count-metric" . }}"4.."}[{{ .Values.alerting.http.sampleInterval }}])) / sum(rate({{ include "generic-service.request-count-metric" . }}[{{ .Values.alerting.http.sampleInterval }}]))) /
-            (sum(rate({{ include "generic-service.request-code-count-metric" . }}"4.."}[{{ .Values.alerting.http.referenceInterval }}])) / sum(rate({{ include "generic-service.request-count-metric" . }}[{{ .Values.alerting.http.referenceInterval }}])))
-            > {{ .Values.alerting.http.max4xxRatio }}
+            (sum(rate({{ include "generic-service.request-code-count-metric" . }}"4.."}[{{ .Values.alerting.http.sampleInterval }}])) - sum(rate({{ include "generic-service.request-code-count-metric" . }}"499"[{{ .Values.alerting.http.sampleInterval }}]))) / 
+            (sum(rate({{ include "generic-service.request-code-count-metric" . }}"4.."}[{{ .Values.alerting.http.referenceInterval }}])) - sum(rate({{ include "generic-service.request-code-count-metric" . }}"499"[{{ .Values.alerting.http.referenceInterval }}])))) > {{ .Values.alerting.http.max4xxRatio }}
           labels: {{- include "generic-service.alert-labels" . | nindent 12 }} warning
           annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} higher HTTP 4xx rate
             description: '{{ include "generic-service.fullname" . }} gave {{"{{ $value }}"}}x more HTTP 4xx responses per request in the last {{ .Values.alerting.http.sampleInterval }} than in the last {{ .Values.alerting.http.referenceInterval }}.'
+        - alert: HttpClientCancelled
+          expr: |
+            (sum(rate({{ include "generic-service.request-code-count-metric" . }}"499"[{{ .Values.alerting.http.sampleInterval }}]))) / 
+            (sum(rate({{ include "generic-service.request-code-count-metric" . }}"499"[{{ .Values.alerting.http.referenceInterval }}])))) > {{ .Values.alerting.http.maxClientCancellationRatio }}
+          labels: {{- include "generic-service.alert-labels" . | nindent 12 }} warning
+          annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} higher HTTP client cancellation rate
+            description: '{{ include "generic-service.fullname" . }} gave a {{"{{ $value }}"}}x higher percentage of HTTP request cancelled by the client in the last {{ .Values.alerting.http.sampleInterval }} than in the last {{ .Values.alerting.http.referenceInterval }}.'
         {{- end }}
 
         - alert: Http5xx
