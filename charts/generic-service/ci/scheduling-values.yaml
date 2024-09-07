@@ -4,6 +4,8 @@ image:
   repository: jwilder/whoami
   tag: latest
 
+replicas: 3
+
 scheduling:
   priority: system-cluster-critical
   nodePreferences:
@@ -16,3 +18,4 @@ scheduling:
   podAntiAffinity:
     otherKey: otherValue
   replicaSpread: Strict
+  minAvailable: 2

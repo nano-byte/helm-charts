@@ -443,7 +443,7 @@
     "replicas": {
       "type": "integer",
       "default": 1,
-      "description": "The number of instances of the service to run (set at least 2 for Pod Disruption Budget)"
+      "description": "The number of instances of the service to run"
     },
     "autoscaling": {
       "type": "object",
@@ -585,6 +585,11 @@
           ],
           "default": "BestEffort",
           "description": "How to spread replicas across nodes"
+        },
+        "minAvailable": {
+          "type": "integer",
+          "default": 1,
+          "description": "Minimum number of instances to keep running during cluster maintenance (only applied if this value is smaller than replicas)"
         }
       },
       "additionalProperties": false

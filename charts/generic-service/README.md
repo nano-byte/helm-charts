@@ -69,7 +69,7 @@ app:
 | `rollout.flagger`                               | `false`                     | Use Flagger to control rollouts (`rollout.controller` must be `Deployment` or `StatefulSet`)             |
 | `rollout.analysis`                              | req. for Canary or Flagger  | Flagger or Argo Rollouts analysis for automatic `Canary` or `BlueGreen` promotion                        |
 | `rollout.revisionHistoryLimit`                  | `null`                      | Number of old ReplicaSets to retain (`rollout.controller` must be `Deployment` or `ArgoRollout`)         |
-| `replicas`                                      | `1`                         | The number of instances of the service to run (set at least `2` for Pod Disruption Budget)               |
+| `replicas`                                      | `1`                         | The number of instances of the service to run                                                            |
 | `autoscaling.enabled`                           | `false`                     | Enables automatic starting of additional instances                                                       |
 | `autoscaling.maxReplicas`                       | `3`                         | The maximum number of instances to run (must be larger than `replicas`)                                  |
 | `autoscaling.metric.type`                       | `Resource`                  | The type of metric to use for scaling (`Resource`, `Pods`, `Object` or `External`)                       |
@@ -86,6 +86,7 @@ app:
 | `scheduling.podAffinity`                        | `{}`                        | Labels to select other pods this service should share nodes with if possible                             |
 | `scheduling.podAntiAffinity`                    | `{}`                        | Labels to select other pods this service must not share nodes with                                       |
 | `scheduling.replicaSpread`                      | `BestEffort`                | How to spread replicas across nodes (`BestEffort`, `Strict`, `None`)                                     |
+| `scheduling.minAvailable`                       | `1`                         | Minimum number of instances to keep running during cluster maintenance (only if smaller than `replicas`) |
 | `persistence.enabled`                           | `false`                     | Enables persistent storage for the service                                                               |
 | `persistence.storageClass`                      |                             | The type of disk to use for storage instead of the cluster default                                       |
 | `persistence.accessModes`                       | `[ReadWriteOnce]`           | The support access modes the volume can be mounted with                                                  |
