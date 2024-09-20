@@ -1,0 +1,10 @@
+# Relative minimum availability test
+
+image:
+  repository: jwilder/whoami
+  tag: latest
+
+replicas: 3
+
+scheduling:
+  minAvailable: 50%

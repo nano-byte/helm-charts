@@ -587,7 +587,7 @@
           "description": "How to spread replicas across nodes"
         },
         "minAvailable": {
-          "type": "integer",
+          "type": ["integer", "string"],
           "default": 1,
           "description": "Minimum number of instances to keep running during cluster maintenance (only applied if this value is smaller than replicas)"
         }

@@ -1,4 +1,4 @@
-{{- if and (gt .Values.scheduling.minAvailable 0.0) (lt .Values.scheduling.minAvailable .Values.replicas) }}
+{{- if or (kindIs "string" .Values.scheduling.minAvailable) (and (gt .Values.scheduling.minAvailable 0.0) (lt .Values.scheduling.minAvailable .Values.replicas)) }}
 
 apiVersion: policy/v1
 kind: PodDisruptionBudget
