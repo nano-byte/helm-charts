@@ -194,7 +194,7 @@ spec:
       serviceAccountName: '{{ .Values.rbac.existingServiceAccount | default (include "generic-service.fullname" .) }}'
       {{- end }}
 
-      terminationGracePeriodSeconds: {{ .Values.maxShutdownSeconds | int }}
+      terminationGracePeriodSeconds: {{ if and .Values.ingress.enabled .Values.ingress.shutdownDelaySeconds }}{{ add (.Values.maxShutdownSeconds | int) (.Values.ingress.shutdownDelaySeconds | int) }}{{ else }}{{ .Values.maxShutdownSeconds | int }}{{ end }}
 
       {{- if .Values.scheduling.priority }}
       priorityClassName: {{ .Values.scheduling.priority }}
@@ -434,12 +434,12 @@ spec:
               {{ if $val }}value: {{ $val | quote }}{{ end }}
             {{- end }}
 
-          {{- if and .Values.ingress.enabled .Values.maxShutdownSeconds | int }}
+          {{- if and .Values.ingress.enabled .Values.ingress.shutdownDelaySeconds }}
           # Delay shutdown to give ingress controller time to reroute traffic
           lifecycle:
             preStop:
               exec:
-                command: ["sleep", "5"]
+                command: ["sleep", "{{ .Values.ingress.shutdownDelaySeconds }}"]
           {{- end }}
 
       {{- range .Values.sidecars }}

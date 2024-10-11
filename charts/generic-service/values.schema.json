@@ -680,6 +680,11 @@
           "default": false,
           "description": "Enables ingress into the service (either cluster-internal or public)"
         },
+        "shutdownDelaySeconds": {
+          "type": "integer",
+          "default": 5,
+          "description": "The number of seconds to delay shutting down the container once no new requests are being routed to it"
+        },
         "port": {
           "type": "integer",
           "default": 80,

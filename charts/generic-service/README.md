@@ -98,6 +98,7 @@ app:
 | `additionalMounts.PATH.name`                    | __required if used__        | The name of an additional volume to be mounted at `PATH` inside the container                            |
 | `additionalMounts.PATH.*`                       | __required if used__        | The configuration for the additional volume (e.g., `emptyDir: {}`)                                       |
 | `ingress.enabled`                               | `false`                     | Enables ingress into the service (either cluster-internal or public)                                     |
+| `ingress.shutdownDelaySeconds`                  | `5`                         | The number of seconds to delay shutting down the container once no new requests are being routed to it   |
 | `ingress.port`                                  | `80`                        | The container port ingress traffic is routed to                                                          |
 | `ingress.protocol`                              | `http`                      | The internal protocol used for ingress (e.g., `http`, `https`, `h2c`, `grpc`, `http2`/`h2` or `grpcs`)   |
 | `ingress.timeoutSeconds`                        |                             | Number of seconds after which to timeout waiting for response from service; -1 for infinite              |

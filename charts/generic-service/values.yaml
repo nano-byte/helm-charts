@@ -105,6 +105,7 @@ additionalMounts: {}
 
 ingress:
   enabled: false
+  shutdownDelaySeconds: 5
   port: 80
   protocol: http
   timeoutSeconds: null
