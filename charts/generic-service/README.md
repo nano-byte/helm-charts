@@ -86,7 +86,7 @@ app:
 | `scheduling.podAffinity`                        | `{}`                        | Labels to select other pods this service should share nodes with if possible                             |
 | `scheduling.podAntiAffinity`                    | `{}`                        | Labels to select other pods this service must not share nodes with                                       |
 | `scheduling.replicaSpread`                      | `BestEffort`                | How to spread replicas across nodes (`BestEffort`, `Strict`, `None`)                                     |
-| `scheduling.minAvailable`                       | `1`                         | Minimum number of instances to keep running during cluster maintenance (only if smaller than `replicas`) |
+| `scheduling.minAvailable`                       | `1`                         | Minimum number of instances to keep running during cluster maintenance (only if smaller than `replicas`) |
 | `persistence.enabled`                           | `false`                     | Enables persistent storage for the service                                                               |
 | `persistence.storageClass`                      |                             | The type of disk to use for storage instead of the cluster default                                       |
 | `persistence.accessModes`                       | `[ReadWriteOnce]`           | The support access modes the volume can be mounted with                                                  |
