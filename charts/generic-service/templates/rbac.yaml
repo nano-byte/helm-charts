@@ -1,3 +1,24 @@
+{{- range $name, $rules := .Values.rbac.customRoles -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ tpl $name $ }}
+rules:
+  {{- $rules | toYaml | nindent 2 }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ tpl $name $ }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ tpl $name $ }}
+subjects:
+  - kind: ServiceAccount
+    name: '{{ $.Values.rbac.existingServiceAccount | default (include "generic-service.fullname" $) }}'
+---
+{{- end }}
 
 {{- range .Values.rbac.roles }}
 apiVersion: rbac.authorization.k8s.io/v1
@@ -32,7 +53,7 @@ subjects:
 ---
 {{- end }}
 
-{{- if and (not .Values.rbac.existingServiceAccount) (or .Values.rbac.roles .Values.rbac.clusterRoles) }}
+{{- if and (not .Values.rbac.existingServiceAccount) (or .Values.rbac.customRoles .Values.rbac.roles .Values.rbac.clusterRoles) }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:

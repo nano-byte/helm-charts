@@ -190,7 +190,7 @@ spec:
         - name: {{ . }}
       {{- end }}
 
-      {{- if or .Values.rbac.existingServiceAccount (or .Values.rbac.roles .Values.rbac.clusterRoles) }}
+      {{- if or .Values.rbac.existingServiceAccount (or .Values.rbac.customRoles .Values.rbac.roles .Values.rbac.clusterRoles) }}
       serviceAccountName: '{{ .Values.rbac.existingServiceAccount | default (include "generic-service.fullname" .) }}'
       {{- end }}
 

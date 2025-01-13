@@ -1409,14 +1409,43 @@
           "items": {
             "type": "string"
           },
-          "description": "Namespace-specific Kubernetes RBAC Roles to assign to the service (supports templating)"
+          "description": "Names of namespace-specific Kubernetes RBAC Roles to assign to the service (supports templating)"
         },
         "clusterRoles": {
           "type": "array",
           "items": {
             "type": "string"
           },
-          "description": "Cluster-wide Kubernetes RBAC Roles to assign to the service (supports templating)"
+          "description": "Names of cluster-wide Kubernetes RBAC Roles to assign to the service (supports templating)"
+        },
+        "customRoles": {
+          "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "object",
+              "properties": {
+                "apiGroups": {
+                  "type": "array",
+                  "items": {"type": "string"}
+                },
+                "resources": {
+                  "type": "array",
+                  "items": {"type": "string"}
+                },
+                "resourceNames": {
+                  "type": "array",
+                  "items": {"type": "string"}
+                },
+                "verbs": {
+                  "type": "array",
+                  "items": {"type": "string"}
+                }
+              },
+              "required": ["apiGroups", "resources", "verbs"]
+            }
+          },
+          "description": "Namespace-specific Kubernetes RBAC Roles to create and assign to the service (name supports templating)."
         },
         "existingServiceAccount": {
           "type": "string",

@@ -200,8 +200,12 @@ app:
 | `sidecarTemplates`                              | `[]`                        | Strings to be templated providing additional sidecar containers to be added to the Pod                   |
 | `initContainers`                                | `[]`                        | Additional init containers to be added to the `Pod`                                                      |
 | `initContainerTemplates`                        | `[]`                        | Strings to be templated providing additional init containers to be added to the Pod                      |
-| `rbac.roles`                                    | `[]`                        | Namespace-specific Kubernetes RBAC Roles to assign to the service (supports templating)                  |
-| `rbac.clusterRoles`                             | `[]`                        | Cluster-wide Kubernetes RBAC Roles to assign to the service (supports templating)                        |
+| `rbac.roles`                                    | `[]`                        | Names of namespace-specific Kubernetes RBAC Roles to assign to the service (supports templating)         |
+| `rbac.clusterRoles`                             | `[]`                        | Names of cluster-wide Kubernetes RBAC Roles to assign to the service (supports templating)               |
+| `rbac.customRoles.ROLE_NAME[].apiGroups`        | __required if used__        | Namespace-specific Kubernetes RBAC Roles to create and assign to the service (name supports templating). |
+| `rbac.customRoles.ROLE_NAME[].resources`        | __required if used__        |                                                                                                          |
+| `rbac.customRoles.ROLE_NAME[].resourceNames`    | `[]`                        |                                                                                                          |
+| `rbac.customRoles.ROLE_NAME[].verbs`            | `__required if used__       |                                                                                                          |
 | `rbac.existingServiceAccount`                   |                             | The name of an existing service account to use (instead of automatically creating one for the service)   |
 | `global.alertLabels`                            | `{}`                        | Additional labels to apply to alert rules                                                                |
 | `global.grafana.url`                            |                             | The URL of a Grafana instance with access to the service's metrics                                       |
