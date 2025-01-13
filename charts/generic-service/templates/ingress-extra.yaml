@@ -48,8 +48,8 @@ metadata:
   {{- end }}
 
 spec:
-  {{- if $class }}
-  ingressClassName: {{ $class }}
+  {{- with $class }}
+  ingressClassName: {{ . }}
   {{- end }}
 
   {{- if $extra.tls }}{{ if $extra.tls.enabled }}

@@ -10,8 +10,8 @@ metadata:
 spec:
 {{ include "generic-service.istio" . | indent 2 }}
   http:
-  {{- if .Values.ingress.paths }}
-    {{- range .Values.ingress.paths }}
+  {{- with .Values.ingress.paths }}
+    {{- range . }}
     - match:
         - uri:
             prefix: {{ . | quote }}

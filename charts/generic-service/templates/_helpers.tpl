@@ -40,8 +40,8 @@ version: {{ .Values.version | default .Values.image.tag |  replace "+" "_" | quo
 app.kubernetes.io/version: {{ .Values.version | default .Values.image.tag | replace "+" "_" | quote }}
 {{- end }}
 
-{{- if .Values.labels }}
-{{ .Values.labels | toYaml }}
+{{- with .Values.labels }}
+{{ . | toYaml }}
 {{- end }}
 
 {{- end }}
@@ -54,8 +54,8 @@ helm.sh/chart: 'generic-service-{{ .Chart.Version | replace "+" "_" }}'
 
 {{ define "generic-service.alert-labels" -}}
 {{ include "generic-service.selector-labels" . }}
-{{- if .Values.global.alertLabels }}
-{{ .Values.global.alertLabels | toYaml }}
+{{- with .Values.global.alertLabels }}
+{{ . | toYaml }}
 {{- end }}
 namespace: {{ .Release.Namespace }}
 severity:
@@ -85,8 +85,8 @@ summary: {{ .Release.Namespace }}/{{ include "generic-service.fullname" . }}
 
 {{ define "generic-service.istio" -}}
 
-{{- if .Values.ingress.istio.gateways }}
-gateways: {{- .Values.ingress.istio.gateways | toYaml | nindent 2 }}
+{{- with .Values.ingress.istio.gateways }}
+gateways: {{- . | toYaml | nindent 2 }}
 {{- end }}
 
 hosts:
@@ -100,9 +100,9 @@ hosts:
 
 {{ define "generic-service.istio-cors-policy" -}}
 {{- if .Values.ingress.cors.enabled }}
-{{- if .Values.ingress.cors.allowOrigin }}
+{{- with .Values.ingress.cors.allowOrigin }}
 allowOrigins:
-  {{- range .Values.ingress.cors.allowOrigin }}
+  {{- range . }}
   - {{ if contains . "*" }}regex{{ else }}exact{{ end }}: {{ . | replace "*" ".*" | quote }}
   {{- end }}
 {{- end }}
