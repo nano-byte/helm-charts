@@ -8,7 +8,6 @@
   {{- end -}}
 {{- end }}
 
-
 {{ define "generic-service.fullname" -}}
   {{- if .Values.fullname -}}
     {{ .Values.fullname }}
@@ -46,7 +45,6 @@ app.kubernetes.io/version: {{ .Values.version | default .Values.image.tag | quot
 {{- end }}
 
 {{- end }}
-
 
 {{ define "generic-service.top-level-labels" -}}
 {{ include "generic-service.default-labels" . }}
@@ -132,6 +130,7 @@ istio_requests_total{destination_service_namespace="{{ .Release.Namespace }}", d
 nginx_ingress_controller_requests{exported_namespace="{{ .Release.Namespace }}", exported_service="{{ include "generic-service.fullname" . }}", status=~
 {{- end }}
 {{- end }}
+
 
 {{ define "generic-service.request-duration-metric" -}}
 {{- if .Values.ingress.istio.enabled -}}
