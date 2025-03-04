@@ -269,9 +269,21 @@ spec:
 
       {{- with .Values.scheduling.tolerations }}
       tolerations:
-        {{- range $key:= . }}
-        - key: {{ $key | quote }}
+        {{- range . }}
+        {{- if kindIs "string" . }}
+        - key: {{ . | quote }}
           operator: Exists
+        {{- else }}
+        {{- $toleration := . }}
+        - key: {{ $toleration.key | quote }}
+          operator: {{ $toleration.operator | default "Exists" | quote }}
+          {{- if $toleration.value }}
+          value: {{ $toleration.value | quote }}
+          {{- end }}
+          {{- if $toleration.effect }}
+          effect: {{ $toleration.effect | quote }}
+          {{- end }}
+        {{- end }}
         {{- end }}
       {{- end }}
 
