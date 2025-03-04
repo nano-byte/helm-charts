@@ -87,6 +87,13 @@ scheduling:
   nodePreferences: {}
   nodeExclusions: {}
   tolerations: []
+    ## Example:
+    ## tolerations: ["node.deepl.dev/k8s-kubevirt"]
+    ## Or you can add more complex tolerations as objects here
+    ## tolerations:
+    ## - node.deepl.dev/k8s-gpu-worker:
+    ##     effect: NoSchedule
+    ##     value: "true"
   podAffinity: {}
   podAntiAffinity: {}
   replicaSpread: BestEffort
