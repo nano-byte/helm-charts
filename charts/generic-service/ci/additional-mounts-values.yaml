@@ -8,3 +8,7 @@ additionalMounts:
   /tmp:
     name: temp
     emptyDir: {}
+  /etc/nginx/nginx.conf:
+    name: temp
+    emptyDir: {}
+    subPath: nginx.conf

@@ -1,0 +1,15 @@
+# Extra ingress test
+
+image:
+  repository: jwilder/whoami
+  tag: latest
+
+ingress:
+  enabled: true
+  port: 8000
+  domains: ['somedomain.example.com']
+  pathType: Exact
+  extra:
+    some-extra:
+      domains: ['some-extra.example.com']
+      pathType: ImplementationSpecific

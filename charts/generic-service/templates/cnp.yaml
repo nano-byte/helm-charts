@@ -1,0 +1,74 @@
+{{- if and .Values.netpol.enabled (or .Values.netpol.ingressEndpoints (or .Values.netpol.egressEndpoints .Values.netpol.egressFQDNs)) }}
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: {{ include "generic-service.fullname" . }}
+  labels:
+    {{- include "generic-service.top-level-labels" . | nindent 4 }}
+
+spec:
+  endpointSelector:
+    matchLabels: {{- include "generic-service.selector-labels" . | nindent 6 }}
+
+  {{- if .Values.netpol.ingressEndpoints }}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            {{- range $key, $value := .Values.netpol.ingressEndpoints.labels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+      toPorts:
+        - ports:
+            {{- range .Values.netpol.ingressEndpoints.ports }}
+            - port: {{ .port | quote }}
+              protocol: "{{ .protocol | default "TCP" }}"
+            {{- end }}
+  {{- end }}
+
+  {{- if or .Values.netpol.egressFQDNs .Values.netpol.egressEndpoints }}
+  egress:
+    {{- range .Values.netpol.egressFQDNs }}
+    {{- if kindIs "string" . }}
+    - toFQDNs:
+        - matchName: "{{ . }}"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+    {{- else }}
+    - toFQDNs:
+        - matchName: "{{ .name }}"
+      toPorts:
+        - ports:
+            {{- range .ports }}
+            - port: {{ .port | quote }}
+              protocol: "{{ .protocol | default "TCP" }}"
+            {{- end }}
+    {{- end }}
+    {{- end }}
+
+    {{- range .Values.netpol.egressEndpoints }}
+    - toEndpoints:
+        - matchLabels:
+            {{- range $key, $value := .labels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+      toPorts:
+        - ports:
+            {{- range .ports }}
+            - port: {{ .port | quote }}
+              protocol: "{{ .protocol | default "TCP" }}"
+            {{- end }}
+    {{- end }}
+
+    {{- if .Values.netpol.egressFQDNs }}
+    - toPorts:
+        - ports:
+            - port: '53'
+              protocol: ANY
+          rules:
+            dns:
+              - matchPattern: '*'
+    {{- end }}
+  {{- end }}
+{{- end }}

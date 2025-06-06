@@ -1,11 +1,5 @@
-{{- if eq .Values.rollout.controller "ArgoRollout" }}
-apiVersion: argoproj.io/v1alpha1
-kind: Rollout
-{{- else }}
 apiVersion: apps/v1
-kind: {{ .Values.rollout.controller }}
-{{- end }}
-
+kind: {{ if eq .Values.rollout.controller "ArgoRollout" }}Deployment{{ else }}{{ .Values.rollout.controller }}{{ end }}
 metadata:
   name: {{ include "generic-service.fullname" . }}
   labels: {{- include "generic-service.top-level-labels" . | nindent 4 }}
@@ -18,7 +12,9 @@ metadata:
   {{- end }}
 
 spec:
-  {{- if and (not .Values.autoscaling.enabled) (ne .Values.rollout.controller "DaemonSet") }}
+  {{- if eq .Values.rollout.controller "ArgoRollout" }}
+  replicas: 0
+  {{- else if and (not .Values.autoscaling.enabled) (ne .Values.rollout.controller "DaemonSet") }}
   replicas: {{ .Values.replicas | int }}
   {{- end }}
 
@@ -36,6 +32,20 @@ spec:
     {{- if eq .Values.rollout.controller "ArgoRollout" }}
       {{ fail "rollout.strategy cannot be RollingUpdate if rollout.controller is ArgoRollout, must be Canary or BlueGreen" }}
     {{- end }}
+    {{- if or .Values.rollout.maxSurge .Values.rollout.maxUnavailable }}
+      {{- if ne .Values.rollout.controller "Deployment" }}
+        {{ fail "rollout.maxSurge and rollout.maxUnavailable only apply when rollout.controller is Deployment" }}
+      {{- end }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      {{- with .Values.rollout.maxSurge }}
+      maxSurge: {{ . }}
+      {{- end }}
+      {{- with .Values.rollout.maxUnavailable }}
+      maxUnavailable: {{ . }}
+      {{- end }}
+    {{- end }}
   {{- else if eq .Values.rollout.strategy "Recreate" }}
     {{- if or (eq .Values.rollout.controller "StatefulSet") (eq .Values.rollout.controller "DaemonSet") }}
       {{ fail "rollout.strategy cannot be Recreate if rollout.controller is StatefulSet or DaemonSet, use OnDelete instead" }}
@@ -51,63 +61,6 @@ spec:
     {{- end }}
   strategy:
     type: OnDelete
-  {{- else if eq .Values.rollout.strategy "Canary" }}
-    {{- if not .Values.ingress.enabled }}
-      {{ fail "ingress.enabled must be true if rollout.strategy is Canary" }}
-    {{- end }}
-    {{- if not .Values.ingress.domains }}
-      {{ fail "ingress.domains must not be empty if rollout.strategy is Canary" }}
-    {{- end }}
-    {{- if eq .Values.rollout.controller "ArgoRollout" }}
-  strategy:
-    canary:
-      stableService: {{ include "generic-service.fullname" . }}
-      stableMetadata:
-        labels:
-          role: stable
-      canaryService: {{ include "generic-service.fullname" . }}-preview
-      canaryMetadata:
-        labels:
-          role: preview
-      analysis: {{- .Values.rollout.analysis | required "rollout.analysis is required if rollout.strategy is Canary" | toYaml |  nindent 8 }}
-      trafficRouting:
-        {{- if .Values.ingress.istio.enabled }}
-        istio:
-          virtualService:
-            name: {{ include "generic-service.fullname" . }}
-        {{- else if contains "nginx" .Values.ingress.class }}
-        nginx:
-          stableIngress: {{ include "generic-service.fullname" . }}
-        {{- else }}
-          {{ fail "Ingress must use Istio or nginx if rollout.strategy is Canary" }}
-        {{- end }}
-    {{- else if not .Values.rollout.flagger }}
-      {{ fail "rollout.flagger must be true or rollout.controller must be ArgoRollout if rollout.strategy is Canary" }}
-    {{- end }}
-  {{- else if eq .Values.rollout.strategy "BlueGreen" }}
-    {{- if not .Values.ingress.enabled }}
-      {{ fail "ingress.enabled must be true if rollout.strategy is BlueGreen" }}
-    {{- end }}
-    {{- if eq .Values.rollout.controller "ArgoRollout" }}
-  strategy:
-    blueGreen:
-      activeService: {{ include "generic-service.fullname" . }}
-      activeMetadata:
-        labels:
-          role: stable
-      previewService: {{ include "generic-service.fullname" . }}-preview
-      previewMetadata:
-        labels:
-          role: preview
-      autoPromotionEnabled: {{ .Values.rollout.autoPromotion }}
-      {{- if .Values.rollout.analysis }}
-      prePromotionAnalysis: {{- .Values.rollout.analysis | toYaml | nindent 8 }}
-      {{- end }}
-    {{- else if not .Values.rollout.flagger }}
-      {{ fail "rollout.flagger must be true or rollout.controller must be ArgoRollout if rollout.strategy is BlueGreen" }}
-    {{- end }}
-  {{ else }}
-    {{ fail "Unknown rollout.strategy" }}
   {{- end }}
 
   {{- if eq .Values.rollout.controller "StatefulSet" }}
@@ -182,7 +135,7 @@ spec:
             secretName: {{ tpl $name $ }}
         {{- end }}
         {{- range $_, $volume := .Values.additionalMounts }}
-        - {{ tpl ($volume | toYaml) $ | nindent 10 }}
+        - {{ tpl (omit $volume "subPath" | toYaml) $ | nindent 10 }}
         {{- end }}
 
       {{- with .Values.image.pullSecret }}
@@ -205,12 +158,16 @@ spec:
         - maxSkew: 1
           topologyKey: kubernetes.io/hostname
           whenUnsatisfiable: {{ if eq .Values.scheduling.replicaSpread "Strict" }}DoNotSchedule{{ else }}ScheduleAnyway{{ end }}
+          {{- if or (eq .Values.rollout.controller "ArgoRollout") (eq .Values.rollout.controller "Deployment") }}
+          matchLabelKeys:
+            {{- if eq .Values.rollout.controller "ArgoRollout" }}
+            - rollouts-pod-template-hash
+            {{- else if eq .Values.rollout.controller "Deployment" }}
+            - pod-template-hash
+            {{- end }}
+          {{- end }}
           labelSelector:
             matchLabels: {{- include "generic-service.selector-labels" . | nindent 14 }}
-              {{- if or .Values.version (not (hasPrefix "@" .Values.image.tag)) }}
-              # Allow rebalancing during update
-              version: {{ .Values.version | default .Values.image.tag | quote }}
-              {{- end }}
       {{- end }}
 
       affinity:
@@ -238,7 +195,7 @@ spec:
                 {{- end }}
         {{- end }}
 
-        {{- if or .Values.scheduling.nodePreferences .Values.scheduling.nodeExclusions }}
+        {{- if or .Values.scheduling.nodePreferences .Values.scheduling.nodeRequirements .Values.scheduling.nodeExclusions }}
         nodeAffinity:
           {{- with  .Values.scheduling.nodePreferences }}
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -251,15 +208,31 @@ spec:
                     values: {{- $values | toYaml | nindent 22 }}
                   {{- end }}
           {{- end }}
-          {{- with .Values.scheduling.nodeExclusions }}
+
+          {{- if or .Values.scheduling.nodeRequirements .Values.scheduling.nodeExclusions}}
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
+              {{- range $req := .Values.scheduling.nodeRequirements }}
               - matchExpressions:
-                {{- range $key, $values := . }}
+                {{- range $key, $values := $req }}
+                - key: {{ $key | quote }}
+                  operator: In
+                  values: {{- $values | toYaml | nindent 20 }}
+                {{- end }}
+                {{- range $key, $values := $.Values.scheduling.nodeExclusions }}
                 - key: {{ $key | quote }}
                   operator: NotIn
                   values: {{- $values | toYaml | nindent 20 }}
                 {{- end }}
+              {{- end }}
+              {{- if not .Values.scheduling.nodeRequirements }}
+              - matchExpressions:
+                {{- range $key, $values := .Values.scheduling.nodeExclusions }}
+                - key: {{ $key | quote }}
+                  operator: NotIn
+                  values: {{- $values | toYaml | nindent 20 }}
+                {{- end }}
+              {{- end }}
           {{- end }}
         {{- end }}
 
@@ -269,9 +242,21 @@ spec:
 
       {{- with .Values.scheduling.tolerations }}
       tolerations:
-        {{- range $key:= . }}
-        - key: {{ $key | quote }}
+        {{- range . }}
+          {{- if kindIs "string" . }}
+        - key: {{ . | quote }}
           operator: Exists
+        {{- else }}
+          {{- $toleration := . }}
+        - key: {{ $toleration.key | quote }}
+          operator: {{ $toleration.operator | default "Exists" | quote }}
+          {{- if $toleration.value }}
+          value: {{ $toleration.value | quote }}
+          {{- end }}
+          {{- if $toleration.effect }}
+          effect: {{ $toleration.effect | quote }}
+          {{- end }}
+        {{- end }}
         {{- end }}
       {{- end }}
 
@@ -316,6 +301,9 @@ spec:
             {{- if ne $path "_" }}
             - name: {{ tpl $volume.name $ }}
               mountPath: {{ $path }}
+              {{- with $volume.subPath }}
+              subPath: {{ . }}
+              {{- end }}
             {{- end }}
             {{- end }}
 
@@ -430,16 +418,16 @@ spec:
             {{- end }}
 
             {{- range $key, $val := .Values.env }}
-            - name: {{ $key | quote }}
-              {{ if $val }}value: {{ $val | quote }}{{ end }}
+            - name: {{ tpl $key $ | quote }}
+              {{ if $val }}value: {{ tpl (toString $val) $ | quote }}{{ end }}
             {{- end }}
 
           {{- if and .Values.ingress.enabled .Values.ingress.shutdownDelaySeconds }}
           # Delay shutdown to give ingress controller time to reroute traffic
           lifecycle:
             preStop:
-              exec:
-                command: ["sleep", "{{ .Values.ingress.shutdownDelaySeconds }}"]
+              sleep:
+                seconds: {{ .Values.ingress.shutdownDelaySeconds }}
           {{- end }}
 
       {{- range .Values.sidecars }}

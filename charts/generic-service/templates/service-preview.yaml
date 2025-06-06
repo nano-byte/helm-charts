@@ -1,0 +1,32 @@
+{{- if eq .Values.rollout.controller "ArgoRollout" }}
+{{- if or (and (eq .Values.rollout.strategy "BlueGreen") .Values.rollout.blueGreen.enablePreviewService) (and (eq .Values.rollout.strategy "Canary") .Values.rollout.canary.useTrafficRouting)}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: '{{ include "generic-service.fullname" . }}-preview'
+  labels: {{- include "generic-service.top-level-labels" . | nindent 4 }}
+
+spec:
+  selector: {{- include "generic-service.selector-labels" . | nindent 4 }}
+    {{- with .Values.ingress.additionalSelectors }}
+    {{- . | toYaml | nindent 4 }}
+    {{- end }}
+
+  {{- if .Values.ingress.headless }}
+  clusterIP: None
+  {{- end }}
+
+  ports:
+    - name: '{{ include "generic-service.normalize-protocol" .Values.ingress.protocol }}-ingress'
+      appProtocol: '{{ include "generic-service.normalize-app-protocol" .Values.ingress.protocol }}'
+      port: 80
+      targetPort: {{ .Values.ingress.port }}
+    {{- range $name, $extra := .Values.ingress.extra }}
+    {{- if $extra.port }}
+    - name: {{ include "generic-service.normalize-protocol" $extra.protocol }}-{{ $name }}
+      appProtocol: '{{ include "generic-service.normalize-app-protocol" $extra.protocol }}'
+      port: {{ $extra.port }}
+    {{- end }}
+    {{- end }}
+{{- end }}
+{{- end }}

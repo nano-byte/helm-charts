@@ -1,4 +1,4 @@
-{{- if .Values.netpol.enabled }}
+{{- if and .Values.netpol.enabled (or .Values.netpol.ingress .Values.netpol.egress .Values.netpol.ingressNamespaces .Values.netpol.egressNamespaces) }}
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
@@ -6,8 +6,40 @@ metadata:
   labels: {{- include "generic-service.top-level-labels" . | nindent 4 }}
 
 spec:
+  policyTypes:
+    {{- if or .Values.netpol.ingress .Values.netpol.ingressNamespaces }}
+    - Ingress
+    {{- end }}
+    {{- if or .Values.netpol.egress .Values.netpol.egressNamespaces }}
+    - Egress
+    {{- end }}
+
   podSelector:
     matchLabels: {{- include "generic-service.selector-labels" . | nindent 6 }}
-  ingress: {{- .Values.netpol.ingress | toYaml | nindent 4 }}
-  egress: {{- .Values.netpol.egress | toYaml | nindent 4 }}
+
+  {{- if or .Values.netpol.ingress .Values.netpol.ingressNamespaces }}
+  ingress:
+    {{- with .Values.netpol.ingress }}{{ . | toYaml | nindent 4 }}{{ end }}
+    {{- with .Values.netpol.ingressNamespaces }}
+    - from:
+      - namespaceSelector:
+          matchExpressions:
+          - key: kubernetes.io/metadata.name
+            operator: In
+            values: {{- . | toYaml | nindent 14 }}
+    {{- end }}
+  {{- end }}
+
+  {{- if or .Values.netpol.egress .Values.netpol.egressNamespaces }}
+  egress:
+    {{- with .Values.netpol.egress }}{{ . | toYaml | nindent 4 }}{{ end }}
+    {{- with .Values.netpol.egressNamespaces }}
+    - to:
+      - namespaceSelector:
+          matchExpressions:
+          - key: kubernetes.io/metadata.name
+            operator: In
+            values: {{- . | toYaml | nindent 14 }}
+    {{- end }}
+  {{- end }}
 {{- end }}

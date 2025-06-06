@@ -20,6 +20,9 @@ spec:
   maxReplicas: {{ .Values.autoscaling.maxReplicas | int }}
   behavior: {{- .Values.autoscaling.behavior | toYaml | nindent 4 }}
   metrics:
+  {{- if .Values.autoscaling.metrics }}
+  {{- .Values.autoscaling.metrics | toYaml | nindent 4 }}
+  {{- else }}
     - type: {{ .Values.autoscaling.metric.type }}
       {{- if eq .Values.autoscaling.metric.type "Resource" }}
       resource:
@@ -41,5 +44,6 @@ spec:
           type: Value
           value: {{ .Values.autoscaling.targetValue | int }}
       {{- end }}
+  {{- end }}
 
 {{- end }}

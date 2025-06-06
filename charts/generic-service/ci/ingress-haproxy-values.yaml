@@ -1,0 +1,19 @@
+# HAProxy ingress test
+
+image:
+  repository: jwilder/whoami
+  tag: latest
+
+ingress:
+  enabled: true
+  port: 8000
+  class: haproxy-public
+  domains: ['somedomain.example.com']
+  protocol: h2c
+  timeoutSeconds: 2
+  cors:
+    enabled: true
+  extra:
+    timeout:
+      domains: ['timeout.example.com']
+      timeoutSeconds: 10

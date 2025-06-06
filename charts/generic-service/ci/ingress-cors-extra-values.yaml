@@ -1,0 +1,36 @@
+# Extra ingress test
+
+image:
+  repository: jwilder/whoami
+  tag: latest
+
+ingress:
+  enabled: true
+  port: 8000
+  domains: ['example.com']
+  class: nginx
+  cors:
+    enabled: true
+    allowOrigin:
+      - foo
+      - bar
+    exposeHeaders:
+      - Content-Type
+  extra:
+    additional-annotation:
+      domains: ['custom-annotation.example.com']
+      annotations:
+        key: value
+    cors-disabled:
+      cors:
+        enabled: false
+      domains: ['cors-disabled.example.com']
+    haproxy:
+      class: haproxy
+      domains: ['haproxy.example.com']
+    haproxy-no-allow-origin:
+      class: haproxy
+      cors:
+        enabled: true
+        allowOrigin: []
+      domains: ['haproxy-no-allow-origin.example.com']

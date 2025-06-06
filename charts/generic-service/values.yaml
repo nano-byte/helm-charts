@@ -63,10 +63,63 @@ resources:
 rollout:
   controller: Deployment
   strategy: RollingUpdate
-  autoPromotion: true
+  # -- Deprecated
   flagger: false
-  analysis: null
-  revisionHistoryLimit: null
+  canary:
+    # -- Analysis for canary rollouts
+    analysis: {}
+    # -- Argo Rollouts list of steps to perform during a canary rollout
+    steps: []
+    # -- Whether to use Argo Rollouts traffig routing feature
+    useTrafficRouting: false
+  blueGreen:
+    # -- The service argo rollouts manages for switching over traffic from blue to green
+    # @default -- `fullname`
+    activeService: ""
+    # -- Create preview service for testing new versions before promotion to stable
+    enablePreviewService: false
+    # -- Analysis template name for pre-promotion step
+    prePromotionAnalysis: {}
+    # -- Analysis template name for post-promotion step
+    postPromotionAnalysis: {}
+    # -- Automatically promote successful rollouts (only applicable if rollout.strategy is BlueGreen)
+    autoPromotion: true
+  # -- A map where each key is the name of an analysis template and the value is the template's configuration settings
+  analysisTemplates: {}
+  # -- Number of old ReplicaSets to retain (rollout.controller must be Deployment or ArgoRollout)
+  revisionHistoryLimit:   # @schema type:[integer, null]
+  # -- The maximum time in seconds for a deployment to make progress before it is considered to be failed
+  progressDeadlineSeconds:   # @schema type:[integer, null]
+  # -- Minimum number of seconds for which a new pod should be ready for it to be considered available
+  minReadySeconds:
+  # -- Maximum number/percentage of Pods that can be created over the desired number of Pods during a rollout (only applicable if rollout.strategy is RollingUpdate and rollout.controller is Deployment)
+  maxSurge:  # @schema type:[integer, string, null]
+  # -- Maximum number/percentage of Pods that can be unavailable during the rollout (only applicable if rollout.strategy is RollingUpdate and rollout.controller is Deployment)
+  maxUnavailable:  # @schema type:[integer, string, null]
+  # -- Whether to abort the update when progressDeadlineSeconds is exceeded (rollout.controller must be ArgoRollout and rollout.strategy Canary)
+  progressDeadlineAbort: false
+  notifications:
+    # -- Slack Channels to notify
+    slackChannels: []
+    subscribe:
+      # -- notify if analysis run errors
+      analysisRunError: false
+      # -- notify if analysis run fails
+      analysisRunFailed: false
+      # -- notify on analysis runs
+      analysisRunRunning: false
+      # -- notify if rollout is aborted
+      rolloutAborted: true
+      # -- notify if rollout is completed
+      rolloutCompleted: true
+      # -- notify if rollout is paused
+      rolloutPaused: false
+      # -- notify on rollout step completion
+      rolloutStepCompleted: false
+      # -- notify on rollout update
+      rolloutUpdated: false
+      # -- notify on replica set scaling
+      scalingReplicasSet: false
 
 replicas: 1
 
@@ -79,6 +132,8 @@ autoscaling:
     object:
     selector: {}
   targetValue: 80
+  # -- Scaling metrics; autoscaling.metric.* and autoscaling.targetValue are ignored when this is set
+  metrics: []
   behavior: {}
 
 scheduling:
@@ -86,11 +141,14 @@ scheduling:
   nodeSelector: {}
   nodePreferences: {}
   nodeExclusions: {}
+  # -- Array of objects describing complex affinity rules (multi-value, and/or) to select nodes this service may be run on
+  nodeRequirements: []
   tolerations: []
   podAffinity: {}
   podAntiAffinity: {}
   replicaSpread: BestEffort
-  minAvailable: 1
+  # -- (int, string) Min pods to keep during disruptions; only applied if replicas > 1 and this value < replicas
+  minAvailable: "50%"   # @schema type:[integer, string]
 
 persistence:
   enabled: false
@@ -101,6 +159,13 @@ persistence:
 
 secrets: {}
 
+sealedSecrets:    # @schema type:[object, null]
+  # # -- The encrypted data, where each key is the name of a secret and each value is the encrypted secret data.
+  # # -- Note: The data must be encrypted per-cluster (different keys) and per-namespace using kubeseal. Use the --scope cluster-wide flag for cluster-wide data.
+  # encryptedData:
+  # # -- The unencrypted data, where each key is the name of a secret and each value is the base64-encoded secret data.
+  # data:
+
 additionalMounts: {}
 
 ingress:
@@ -110,6 +175,8 @@ ingress:
   protocol: http
   timeoutSeconds: null
   domains: []
+  # -- (Prefix, Exact, ImplementationSpecific) Path matching algorithm.
+  pathType: Prefix    # @schema enum:[Prefix, Exact, ImplementationSpecific]
   paths: []
   tls:
     enabled: false
@@ -137,10 +204,49 @@ ingress:
 
 netpol:
   enabled: false
+
+  # -- Deprecated, please use ingressNamespaces or ingressEndpoints instead
   ingress:
     # Allow from same namespace
     - from: [podSelector: {}]
+  # -- Deprecated, please use egressNamespaces, egressEndpoints or egressFQDNs instead
   egress: []
+
+  # -- Kubernetes namespaces that are allowed to make requests into the service.
+  ingressNamespaces: []
+
+  # -- Kubernetes namespaces the service is allowed to make requests to.
+  egressNamespaces: []
+
+  # -- Configuration for ingress rules (traffic allowed into the selected Pods).
+  ingressEndpoints: {}
+  # Each entry should define the `fromEndpoints` and associated ports.
+  # Example:
+  # ingress:
+  #   fromEndpoints:
+  #     labels:
+  #       io.kubernetes.pod.namespace: service-a
+  #     ports:
+  #       - port: 443
+
+  # -- List of egress rules for Layer 7 traffic using FQDNs. You can use bare domain names if you only require HTTPS traffic.
+  egressFQDNs: []
+    # Each entry allows traffic to a specific FQDN and associated ports.
+    # Example:
+    # toFQDNs:
+    #   - name: api.github.com
+    #     ports:
+    #       - port: 443
+
+  # -- List of egress rules (traffic allowed into the selected Pods).
+  egressEndpoints: []
+  # Each entry allows traffic to Pods matching specific labels and associated ports.
+  # Example:
+  # toEndpoints:
+  #   - labels:
+  #       io.kubernetes.pod.namespace: service-a
+  #     ports:
+  #       - port: 443
 
 tracing:
   enabled: false
@@ -153,6 +259,10 @@ monitoring:
   port: 9100
   path: /metrics
   interval: 1m
+  # -- The response timeout when scraping
+  scrapeTimeout: 10s
+  # -- Extra labels which are transferred from the pod onto the ingested metrics.
+  podTargetLabels: []  # @schema type:array
 
 alerting:
   enabled: false
@@ -165,6 +275,9 @@ alerting:
     enabled: true
     maxUsageFactor: 0.9
     quotaBufferFactor: 1.0
+  rollout:
+    # -- Deploys Prometheus alert rule for aborted Argo Rollouts
+    enabled: true
   cpu:
     sampleInterval: 1m
     maxThrottleFactor: 0.01
@@ -214,3 +327,81 @@ global:
     url: ''
     dashboard: qqsCbY5Zz
     queryVariables: {}
+
+analysisTemplates:
+  # @ignore
+  ingress-success-rate:
+    args:
+      - name: ingress-success-rate
+        value: "0.99"
+      - name: ingress-rate-interval
+        value: "1m"
+      - name: ingress-interval
+        value: "1m"
+      - name: ingress-initial-delay
+        value: "0"
+      - name: ingress-count
+        value: "0"
+      - name: ingress-failure-limit
+        value: "0"
+      - name: ingress-name
+      - name: ingress-namespace
+    metrics:
+      - name: ingress-success-rate
+        successCondition: "len(result) == 0 || isNaN(result[0]) || result[0] >= {{ args.ingress-success-rate }}"
+        interval: "{{ args.ingress-interval }}"
+        count: "{{ args.ingress-count }}"
+        initialDelay: "{{ args.ingress-initial-delay }}"
+        failureLimit: "{{ args.ingress-failure-limit }}"
+        query: |
+          # this is rendered as a literal string so double-curlies are not touched
+          # divide 4/500 by total rate of requests
+          sum(
+            rate(
+              nginx_ingress_controller_requests{ingress=~"{{ args.ingress-name }}", status!~"5.*", exported_namespace="{{args.ingress-namespace}}"}[{{ args.ingress-rate-interval }}]
+            )
+          )
+          /
+          sum(
+            rate(
+              nginx_ingress_controller_requests{ingress=~"{{ args.ingress-name }}", exported_namespace="{{args.ingress-namespace}}"}[{{ args.ingress-rate-interval }}]
+            )
+          )
+  # @ignore
+  pod-ready:
+    args:
+      - name: interval
+        value: "10s"
+      - name: count
+        value: "3"
+      - name: initial-delay
+        value: "5m"
+      - name: current-pod-hash
+      - name: pod-name
+    metrics:
+      - name: pod-ready
+        successCondition: result[0] >= 1
+        initialDelay: "{{ args.initial-delay }}"
+        interval: "{{ args.interval }}"
+        count: "{{ args.count }}"
+        query: |
+            max(kube_pod_status_ready{condition="true", pod=~"{{ args.pod-name }}-{{ args.current-pod-hash }}.*" })
+  # @ignore
+  pod-non-zero-exit-code:
+    args:
+      - name: nonzero-exit-interval
+        value: "10s"
+      - name: nonzero-exit-count
+        value: "0"
+      - name: nonzero-exit-failure-limit
+        value: "3"
+      - name: nonzero-exit-current-pod-hash
+      - name: nonzero-exit-pod-name
+    metrics:
+      - name: background-pod-non-zero-exit-code
+        successCondition: len(result) == 0 || result[0] == 0
+        interval: "{{ args.nonzero-exit-interval }}"
+        count: "{{ args.nonzero-exit-count }}"
+        failureLimit: "{{ args.nonzero-exit-failure-limit }}"
+        query: |
+            max(kube_pod_container_status_last_terminated_exitcode{pod=~"{{ args.nonzero-exit-pod-name }}-{{ args.nonzero-exit-current-pod-hash }}.*" })

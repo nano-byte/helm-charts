@@ -3,10 +3,14 @@
 This Helm chart simplifies deploying a typical "80% case" service on Kubernetes. It takes care of creating common [Resources](#resources) such as `Deployment`, `Service` and `Ingress`. It also provides optional support for:
 
 - [nginx Ingress Controller](https://kubernetes.github.io/ingress-nginx/), [Contour](https://projectcontour.io/) or [Istio](https://istio.io/) for routing
+- HAProxy
+- Contour
 - [Prometheus Operator](https://github.com/prometheus-operator/prometheus-operator) for monitoring
 - [Loki Rule Operator](https://github.com/opsgy/loki-rule-operator) or Loki sidecar for logging-based alerting
 - [OpenTelemetry Operator](https://github.com/open-telemetry/opentelemetry-operator) or [Jaeger Operator](https://www.jaegertracing.io/docs/latest/operator/) for tracing
 - [Flagger](https://flagger.app/) and [Argo Rollouts](https://argoproj.github.io/argo-rollouts/) for canary and blue-green deployments
+- Cillium Network Policies
+- Sealed Secrets
 
 The [Generic Service Grafana Dashboard](https://grafana.com/grafana/dashboards/14759) is a useful companion to this chart.
 

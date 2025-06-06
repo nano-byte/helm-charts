@@ -11,10 +11,14 @@ spec:
   groups:
     - name: {{ include "generic-service.fullname" . }}.rules
       rules:
-      {{- if ne .Values.rollout.controller "ArgoRollout" }}
         {{- if gt .Values.replicas 0.0 }}
         - alert: Down
-          expr: kube_{{ .Values.rollout.controller | lower }}_status_{{ if eq .Values.rollout.controller "DaemonSet" }}number{{ else }}replicas{{ end }}_ready{namespace="{{ .Release.Namespace }}", {{ .Values.rollout.controller | lower }}="{{ include "generic-service.fullname" . }}"} == 0
+          expr: |
+            {{- if eq .Values.rollout.controller "ArgoRollout" }}
+            rollout_info_replicas_available{exported_namespace="{{ .Release.Namespace }}", name="{{ include "generic-service.fullname" . }}"} == 0
+            {{- else }}
+            kube_{{ .Values.rollout.controller | lower }}_status_{{ if eq .Values.rollout.controller "DaemonSet" }}number{{ else }}replicas{{ end }}_ready{namespace="{{ .Release.Namespace }}", {{ .Values.rollout.controller | lower }}="{{ include "generic-service.fullname" . }}"} == 0
+            {{- end }}
           for: '
             {{- if and (eq .Values.replicas 1.0) (or (eq .Values.rollout.strategy "Recreate") (eq .Values.rollout.controller "StatefulSet")) -}}
               {{ .Values.alerting.pod.maxStartupSeconds | int }}s
@@ -29,11 +33,22 @@ spec:
             description: 'All replicas for {{ include "generic-service.fullname" . }} are down.'
         {{- end }}
 
+        {{- if eq .Values.rollout.controller "ArgoRollout" }}
+        - alert: RolloutAborted
+          expr: rollout_info{exported_namespace="{{ .Release.Namespace }}", name="{{ include "generic-service.fullname" . }}", phase="Abort"}
+          labels: {{- include "generic-service.alert-labels" . | nindent 12 }} warning
+            topic: availability
+          annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} rollout aborted
+            description: '{{"{{ $labels.strategy }}"}} rollout {{ include "generic-service.fullname" . }} perfomed automatic rollback to the previous version.'
+        {{- end }}
+
         {{- if or (gt .Values.replicas 1.0) (eq .Values.rollout.controller "DaemonSet") }}
         - alert: ReplicasDown
           expr: |
             {{- if eq .Values.rollout.controller "StatefulSet" }}
             kube_statefulset_status_replicas{namespace="{{ .Release.Namespace }}", statefulset="{{ include "generic-service.fullname" . }}"} - kube_statefulset_status_replicas_ready{namespace="{{ .Release.Namespace }}", statefulset="{{ include "generic-service.fullname" . }}"} > 0
+            {{- else if eq .Values.rollout.controller "ArgoRollout" }}
+            rollout_info_replicas_desired{exported_namespace="{{ .Release.Namespace }}", name="{{ include "generic-service.fullname" . }}"} - rollout_info_replicas_available{exported_namespace="{{ .Release.Namespace }}", name="{{ include "generic-service.fullname" . }}"} > 0
             {{- else }}
             kube_{{ .Values.rollout.controller | lower }}_status_{{ if eq .Values.rollout.controller "DaemonSet" }}number{{ else }}replicas{{ end }}_unavailable{namespace="{{ .Release.Namespace }}", {{ .Values.rollout.controller | lower }}="{{ include "generic-service.fullname" . }}"} > 0
             {{- end }}
@@ -43,7 +58,6 @@ spec:
           annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} replicas down
             description: '{{"{{ $value }}"}} replicas for {{ include "generic-service.fullname" . }} are down.'
         {{- end }}
-      {{- end }}
 
       {{- if .Values.alerting.restarts.enabled }}
         - alert: ContainerRestart
@@ -185,21 +199,30 @@ spec:
 
         - alert: Http5xx
           expr: |
-            sum(round(increase({{ include "generic-service.request-code-count-metric" . }}"5.[^4]"}[{{ .Values.alerting.http.sampleInterval }}])))
+            sum(round(increase({{ include "generic-service.request-code-count-metric" . }}"50[0-25-9]"}[{{ .Values.alerting.http.sampleInterval }}])))
             > {{ .Values.alerting.http.max5xxCount }}
           labels: {{- include "generic-service.alert-labels" . | nindent 12 }} critical
             topic: ingress
           annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} HTTP 5xx responses
             description: '{{ include "generic-service.fullname" . }} gave {{"{{ $value }}"}} HTTP 5xx responses in the last {{ .Values.alerting.http.sampleInterval }}.'
 
+        - alert: HttpUnavailable
+          expr: |
+            sum(round(increase({{ include "generic-service.request-code-count-metric" . }}"503"}[{{ .Values.alerting.http.sampleInterval }}])))
+            > {{ .Values.alerting.http.maxUnavailableCount }}
+          labels: {{- include "generic-service.alert-labels" . | nindent 12 }} warning
+            topic: ingress
+          annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} HTTP service unavailable responses
+            description: '{{ include "generic-service.fullname" . }} gave {{"{{ $value }}"}} service unavailable (HTTP 503) responses in the last {{ .Values.alerting.http.sampleInterval }}.'
+
         - alert: HttpTimeout
           expr: |
             sum(round(increase({{ include "generic-service.request-code-count-metric" . }}"504"}[{{ .Values.alerting.http.sampleInterval }}])))
             > {{ .Values.alerting.http.maxTimeoutCount }}
-          labels: {{- include "generic-service.alert-labels" . | nindent 12 }} critical
+          labels: {{- include "generic-service.alert-labels" . | nindent 12 }} warning
             topic: ingress
           annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} HTTP gateway timeout responses
-            description: '{{ include "generic-service.fullname" . }} gave {{"{{ $value }}"}} HTTP gateway timeout responses in the last {{ .Values.alerting.http.sampleInterval }}.'
+            description: '{{ include "generic-service.fullname" . }} gave {{"{{ $value }}"}} gateway timeout responses (HTTP 504) in the last {{ .Values.alerting.http.sampleInterval }}.'
         {{- end }}
 
         {{- if or (eq .Values.ingress.protocol "grpc") (eq .Values.ingress.protocol "grpcs") }}

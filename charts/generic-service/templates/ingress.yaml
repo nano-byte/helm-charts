@@ -5,37 +5,7 @@ kind: Ingress
 metadata:
   name: {{ include "generic-service.fullname" . }}
   labels: {{- include "generic-service.top-level-labels" . | nindent 4 }}
-  annotations:
-  {{- with .Values.ingress.annotations }}
-    {{- . | toYaml | nindent 4 }}
-  {{- end }}
-  {{- if contains "nginx" .Values.ingress.class }}
-    nginx.ingress.kubernetes.io/backend-protocol: {{ include "generic-service.normalize-protocol" .Values.ingress.protocol | upper }}
-    {{- if .Values.ingress.timeoutSeconds }}
-    nginx.ingress.kubernetes.io/proxy-read-timeout: '{{ .Values.ingress.timeoutSeconds }}'
-    {{- if or (eq .Values.ingress.protocol "grpc") (eq .Values.ingress.protocol "grpcs") }}
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      grpc_read_timeout {{ .Values.ingress.timeoutSeconds }}s;
-      {{- get .Values.ingress.annotations "nginx.ingress.kubernetes.io/configuration-snippet" | nindent 6 }}
-    {{- end }}
-    {{- end }}
-    {{- if .Values.ingress.cors.enabled }}
-    nginx.ingress.kubernetes.io/enable-cors: 'true'
-    {{ if .Values.ingress.cors.allowOrigin }}nginx.ingress.kubernetes.io/cors-allow-origin: {{ join "," .Values.ingress.cors.allowOrigin | quote }}{{ end }}
-    {{ if .Values.ingress.cors.allowMethods }}nginx.ingress.kubernetes.io/cors-allow-methods: {{ join "," .Values.ingress.cors.allowMethods | quote }}{{ end }}
-    {{ if .Values.ingress.cors.allowHeaders }}nginx.ingress.kubernetes.io/cors-allow-headers: {{ join "," .Values.ingress.cors.allowHeaders | quote }}{{ end }}
-    nginx.ingress.kubernetes.io/cors-allow-credentials: {{ .Values.ingress.cors.allowCredentials | quote }}
-    {{ if .Values.ingress.cors.exposeHeaders }}nginx.ingress.kubernetes.io/cors-expose-headers: {{ join "," .Values.ingress.cors.exposeHeaders | quote }}{{ end }}
-    {{- end }}
-  {{- end }}
-  {{- if contains "contour" .Values.ingress.class }}
-    {{- with .Values.ingress.timeoutSeconds }}
-    projectcontour.io/response-timeout: '{{ if eq (int .) -1 }}infinity{{ else }}{{ . }}s{{ end }}'
-    {{- end }}
-    {{- if and .Values.ingress.tls.enabled .Values.ingress.tls.secretNamespace }}
-    projectcontour.io/tls-cert-namespace: {{ .Values.ingress.tls.secretNamespace }}
-    {{- end }}
-  {{- end }}
+  annotations: {{- include "generic-service.ingress-annotations" .Values.ingress | nindent 4 }}
 
 spec:
   {{- with .Values.ingress.class }}
@@ -54,7 +24,7 @@ spec:
       http:
         paths:
           {{- range ($.Values.ingress.paths | default (list "/")) }}
-          - pathType: Prefix
+          - pathType: {{ $.Values.ingress.pathType | default "Prefix" }}
             path: {{ . | quote }}
             backend:
               service:

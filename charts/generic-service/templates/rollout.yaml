@@ -1,0 +1,167 @@
+{{- if eq .Values.rollout.controller "ArgoRollout" }}
+
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: {{ include "generic-service.fullname" . }}
+  labels: {{- include "generic-service.top-level-labels" . | nindent 4 }}
+  annotations:
+  {{- if .Values.tracing.enabled }}
+    sidecar.jaegertracing.io/inject: {{ .Values.tracing.class | default "true" | quote }}
+  {{- end }}
+  {{- with .Values.annotations }}
+    {{- . | toYaml | nindent 4 }}
+  {{- end }}
+  {{- include "generic-service.rollout-notifications-annotations" . | nindent 4 }}
+
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicas | int }}
+  {{- end }}
+  {{- if (ne .Values.rollout.revisionHistoryLimit nil) }}
+  revisionHistoryLimit: {{ .Values.rollout.revisionHistoryLimit | int }}
+  {{- end }}
+
+  selector:
+    matchLabels: {{- include "generic-service.selector-labels" . | nindent 6 }}
+
+  {{- if (ne .Values.rollout.progressDeadlineSeconds nil) }}
+  progressDeadlineSeconds: {{ .Values.rollout.progressDeadlineSeconds | int }}
+  {{- end }}
+
+  {{- if (ne .Values.rollout.minReadySeconds nil) }}
+  minReadySeconds: {{ .Values.rollout.minReadySeconds | int }}
+  {{- end }}
+
+  {{- if and .Values.rollout.progressDeadlineAbort (eq .Values.rollout.controller "ArgoRollout") }}
+  progressDeadlineAbort: {{ .Values.rollout.progressDeadlineAbort }}
+  {{- end }}
+
+  rollbackWindow:
+    revisions: 3
+
+  workloadRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "generic-service.fullname" . }}
+
+  strategy:
+  {{- if eq .Values.rollout.strategy "Canary" }}
+    {{- if eq .Values.rollout.controller "ArgoRollout" }}
+    canary:
+      {{- if .Values.rollout.canary.analysis }}
+      analysis:
+        templates:
+        {{- range $template := .Values.rollout.canary.analysis.templates }}
+          {{- if $template.clusterScope }}
+          - templateName: {{ $template.templateName }}
+            clusterScope: true
+          {{- else if $template.custom }}
+          - templateName: {{ $template.templateName }}
+          {{- else}}
+          - {{ print "templateName: " (include "generic-service.fullname" $) "-" $template.templateName }}
+          {{- end }}
+        {{- end }}
+        {{- with .Values.rollout.canary.analysis.args }}
+        args: {{- . | toYaml | nindent 10 }}
+        {{- end }}
+      {{- with .Values.rollout.canary.steps }}
+      steps:
+        {{- range . }}
+        {{- if hasKey . "analysis"}}
+        - analysis:
+            templates:
+        {{- range $template := .analysis.templates }}
+          {{- if $template.clusterScope }}
+            - templateName: {{ $template.templateName }}
+              clusterScope: true
+          {{- else if $template.custom }}
+            - templateName: {{ $template.templateName }}
+          {{- else }}
+            - {{ print "templateName: " (include "generic-service.fullname" $) "-" $template.templateName -}}
+          {{- end }}
+        {{- end }}
+          {{- with .analysis.args }}
+            args: {{ . | toYaml | nindent 12 }}
+          {{- end }}
+        {{- else }}
+        {{- . | list | toYaml | nindent 8 }}
+        {{- end }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+      {{- if .Values.rollout.canary.useTrafficRouting }}
+      stableService: {{ include "generic-service.fullname" . }}
+      stableMetadata:
+        labels:
+          role: stable
+      canaryService: {{ include "generic-service.fullname" . }}-preview
+      canaryMetadata:
+        labels:
+          role: preview
+      trafficRouting:
+        {{- if .Values.ingress.istio.enabled }}
+        istio:
+          virtualService:
+            name: {{ include "generic-service.fullname" . }}
+        {{- else if contains "nginx" .Values.ingress.class }}
+        nginx:
+          stableIngress: {{ include "generic-service.fullname" . }}
+        {{- else }}
+          {{ fail "Ingress must use Istio or nginx if rollout.strategy is Canary" }}
+        {{- end }}
+      {{- end }}
+      {{- else if not .Values.rollout.flagger }}
+        {{ fail "rollout.flagger must be true or rollout.controller must be ArgoRollout if rollout.strategy is Canary" }}
+      {{- end }}
+  {{- else if eq .Values.rollout.strategy "BlueGreen" }}
+    {{- if eq .Values.rollout.controller "ArgoRollout" }}
+    blueGreen:
+      activeService: {{ .Values.rollout.blueGreen.activeService | default (include "generic-service.fullname" .)}}
+      activeMetadata:
+        labels:
+          role: stable
+      {{- if .Values.rollout.blueGreen.enablePreviewService }}
+      previewService: {{ include "generic-service.fullname" . }}-preview
+      {{- end }}
+      previewMetadata:
+        labels:
+          role: preview
+      autoPromotionEnabled: {{ .Values.rollout.blueGreen.autoPromotion }}
+      {{- with .Values.rollout.blueGreen.prePromotionAnalysis }}
+      prePromotionAnalysis:
+        templates:
+          {{- range $template := .templates }}
+            {{- if $template.clusterScope }}
+            - templateName: {{ $template.templateName }}
+              clusterScope: true
+            {{- else}}
+            - {{ print "templateName: " (include "generic-service.fullname" $) "-" $template.templateName }}
+            {{- end }}
+          {{- end }}
+        {{- with .args }}
+        args: {{- . | toYaml | nindent 10 }}
+        {{- end }}
+      {{- end }}
+      {{- with .Values.rollout.blueGreen.postPromotionAnalysis }}
+      postPromotionAnalysis:
+        templates:
+          {{- range $template := .templates }}
+            {{- if $template.clusterScope }}
+            - templateName: {{ $template.templateName }}
+              clusterScope: true
+            {{- else}}
+            - {{ print "templateName: " (include "generic-service.fullname" $) "-" $template.templateName }}
+            {{- end }}
+          {{- end }}
+        {{- with .args }}
+        args: {{- . | toYaml | nindent 10 }}
+        {{- end }}
+      {{- end }}
+    {{- else if not .Values.rollout.flagger }}
+      {{ fail "rollout.flagger must be true or rollout.controller must be ArgoRollout if rollout.strategy is BlueGreen" }}
+    {{- end }}
+  {{ else }}
+    {{ fail "Unknown rollout.strategy" }}
+  {{- end }}
+{{- end }}

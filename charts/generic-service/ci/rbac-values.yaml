@@ -5,9 +5,3 @@ image:
   tag: latest
 rbac:
   clusterRoles: [view]
-  customRoles:
-    get-my-map:
-      - apiGroups: [""]
-        resources: [configmaps]
-        resourceNames: [my-configmap]
-        verbs: [get]

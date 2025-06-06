@@ -18,12 +18,16 @@ spec:
     - port: {{ if and .Values.ingress.enabled (eq .Values.monitoring.port .Values.ingress.port) }}http-ingress{{ else }}http-monitoring{{ end }}
       path: {{ .Values.monitoring.path | quote }}
       interval: {{ .Values.monitoring.interval | quote }}
+      scrapeTimeout: {{ .Values.monitoring.scrapeTimeout | quote }}
 
   podTargetLabels:
     - app
     - release
     {{- if eq .Values.rollout.controller "ArgoRollout" }}
     - role
+    {{- end }}
+    {{- with .Values.monitoring.podTargetLabels }}
+    {{- . | toYaml | nindent 4 }}
     {{- end }}
 
 {{- end }}

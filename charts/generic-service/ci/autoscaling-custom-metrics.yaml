@@ -1,0 +1,18 @@
+# Autoscaling custom metrics test
+
+image:
+  repository: jwilder/whoami
+  tag: latest
+
+autoscaling:
+  enabled: true
+  metrics:
+    - type: External
+      external:
+        metric:
+          name: some_metric
+          selector:
+            key: value
+        target:
+          type: AverageValue
+          averageValue: 30

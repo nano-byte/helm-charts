@@ -1,14 +1,26 @@
-{{- if or (kindIs "string" .Values.scheduling.minAvailable) (and (gt .Values.scheduling.minAvailable 0.0) (lt .Values.scheduling.minAvailable .Values.replicas)) }}
+{{- $minAvailable := .Values.scheduling.minAvailable }}
+{{- $replicas := int .Values.replicas }}
+{{- $shouldCreatePDB := false }}
+
+{{- if ne $replicas 1 }}
+  {{- if and (kindIs "string" $minAvailable) (hasSuffix "%" $minAvailable) }}
+    {{- $shouldCreatePDB = true }}
+  {{- else if or (kindIs "int" $minAvailable) (kindIs "float64" $minAvailable) }}
+    {{- if lt (float64 $minAvailable) (float64 $replicas) }}
+      {{- $shouldCreatePDB = true }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+
+{{- if $shouldCreatePDB }}
 
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: {{ include "generic-service.fullname" . }}
   labels: {{- include "generic-service.top-level-labels" . | nindent 4 }}
-
 spec:
-  minAvailable: {{ .Values.scheduling.minAvailable }}
-
+  minAvailable: {{ $minAvailable }}
   selector:
     matchLabels: {{- include "generic-service.selector-labels" . | nindent 6 }}
 

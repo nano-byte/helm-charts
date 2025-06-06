@@ -1,0 +1,10 @@
+# maxSurge and maxUnavailable testing
+
+image:
+  repository: jwilder/whoami
+  tag: latest
+
+rollout:
+  strategy: RollingUpdate
+  maxSurge: 15%
+  maxUnavailable: "2"

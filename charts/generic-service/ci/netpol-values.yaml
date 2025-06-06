@@ -1,4 +1,4 @@
-# Ingress test
+# Network policy test
 
 image:
   repository: jwilder/whoami
@@ -6,3 +6,5 @@ image:
 
 netpol:
   enabled: true
+  ingressNamespaces: [my-namespace]
+  egressNamespaces: [other-namespace]

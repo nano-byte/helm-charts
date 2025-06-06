@@ -12,7 +12,21 @@ scheduling:
     someKey: [someValue1, someValue2]
   nodeExclusions:
     otherKey: [otherValue1, otherValue2]
-  tolerations: [someTaint]
+    nextKey: [nextValue1, nextValue2]
+  nodeRequirements:
+    - cond1: [thisCanMatchAlone]
+    - cond2: [any, of, these, can, match]
+    - cond3a: [anyOfThese, canMatch, but, cond3bMustMatchToo]
+      cond3b: [val1, val2, val3]
+  tolerations:
+    - taint1
+    - key: taint2
+      operator: Equal
+      value: "value1"
+      effect: NoSchedule
+    - key: taint2
+      operator: Exists
+      effect: NoSchedule
   podAffinity:
     someKey: someValue
   podAntiAffinity:

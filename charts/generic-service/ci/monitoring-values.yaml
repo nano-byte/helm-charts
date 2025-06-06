@@ -6,6 +6,11 @@ image:
 
 monitoring:
   enabled: true
+  podTargetLabels:
+  - some
+  - label
 
 alerting:
   enabled: true
+  pod:
+    maxAgeSeconds: 20

@@ -1,0 +1,24 @@
+# Cilium network policy test
+
+image:
+  repository: jwilder/whoami
+  tag: latest
+
+netpol:
+  enabled: true
+  ingressEndpoints:
+    labels:
+      app.kubernetes.io/name: testy-test
+    ports:
+      - port: 443
+        protocol: TCP
+      - port: 80
+        protocol: UDP
+
+  egressFQDNs: [api.github.com]
+  egressEndpoints:
+    - labels:
+        app.kubernetes.io/name: testy-test
+      ports:
+        - port: 443
+        - port: 80
