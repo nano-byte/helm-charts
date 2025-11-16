@@ -10,6 +10,4 @@ image:
 initContainerTemplates:
   - |
       name: init2
-      image: docker/whalesay:{{ .Values.image.tag }}
-      command: ["cowsay"]
-      args: ["hi"]
+      image: hello-world:{{ .Values.image.tag }}

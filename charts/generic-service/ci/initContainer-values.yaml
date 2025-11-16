@@ -9,6 +9,4 @@ image:
 
 initContainers:
   - name: init1
-    image: docker/whalesay
-    command: ["cowsay"]
-    args: ["hi"]
+    image: hello-world
