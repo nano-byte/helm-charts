@@ -793,7 +793,7 @@
             "enabled": {
               "type": "boolean",
               "default": false,
-              "description": "Enables CORS (only applicable if ingress.class is 'nginx' or ingress.istio.enabled is true)"
+              "description": "Enables CORS (supports nginx, HAProxy, and Istio)"
             },
             "allowOrigin": {
               "type": "array",
@@ -833,6 +833,11 @@
                 "type": "string"
               },
               "description": "List of HTTP headers that the browsers are allowed to access"
+            },
+            "maxAge": {
+              "type": "integer",
+              "default": 1728000,
+              "description": "Number of seconds clients may cache CORS headers"
             }
           },
           "additionalProperties": false

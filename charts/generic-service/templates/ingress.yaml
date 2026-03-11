@@ -6,6 +6,9 @@ metadata:
   name: {{ include "generic-service.fullname" . }}
   labels: {{- include "generic-service.top-level-labels" . | nindent 4 }}
   annotations:
+  {{- if contains "haproxy" .Values.ingress.class }}
+    {{- include "generic-service.ingress-annotations" .Values.ingress | nindent 4 }}
+  {{- else }}
   {{- with .Values.ingress.annotations }}
     {{- . | toYaml | nindent 4 }}
   {{- end }}
@@ -35,6 +38,7 @@ metadata:
     {{- if and .Values.ingress.tls.enabled .Values.ingress.tls.secretNamespace }}
     projectcontour.io/tls-cert-namespace: {{ .Values.ingress.tls.secretNamespace }}
     {{- end }}
+  {{- end }}
   {{- end }}
 
 spec:

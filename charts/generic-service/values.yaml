@@ -125,6 +125,7 @@ ingress:
     allowHeaders: [Content-Type]
     allowCredentials: true
     exposeHeaders: []
+    maxAge: 1728000
   class: ''
   annotations: {}
   headless: false

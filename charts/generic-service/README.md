@@ -2,7 +2,7 @@
 
 This Helm chart simplifies deploying a typical "80% case" service on Kubernetes. It takes care of creating common [Resources](#resources) such as `Deployment`, `Service` and `Ingress`. It also provides optional support for:
 
-- [nginx Ingress Controller](https://kubernetes.github.io/ingress-nginx/), [Contour](https://projectcontour.io/) or [Istio](https://istio.io/) for routing
+- [nginx Ingress Controller](https://kubernetes.github.io/ingress-nginx/), [HAProxy Ingress Controller](https://www.haproxy.com/documentation/kubernetes-ingress/), [Contour](https://projectcontour.io/) or [Istio](https://istio.io/) for routing
 - [Prometheus Operator](https://github.com/prometheus-operator/prometheus-operator) for monitoring
 - [Loki Rule Operator](https://github.com/opsgy/loki-rule-operator) or Loki sidecar for logging-based alerting
 - [OpenTelemetry Operator](https://github.com/open-telemetry/opentelemetry-operator) or [Jaeger Operator](https://www.jaegertracing.io/docs/latest/operator/) for tracing
@@ -110,12 +110,13 @@ app:
 | `ingress.tls.enabled`                           | `false`                     | Enables TLS termination at the ingress (not applicable if `ingress.istio.enabled`)                       |
 | `ingress.tls.secret`                            | `{{ .Release.Name }}-tls`   | The name of the `Secret` holding the TLS private key (not applicable if `ingress.istio.enabled`)         |
 | `ingress.tls.secretNamespace`                   |                             | The Kubernetes namespace containing the `Secret` (only applicable if `ingress.class` is `contour`)       |
-| `ingress.cors.enabled`                          | `false`                     | Enables CORS (only applicable if `ingress.class` is `nginx` or `ingress.istio.enabled` is `true`)        |
+| `ingress.cors.enabled`                          | `false`                     | Enables CORS (supports nginx, HAProxy, and Istio)                                                        |
 | `ingress.cors.allowOrigin`                      | `[]`                        | List of origins allowed to access the ingress via CORS; leave empty to allow any                         |
 | `ingress.cors.allowMethods`                     | `[GET]`                     | List of HTTP methods allowed to access the ingress via CORS                                              |
 | `ingress.cors.allowHeaders`                     | `[Content-Type]`            | List of HTTP headers that can be used when requesting the ingress via CORS                               |
 | `ingress.cors.allowCredentials`                 | `true`                      | Indicates whether the caller is allowed to send the actual request (not the preflight) using credentials |
 | `ingress.cors.exposeHeaders`                    | `[]`                        | List of HTTP headers that the browsers are allowed to access                                             |
+| `ingress.cors.maxAge`                           | `1728000`                   | Number of seconds clients may cache CORS headers                                                         |
 | `ingress.class`                                 |                             | The ingress controller to use (not applicable if `ingress.istio.enabled`)                                |
 | `ingress.annotations`                           | `{}`                        | Annotations for `Ingress` or `VirtualService` resource                                                   |
 | `ingress.headless`                              | `false`                     | Creates an additional `Service` with the suffix `-headless` that directly exposes Pod IPs                |

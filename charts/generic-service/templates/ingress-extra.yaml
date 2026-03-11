@@ -1,8 +1,30 @@
 {{- if and (and .Values.ingress.enabled .Values.ingress.extra) (not .Values.ingress.istio.enabled) }}
 {{- range $name, $extra := .Values.ingress.extra }}
 {{- if $extra.domains }}
-{{ $class := $extra.class | default $.Values.ingress.class }}
-{{ $timeout := $extra.timeoutSeconds | default $.Values.ingress.timeoutSeconds }}
+{{- /* get properties and fall back to main ingress properties */}}
+{{- $class := $extra.class | default $.Values.ingress.class }}
+{{- $timeout := $extra.timeoutSeconds | default $.Values.ingress.timeoutSeconds }}
+{{- $cors := $extra.cors | default $.Values.ingress.cors }}
+{{- $protocol := $.Values.ingress.protocol }}
+{{- if $extra.port }}
+  {{- if $extra.portRef }}
+    {{ fail "ingress.extra.*.port and ingress.extra.*.portRef are mutually exclusive" }}
+  {{- end }}
+  {{ $protocol = $extra.protocol }}
+{{- else if $extra.portRef }}
+  {{- $protocol = (get $.Values.ingress.extra $extra.portRef).protocol | default "http" }}
+{{- else if $extra.protocol }}
+  {{ fail "ingress.extra.*.protocol may only be set if ingress.extra.*.port is also set" }}
+{{- end }}
+{{- $annotations := deepCopy ($.Values.ingress.annotations | default dict) | mustMerge ($extra.annotations | default dict) }}
+
+{{- /* build ingress map that is compatible with defines that are meant for the main ingress */}}
+{{- $mergedExtra := deepCopy $extra }}
+{{- $mergedExtra = $mergedExtra | mustMerge (dict "class" $class) }}
+{{- $mergedExtra = $mergedExtra | mustMerge (dict "timeoutSeconds" $timeout) }}
+{{- $mergedExtra = $mergedExtra | mustMerge (dict "cors" $cors) }}
+{{- $mergedExtra = $mergedExtra | mustMerge (dict "protocol" $protocol) }}
+{{- $mergedExtra = $mergedExtra | mustMerge (dict "annotations" $annotations) }}
 
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -10,22 +32,14 @@ metadata:
   name: {{ include "generic-service.fullname" $ }}-{{ $name }}
   labels: {{- include "generic-service.default-labels" $ | nindent 4 }}
   annotations:
+  {{- if contains "haproxy" $class }}
+    {{- include "generic-service.ingress-annotations" $mergedExtra | nindent 4 }}
+  {{- else }}
   {{- $merged := deepCopy ($.Values.ingress.annotations | default dict) | mustMerge ($extra.annotations | default dict) }}
   {{- range $mname, $mvalue := $merged }}
     {{- if ne $mvalue "nil" }}
       {{- dict $mname $mvalue | toYaml | nindent 4 }}
     {{- end }}
-  {{- end }}
-  {{- $protocol := $.Values.ingress.protocol }}
-  {{- if $extra.port }}
-    {{- if $extra.portRef }}
-      {{ fail "ingress.extra.*.port and ingress.extra.*.portRef are mutually exclusive" }}
-    {{- end }}
-    {{ $protocol = $extra.protocol }}
-  {{- else if $extra.portRef }}
-    {{- $protocol = (get $.Values.ingress.extra $extra.portRef).protocol | default "http" }}
-  {{- else if $extra.protocol }}
-    {{ fail "ingress.extra.*.protocol may only be set if ingress.extra.*.port is also set" }}
   {{- end }}
   {{- if contains "nginx" $class }}
     nginx.ingress.kubernetes.io/backend-protocol: {{ include "generic-service.normalize-protocol" $protocol | upper }}
@@ -45,6 +59,7 @@ metadata:
     {{- if and $extra.tls (and $extra.tls.enabled $extra.tls.secretNamespace) }}
     projectcontour.io/tls-cert-namespace: {{ $extra.tls.secretNamespace }}
     {{- end }}
+  {{- end }}
   {{- end }}
 
 spec:

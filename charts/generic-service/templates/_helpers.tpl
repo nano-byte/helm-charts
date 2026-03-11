@@ -139,3 +139,49 @@ istio_request_duration_seconds_sum{destination_service_namespace="{{ .Release.Na
 nginx_ingress_controller_response_duration_seconds_sum{exported_namespace="{{ .Release.Namespace }}", exported_service="{{ include "generic-service.fullname" . }}"}
 {{- end }}
 {{- end }}
+
+
+{{ define "generic-service.ingress-annotations" -}}
+{{- range $annotationKey, $annotationValue := .annotations }}
+{{- if ne $annotationKey "haproxy.org/backend-config-snippet" }}
+{{ $annotationKey }}: {{ $annotationValue | quote }}
+{{- end }}
+{{- end }}
+
+{{- if contains "haproxy" .class }}
+{{ include "generic-service.haproxy-backend-config-snippet" . }}
+{{- if or (eq .protocol "h2c") (eq .protocol "http2") (eq .protocol "h2") (eq .protocol "grpc") (eq .protocol "grpcs") }}
+haproxy.org/server-proto: h2
+{{- end }}
+{{- if or (eq .protocol "https") (eq .protocol "http2") (eq .protocol "h2") (eq .protocol "grpcs") }}
+haproxy.org/server-ssl: "true"
+{{- end }}
+{{- with .timeoutSeconds }}
+haproxy.org/timeout-server: '{{ if eq (int .) -1 }}0{{ else }}{{ . }}s{{ end }}'
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{ define "generic-service.haproxy-backend-config-snippet" -}}
+{{- $configSnippet := get .annotations "haproxy.org/backend-config-snippet" | default "" }}
+{{- if .cors.enabled }}
+{{- $configSnippet = printf "%s\n%s" $configSnippet (printf "http-after-response set-header Access-Control-Allow-Origin %s" (join "," (.cors.allowOrigin | default (list "*"))))  }}
+{{- if .cors.allowMethods }}
+{{- $configSnippet = printf "%s\n%s" $configSnippet (printf "http-after-response set-header Access-Control-Allow-Methods %s" (join "," .cors.allowMethods))  }}
+{{- end }}
+{{ if .cors.allowHeaders }}
+{{- $configSnippet = printf "%s\n%s" $configSnippet (printf "http-after-response set-header Access-Control-Allow-Headers %s" (join "," .cors.allowHeaders))  }}
+{{- end }}
+{{- if .cors.exposeHeaders }}
+{{- $configSnippet = printf "%s\n%s" $configSnippet (printf "http-after-response set-header Access-Control-Expose-Headers %s" (join "," .cors.exposeHeaders))  }}
+{{- end }}
+{{- $configSnippet = printf "%s\n%s" $configSnippet (printf "http-after-response set-header Access-Control-Allow-Credentials %v" (.cors.allowCredentials| default "true"))  }}
+{{- $configSnippet = printf "%s\n%s" $configSnippet (printf "http-after-response set-header Access-Control-Max-Age %d" (.cors.maxAge | int))  }}
+{{- $configSnippet = printf "%s\n%s" $configSnippet "http-request return status 204 content-type \"text/plain charset=UTF-8\" if METH_OPTIONS"  }}
+{{- $configSnippet = trim $configSnippet }}
+{{- end }}
+{{- if $configSnippet }}
+{{- $configSnippet = printf "%s\n" $configSnippet }}
+haproxy.org/backend-config-snippet: {{ $configSnippet | toYaml }}
+{{- end }}
+{{- end }}
