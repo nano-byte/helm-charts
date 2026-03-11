@@ -754,6 +754,12 @@
           },
           "description": "The public domain names under which the service is exposed (leave empty for cluster-internal only)"
         },
+        "pathType": {
+          "type": "string",
+          "enum": ["Prefix", "Exact", "ImplementationSpecific"],
+          "default": "Prefix",
+          "description": "Path matching algorithm"
+        },
         "paths": {
           "type": "array",
           "items": {
@@ -937,6 +943,11 @@
                   "type": "string"
                 },
                 "description": "The public domain names under which the port is exposed (leave empty for cluster-internal only)"
+              },
+              "pathType": {
+                "type": "string",
+                "enum": ["Prefix", "Exact", "ImplementationSpecific"],
+                "description": "Path matching algorithm"
               },
               "paths": {
                 "type": "array",

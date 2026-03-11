@@ -105,6 +105,7 @@ app:
 | `ingress.protocol`                              | `http`                      | The internal protocol used for ingress (e.g., `http`, `https`, `h2c`, `grpc`, `http2`/`h2` or `grpcs`)   |
 | `ingress.timeoutSeconds`                        |                             | Number of seconds after which to timeout waiting for response from service; -1 for infinite              |
 | `ingress.domains`                               | `[]`                        | The public domain names under which the service is exposed (leave empty for cluster-internal only)       |
+| `ingress.pathType`                              | `Prefix`                    | Path matching algorithm (`Prefix`, `Exact`, or `ImplementationSpecific`)                                 |
 | `ingress.paths`                                 | `[]`                        | HTTP path prefixes to accept ingress traffic for (leave empty to accept traffic for any path)            |
 | `ingress.tls.enabled`                           | `false`                     | Enables TLS termination at the ingress (not applicable if `ingress.istio.enabled`)                       |
 | `ingress.tls.secret`                            | `{{ .Release.Name }}-tls`   | The name of the `Secret` holding the TLS private key (not applicable if `ingress.istio.enabled`)         |
@@ -131,6 +132,7 @@ app:
 | `ingress.extra.*.protocol`                      | `http`                      | The protocol used for the port (e.g., `http`, `https`, `h2c`, `grpc`, `http2`/`h2` or `grpcs`)           |
 | `ingress.extra.*.timeoutSeconds`                |                             | Number of seconds after which to timeout waiting for response from service; -1 for infinite              |
 | `ingress.extra.*.domains`                       | `[]`                        | The public domain names under which the port is exposed (leave empty for cluster-internal only)          |
+| `ingress.extra.*.pathType`                      | same as `ingress.pathType`  | Path matching algorithm (`Prefix`, `Exact`, or `ImplementationSpecific`)                                 |
 | `ingress.extra.*.paths`                         | `[]`                        | HTTP path prefixes to accept ingress traffic for (leave empty to accept traffic for any path)            |
 | `ingress.extra.*.tls.enabled`                   | `false`                     | Enables TLS termination at the ingress                                                                   |
 | `ingress.extra.*.tls.secret`                    | Release Name + `*` + `-tls` | The name of the `Secret` holding the TLS private key                                                     |

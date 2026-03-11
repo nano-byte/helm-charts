@@ -64,7 +64,7 @@ spec:
       http:
         paths:
           {{- range ($extra.paths | default (list "/")) }}
-          - pathType: Prefix
+          - pathType: {{ $extra.pathType | default $.Values.ingress.pathType }}
             path: {{ . | quote }}
             backend:
               service:

@@ -54,7 +54,7 @@ spec:
       http:
         paths:
           {{- range ($.Values.ingress.paths | default (list "/")) }}
-          - pathType: Prefix
+          - pathType: {{ $.Values.ingress.pathType }}
             path: {{ . | quote }}
             backend:
               service:

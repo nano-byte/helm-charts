@@ -112,6 +112,7 @@ ingress:
   protocol: http
   timeoutSeconds: null
   domains: []
+  pathType: Prefix
   paths: []
   tls:
     enabled: false
