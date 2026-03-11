@@ -1,0 +1,10 @@
+# Test PodDisruptionBudget with percentage-based minAvailable
+
+image:
+  repository: jwilder/whoami
+  tag: latest
+
+replicas: 4
+
+scheduling:
+  minAvailable: "75%"

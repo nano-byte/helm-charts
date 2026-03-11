@@ -589,7 +589,7 @@
         "minAvailable": {
           "type": ["integer", "string"],
           "default": 1,
-          "description": "Minimum number of instances to keep running during cluster maintenance (only applied if this value is smaller than replicas)"
+          "description": "Min pods to keep during disruptions (supports integers and percentages); only if replicas > 1 "
         }
       },
       "additionalProperties": false
