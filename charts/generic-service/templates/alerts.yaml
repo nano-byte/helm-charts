@@ -185,21 +185,33 @@ spec:
 
         - alert: Http5xx
           expr: |
-            sum(round(increase({{ include "generic-service.request-code-count-metric" . }}"5.[^4]"}[{{ .Values.alerting.http.sampleInterval }}])))
+            sum(round(increase({{ include "generic-service.request-code-count-metric" . }}"50[0-25-9]"}[1m])))
             > {{ .Values.alerting.http.max5xxCount }}
+          for: 2m  # longer than 1m sample window to avoid flaky alerts
           labels: {{- include "generic-service.alert-labels" . | nindent 12 }} critical
             topic: ingress
           annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} HTTP 5xx responses
-            description: '{{ include "generic-service.fullname" . }} gave {{"{{ $value }}"}} HTTP 5xx responses in the last {{ .Values.alerting.http.sampleInterval }}.'
+            description: '{{ include "generic-service.fullname" . }} gave {{"{{ $value }}"}} HTTP 5xx responses in the last minute.'
+
+        - alert: HttpUnavailable
+          expr: |
+            sum(round(increase({{ include "generic-service.request-code-count-metric" . }}"503"}[1m])))
+            > {{ .Values.alerting.http.maxUnavailableCount }}
+          for: 2m  # longer than 1m sample window to avoid flaky alerts
+          labels: {{- include "generic-service.alert-labels" . | nindent 12 }} warning
+            topic: ingress
+          annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} HTTP service unavailable responses
+            description: '{{ include "generic-service.fullname" . }} gave {{"{{ $value }}"}} service unavailable (HTTP 503) responses in the last minute.'
 
         - alert: HttpTimeout
           expr: |
-            sum(round(increase({{ include "generic-service.request-code-count-metric" . }}"504"}[{{ .Values.alerting.http.sampleInterval }}])))
+            sum(round(increase({{ include "generic-service.request-code-count-metric" . }}"504"}[1m])))
             > {{ .Values.alerting.http.maxTimeoutCount }}
-          labels: {{- include "generic-service.alert-labels" . | nindent 12 }} critical
+          for: 2m  # longer than 1m sample window to avoid flaky alerts
+          labels: {{- include "generic-service.alert-labels" . | nindent 12 }} warning
             topic: ingress
           annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} HTTP gateway timeout responses
-            description: '{{ include "generic-service.fullname" . }} gave {{"{{ $value }}"}} HTTP gateway timeout responses in the last {{ .Values.alerting.http.sampleInterval }}.'
+            description: '{{ include "generic-service.fullname" . }} gave {{"{{ $value }}"}} gateway timeout responses (HTTP 504) in the last minute.'
         {{- end }}
 
         {{- if or (eq .Values.ingress.protocol "grpc") (eq .Values.ingress.protocol "grpcs") }}
@@ -221,12 +233,13 @@ spec:
 
         - alert: GrpcCriticalErrors
           expr: |
-            round(sum(increase({{ .Values.alerting.grpc.requestsMetric }}{namespace="{{ .Release.Namespace }}", release="{{ .Release.Name }}", grpc_code=~"{{ .Values.alerting.grpc.criticalCodes | join "|" }}"}[{{ .Values.alerting.grpc.sampleInterval }}])) by (grpc_code))
+            round(sum(increase({{ .Values.alerting.grpc.requestsMetric }}{namespace="{{ .Release.Namespace }}", release="{{ .Release.Name }}", grpc_code=~"{{ .Values.alerting.grpc.criticalCodes | join "|" }}"}[1m])) by (grpc_code))
             > {{ .Values.alerting.grpc.maxCriticalErrors | int }}
+          for: 2m  # longer than 1m sample window to avoid flaky alerts
           labels: {{- include "generic-service.alert-labels" . | nindent 12 }} critical
             topic: ingress
           annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} critical gRPC errors
-            description: '{{ include "generic-service.fullname" . }} returned {{"{{ $value }}"}} gRPC errors with status code {{"{{ $labels.grpc_code }}"}} in the last {{ .Values.alerting.grpc.sampleInterval }}.'
+            description: '{{ include "generic-service.fullname" . }} returned {{"{{ $value }}"}} gRPC errors with status code {{"{{ $labels.grpc_code }}"}} in the last minute.'
         {{- end }}
       {{- end }}
 
