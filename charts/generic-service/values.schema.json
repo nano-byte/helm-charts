@@ -962,7 +962,7 @@
           "items": {
             "type": "object"
           },
-          "description": "Ingress network policy rules to apply"
+          "description": "Egress network policy rules to apply"
         }
       },
       "additionalProperties": false
