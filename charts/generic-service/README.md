@@ -77,6 +77,7 @@ app:
 | `autoscaling.metric.object`                     | req. if `type` = `Object`   | Reference to the Kubernetes object the metric describes                                                  |
 | `autoscaling.metric.selector`                   | `{}`                        | Labels for selecting the metric as a key-value map                                                       |
 | `autoscaling.targetValue`                       | `80`                        | The desired value of the metric to achieve through scaling (e.g., CPU utilization in percent)            |
+| `autoscaling.metrics`                           | `[]`                        | Custom metrics array (when set, `metric.*` and `targetValue` are ignored); HPA only                      |
 | `autoscaling.behavior`                          | `{}`                        | Scaling behavior configuration (see `HorizontalPodAutoscalerBehavior`)                                   |
 | `scheduling.priority`                           |                             | The name of the `PriorityClass` to use for scheduling this service                                       |
 | `scheduling.nodeSelector`                       | `{}`                        | Labels to select nodes this service may be run on                                                        |

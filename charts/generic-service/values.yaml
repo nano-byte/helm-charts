@@ -79,6 +79,7 @@ autoscaling:
     object:
     selector: {}
   targetValue: 80
+  metrics: []
   behavior: {}
 
 scheduling:

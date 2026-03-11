@@ -514,6 +514,11 @@
           "default": 80,
           "description": "The desired value of the metric to achieve through scaling (e.g., CPU utilization in percent)"
         },
+        "metrics": {
+          "type": "array",
+          "default": [],
+          "description": "Scaling metrics; autoscaling.metric.* and autoscaling.targetValue are ignored when this is set (only used if autoscaling.type = hpa)"
+        },
         "behavior": {
           "type": "object",
           "description": "Scaling behavior configuration (see HorizontalPodAutoscalerBehavior)"
