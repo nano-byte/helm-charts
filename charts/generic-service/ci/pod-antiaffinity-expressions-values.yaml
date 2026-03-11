@@ -1,0 +1,22 @@
+# Test pod anti-affinity with matchExpressions
+
+image:
+  repository: jwilder/whoami
+  tag: latest
+
+replicas: 3
+
+scheduling:
+  podAntiAffinityExpressions:
+    - key: app.kubernetes.io/name
+      operator: In
+      values:
+        - myapp
+        - otherapp
+    - key: environment
+      operator: In
+      values:
+        - production
+        - staging
+    - key: tier
+      operator: Exists

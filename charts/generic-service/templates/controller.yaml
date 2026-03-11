@@ -228,14 +228,26 @@ spec:
                   {{- end }}
         {{- end }}
 
-        {{- if .Values.scheduling.podAntiAffinity }}
+        {{- if or .Values.scheduling.podAntiAffinity .Values.scheduling.podAntiAffinityExpressions }}
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             - topologyKey: kubernetes.io/hostname
               labelSelector:
+                {{- if .Values.scheduling.podAntiAffinity }}
                 matchLabels:
                 {{- range $key, $value := .Values.scheduling.podAntiAffinity }}
                   {{ $key }}: {{ tpl $value $ | quote }}
+                {{- end }}
+                {{- end }}
+                {{- if .Values.scheduling.podAntiAffinityExpressions }}
+                matchExpressions:
+                {{- range .Values.scheduling.podAntiAffinityExpressions }}
+                - key: {{ .key | quote }}
+                  operator: {{ .operator | quote }}
+                  {{- if .values }}
+                  values: {{- .values | toYaml | nindent 18 }}
+                  {{- end }}
+                {{- end }}
                 {{- end }}
         {{- end }}
 

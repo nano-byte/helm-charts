@@ -85,6 +85,7 @@ app:
 | `scheduling.tolerations`                        | `[]`                        | Taints on nodes this service can tolerate                                                                |
 | `scheduling.podAffinity`                        | `{}`                        | Labels to select other pods this service should share nodes with if possible                             |
 | `scheduling.podAntiAffinity`                    | `{}`                        | Labels to select other pods this service must not share nodes with                                       |
+| `scheduling.podAntiAffinityExpressions`         | `[]`                        | Label match expressions to select other pods this service must not share nodes with                      |
 | `scheduling.replicaSpread`                      | `BestEffort`                | How to spread replicas across nodes (`BestEffort`, `Strict`, `None`)                                     |
 | `scheduling.minAvailable`                       | `1`                         | Min pods to keep during disruptions (supports integers and percentages); only if replicas > 1            |
 | `persistence.enabled`                           | `false`                     | Enables persistent storage for the service                                                               |

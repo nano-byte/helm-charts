@@ -576,6 +576,37 @@
           },
           "description": "Labels to select other pods this service must not share nodes with"
         },
+        "podAntiAffinityExpressions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "operator": {
+                "type": "string",
+                "enum": [
+                  "In",
+                  "NotIn",
+                  "Exists",
+                  "DoesNotExist"
+                ]
+              },
+              "values": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "key",
+              "operator"
+            ]
+          },
+          "description": "Label match expressions to select other pods this service must not share nodes with"
+        },
         "replicaSpread": {
           "type": "string",
           "enum": [
