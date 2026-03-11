@@ -251,7 +251,7 @@ spec:
                 {{- end }}
         {{- end }}
 
-        {{- if or .Values.scheduling.nodePreferences .Values.scheduling.nodeExclusions }}
+        {{- if or .Values.scheduling.nodePreferences .Values.scheduling.nodeRequirements .Values.scheduling.nodeExclusions }}
         nodeAffinity:
           {{- with  .Values.scheduling.nodePreferences }}
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -264,15 +264,31 @@ spec:
                     values: {{- $values | toYaml | nindent 22 }}
                   {{- end }}
           {{- end }}
-          {{- with .Values.scheduling.nodeExclusions }}
+
+          {{- if or .Values.scheduling.nodeRequirements .Values.scheduling.nodeExclusions}}
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
+              {{- range $req := .Values.scheduling.nodeRequirements }}
               - matchExpressions:
-                {{- range $key, $values := . }}
+                {{- range $key, $values := $req }}
+                - key: {{ $key | quote }}
+                  operator: In
+                  values: {{- $values | toYaml | nindent 20 }}
+                {{- end }}
+                {{- range $key, $values := $.Values.scheduling.nodeExclusions }}
                 - key: {{ $key | quote }}
                   operator: NotIn
                   values: {{- $values | toYaml | nindent 20 }}
                 {{- end }}
+              {{- end }}
+              {{- if not .Values.scheduling.nodeRequirements }}
+              - matchExpressions:
+                {{- range $key, $values := .Values.scheduling.nodeExclusions }}
+                - key: {{ $key | quote }}
+                  operator: NotIn
+                  values: {{- $values | toYaml | nindent 20 }}
+                {{- end }}
+              {{- end }}
           {{- end }}
         {{- end }}
       {{- end }}

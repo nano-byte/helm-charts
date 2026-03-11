@@ -87,6 +87,7 @@ scheduling:
   nodeSelector: {}
   nodePreferences: {}
   nodeExclusions: {}
+  nodeRequirements: []
   tolerations: []
   podAffinity: {}
   podAntiAffinity: {}

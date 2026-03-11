@@ -560,6 +560,17 @@
           },
           "description": "Sets of label values to select nodes this service must not run on"
         },
+        "nodeRequirements": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {"type": "string"}
+            }
+          },
+          "description": "Array of objects describing complex affinity rules (multi-value, and/or) to select nodes this service may be run on"
+        },
         "tolerations": {
           "type": "array",
           "items": {
