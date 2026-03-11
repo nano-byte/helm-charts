@@ -213,6 +213,7 @@ spec:
               {{- end }}
       {{- end }}
 
+      {{- if or .Values.scheduling.podAffinity .Values.scheduling.podAntiAffinity .Values.scheduling.podAntiAffinityExpressions .Values.scheduling.nodePreferences .Values.scheduling.nodeRequirements .Values.scheduling.nodeExclusions }}
       affinity:
         {{- with .Values.scheduling.podAffinity }}
         podAffinity:
@@ -262,6 +263,7 @@ spec:
                 {{- end }}
           {{- end }}
         {{- end }}
+      {{- end }}
 
       {{- with .Values.scheduling.nodeSelector }}
       nodeSelector: {{- . | toYaml | nindent 8 }}
@@ -290,6 +292,7 @@ spec:
 
           securityContext: {{- .Values.securityContext.container | toYaml | nindent 12 }}
 
+          {{- if or .Values.persistence.enabled .Values.config .Values.additionalConfigs .Values.secrets .Values.additionalMounts }}
           volumeMounts:
             {{- if .Values.persistence.enabled }}
             - name: {{ if eq .Values.rollout.controller "StatefulSet" }}{{ include "generic-service.fullname" . }}{{ else }}persistence{{ end }}
@@ -318,6 +321,7 @@ spec:
               mountPath: {{ $path }}
             {{- end }}
             {{- end }}
+          {{- end }}
 
           ports:
           {{- if .Values.ingress.enabled }}
