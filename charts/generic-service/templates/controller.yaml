@@ -474,6 +474,7 @@ spec:
                 command: ["sleep", "{{ .Values.ingress.shutdownDelaySeconds }}"]
           {{- end }}
 
+      {{- if not .Values.launchSidecarFirst }}
       {{- range .Values.sidecars }}
         - securityContext: {{- $.Values.securityContext.container | toYaml | nindent 12 }}
           {{- toYaml . | nindent 10 }}
@@ -485,8 +486,9 @@ spec:
           {{- $spec | nindent 10 }}
       {{- end }}
       {{- end }}
+      {{- end }}
 
-      {{ if or .Values.initContainers .Values.initContainerTemplates }}
+      {{ if or .Values.initContainers .Values.initContainerTemplates (and .Values.launchSidecarFirst (or .Values.sidecars .Values.sidecarTemplates)) }}
       initContainers:
       {{- range .Values.initContainers }}
         - securityContext: {{- $.Values.securityContext.container | toYaml | nindent 12 }}
@@ -497,6 +499,23 @@ spec:
       {{- if $spec }}
         - securityContext: {{- $.Values.securityContext.container | toYaml | nindent 12 }}
           {{- $spec | nindent 10 }}
+      {{- end }}
+      {{- end }}
+      {{- if .Values.launchSidecarFirst }}
+      {{- range .Values.sidecars }}
+      {{- $sidecar := omit . "restartPolicy" }}
+        - restartPolicy: Always
+          securityContext: {{- $.Values.securityContext.container | toYaml | nindent 12 }}
+          {{- toYaml $sidecar | nindent 10 }}
+      {{- end }}
+      {{- range .Values.sidecarTemplates }}
+      {{- $spec := tpl . $ }}
+      {{- if $spec }}
+      {{- $specMap := omit (fromYaml $spec) "restartPolicy" }}
+        - restartPolicy: Always
+          securityContext: {{- $.Values.securityContext.container | toYaml | nindent 12 }}
+          {{- toYaml $specMap | nindent 10 }}
+      {{- end }}
       {{- end }}
       {{- end }}
       {{- end }}

@@ -1443,6 +1443,11 @@
       },
       "description": "Additional sidecar containers to be added to the Pod"
     },
+    "launchSidecarFirst": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether to wait for the sidecar's startup probe to succeed before launching the main container."
+    },
     "sidecarsTemplates": {
       "type": "array",
       "items": {

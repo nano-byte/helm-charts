@@ -206,6 +206,7 @@ initContainerTemplates: []
 
 sidecars: []
 sidecarTemplates: []
+launchSidecarFirst: false
 
 rbac:
   roles: []
