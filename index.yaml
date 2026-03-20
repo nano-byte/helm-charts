@@ -2,6 +2,15 @@ apiVersion: v1
 entries:
   generic-service:
   - apiVersion: v1
+    created: "2026-03-20T17:23:09.563659948Z"
+    description: runs a service (with monitoring, ingress, etc.)
+    digest: d485a11e70ac02d7b4a923f1396adfcbcd74b699f844057e20bfdb251d65b6db
+    home: https://github.com/nano-byte/helm-charts/tree/master/charts/generic-service
+    name: generic-service
+    urls:
+    - https://github.com/nano-byte/helm-charts/releases/download/generic-service-1.14.0/generic-service-1.14.0.tgz
+    version: 1.14.0
+  - apiVersion: v1
     created: "2025-01-14T08:59:21.847122499Z"
     description: runs a service (with monitoring, ingress, etc.)
     digest: 6ce50c73344a219f8bafa35a9918105796b8314d3a5355a27026954b79096742
@@ -622,4 +631,4 @@ entries:
     urls:
     - https://github.com/nano-byte/helm-charts/releases/download/generic-service-1.0.0/generic-service-1.0.0.tgz
     version: 1.0.0
-generated: "2025-01-14T08:59:21.847368769Z"
+generated: "2026-03-20T17:23:09.563904329Z"
