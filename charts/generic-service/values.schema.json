@@ -113,7 +113,10 @@
     "envFrom": {
       "type": "object",
       "additionalProperties": {
-        "type": "object",
+        "type": [
+          "object",
+          "null"
+        ],
         "properties": {
           "fieldRef": {
             "type": "object"
@@ -129,7 +132,7 @@
           }
         }
       },
-      "description": "Environment variables passed to the service from other sources (e.g., secretKeyRef)"
+      "description": "Environment variables passed to the service from other sources (e.g., secretKeyRef); set an entry to null to remove it"
     },
     "config": {
       "type": "object",

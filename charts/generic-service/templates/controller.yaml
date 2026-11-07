@@ -456,8 +456,10 @@ spec:
             {{- end }}
 
             {{- range $key, $val := .Values.envFrom }}
+            {{- if $val }}
             - name: {{ $key | quote }}
               valueFrom: {{- $val | toYaml | nindent 16 }}
+            {{- end }}
             {{- end }}
 
             {{- range $key, $val := .Values.env }}
