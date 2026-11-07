@@ -207,10 +207,9 @@ spec:
           whenUnsatisfiable: {{ if eq .Values.scheduling.replicaSpread "Strict" }}DoNotSchedule{{ else }}ScheduleAnyway{{ end }}
           labelSelector:
             matchLabels: {{- include "generic-service.selector-labels" . | nindent 14 }}
-              {{- if or .Values.version (not (hasPrefix "@" .Values.image.tag)) }}
-              # Allow rebalancing during update
-              version: {{ .Values.version | default .Values.image.tag | quote }}
-              {{- end }}
+          # Only consider pods from the same revision, to allow rebalancing during updates
+          matchLabelKeys:
+            - {{ if eq .Values.rollout.controller "Deployment" }}pod-template-hash{{ else if eq .Values.rollout.controller "ArgoRollout" }}rollouts-pod-template-hash{{ else }}controller-revision-hash{{ end }}
       {{- end }}
 
       {{- if or .Values.scheduling.podAffinity .Values.scheduling.podAntiAffinity .Values.scheduling.podAntiAffinityExpressions .Values.scheduling.nodePreferences .Values.scheduling.nodeRequirements .Values.scheduling.nodeExclusions }}
