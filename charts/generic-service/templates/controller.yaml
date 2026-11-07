@@ -147,6 +147,9 @@ spec:
       {{- with .Values.config }}
         checksum/config: {{ . | toJson | sha256sum }}
       {{- end }}
+      {{- with .Values.secretConfig }}
+        checksum/secret-config: {{ . | toJson | sha256sum }}
+      {{- end }}
       {{- with .Values.secrets }}
         checksum/secrets: {{ . | toJson | sha256sum }}
       {{- end }}
@@ -170,6 +173,11 @@ spec:
         - name: config
           configMap:
             name: {{ include "generic-service.fullname" . }}
+        {{- end }}
+        {{- if .Values.secretConfig }}
+        - name: secret-config
+          secret:
+            secretName: {{ include "generic-service.fullname" . }}-secret-config
         {{- end }}
         {{- range .Values.additionalConfigs }}
         - name: config-{{ tpl . $ }}
@@ -384,7 +392,7 @@ spec:
 
           securityContext: {{- .Values.securityContext.container | toYaml | nindent 12 }}
 
-          {{- if or .Values.persistence.enabled .Values.config .Values.additionalConfigs .Values.secrets .Values.additionalMounts }}
+          {{- if or .Values.persistence.enabled .Values.config .Values.secretConfig .Values.additionalConfigs .Values.secrets .Values.additionalMounts }}
           volumeMounts:
             {{- if .Values.persistence.enabled }}
             - name: {{ if eq .Values.rollout.controller "StatefulSet" }}{{ include "generic-service.fullname" . }}{{ else }}persistence{{ end }}
@@ -394,6 +402,11 @@ spec:
             - name: config
               subPath: data.yaml
               mountPath: {{ .Values.configMountPath }}
+            {{- end }}
+            {{- if .Values.secretConfig }}
+            - name: secret-config
+              subPath: secret.json
+              mountPath: {{ .Values.secretConfigMountPath }}
             {{- end }}
             {{- range .Values.additionalConfigs }}
             - name: config-{{ tpl . $ }}
@@ -520,9 +533,9 @@ spec:
             {{- end }}
             {{- end }}
 
-            {{- if or .Values.config .Values.additionalConfigs }}
+            {{- if or .Values.config .Values.secretConfig .Values.additionalConfigs }}
             - name: CONFIG_FILE
-              value: '{{ if .Values.config }}{{ .Values.configMountPath }}{{ end }}{{ range .Values.additionalConfigs }}:/additional-configs/{{ tpl . $ }}/data.yaml{{ end }}'
+              value: '{{ if .Values.config }}{{ .Values.configMountPath }}{{ end }}{{ if .Values.secretConfig }}{{ if .Values.config }}:{{ end }}{{ .Values.secretConfigMountPath }}{{ end }}{{ range .Values.additionalConfigs }}:/additional-configs/{{ tpl . $ }}/data.yaml{{ end }}'
             {{- end }}
 
             {{- range $key, $val := .Values.envFrom }}

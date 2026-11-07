@@ -29,6 +29,9 @@ config: {}
 configMountPath: /config/config.yaml
 additionalConfigs: []
 
+secretConfig: {}
+secretConfigMountPath: /secrets/secret.json
+
 dnsConfig: {}
 
 # startupProbe:

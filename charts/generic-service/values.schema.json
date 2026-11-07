@@ -150,6 +150,15 @@
       },
       "description": "Additional ConfigMaps with key named data.yaml to be mounted (paths appended to $CONFIG_FILE)"
     },
+    "secretConfig": {
+      "type": ["object", "null"],
+      "description": "YAML/JSON configuration to be stored in a Secret and mounted as a JSON file in the container"
+    },
+    "secretConfigMountPath": {
+      "type": "string",
+      "default": "/secrets/secret.json",
+      "description": "The file path in the container to mount the data from secretConfig into (exposed via $CONFIG_FILE)"
+    },
     "dnsConfig": {
       "type": "object",
       "properties": {
@@ -789,6 +798,11 @@
               "type": "string"
             },
             "description": "Map of file names to base64-encoded content; leave empty to reference existing Secret"
+          },
+          "stringData": {
+            "type": "boolean",
+            "default": false,
+            "description": "Interpret files as plain-text content instead of base64-encoded"
           }
         },
         "required": [
