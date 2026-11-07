@@ -4,6 +4,7 @@ This Helm chart simplifies deploying a typical "80% case" service on Kubernetes.
 
 - [nginx Ingress Controller](https://kubernetes.github.io/ingress-nginx/), [HAProxy Ingress Controller](https://www.haproxy.com/documentation/kubernetes-ingress/), [Contour](https://projectcontour.io/) or [Istio](https://istio.io/) for routing
 - [Cilium](https://cilium.io/) for network policies with DNS-based egress rules
+- [Sealed Secrets](https://github.com/bitnami-labs/sealed-secrets) for encrypted secrets
 - [Prometheus Operator](https://github.com/prometheus-operator/prometheus-operator) for monitoring
 - [Loki Rule Operator](https://github.com/opsgy/loki-rule-operator) or Loki sidecar for logging-based alerting
 - [OpenTelemetry Operator](https://github.com/open-telemetry/opentelemetry-operator) or [Jaeger Operator](https://www.jaegertracing.io/docs/latest/operator/) for tracing
@@ -107,6 +108,8 @@ app:
 | `secrets.SECRET_NAME.subPath`                   |                             | The path of a single file in the `Secret` named `SECRET_NAME` to mount; leave empty to mount all files   |
 | `secrets.SECRET_NAME.files`                     |                             | Map of file names to base64-encoded content; leave empty to reference existing `Secret`                  |
 | `secrets.SECRET_NAME.stringData`                | `false`                     | Interpret `secrets.SECRET_NAME.files` as plain-text content instead of base64-encoded                    |
+| `secrets.SECRET_NAME.encryptedFiles`            |                             | Map of file names to `kubeseal`-encrypted content; creates `SealedSecret` (`files` added unencrypted)    |
+| `secrets.SECRET_NAME.sealingScope`              | `strict`                    | The `kubeseal --scope` used for `encryptedFiles` (`strict`, `namespace-wide` or `cluster-wide`)          |
 | `additionalMounts.PATH.name`                    | __required if used__        | The name of an additional volume to be mounted at `PATH` inside the container                            |
 | `additionalMounts.PATH.*`                       | __required if used__        | The configuration for the additional volume (e.g., `emptyDir: {}`)                                       |
 | `ingress.enabled`                               | `false`                     | Enables ingress into the service (either cluster-internal or public)                                     |
@@ -286,7 +289,10 @@ Created if `netpol.enabled` is `true` (unless only Cilium-specific rules are set
 Created if `netpol.enabled` is `true` and `netpol.ingressEndpoints`, `netpol.egressEndpoints` or `netpol.egressFQDNs` is not empty.
 
 **Secret**  
-Created if `secretConfig` is not empty and once for every entry in `secrets` with `files`.
+Created if `secretConfig` is not empty and once for every entry in `secrets` with `files` but no `encryptedFiles`.
+
+**SealedSecret**  
+Created once for every entry in `secrets` with `encryptedFiles`.
 
 **PodMonitor**  
 Created if `monitoring.enabled` is `true`.

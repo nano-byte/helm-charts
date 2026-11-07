@@ -803,6 +803,23 @@
             "type": "boolean",
             "default": false,
             "description": "Interpret files as plain-text content instead of base64-encoded"
+          },
+          "encryptedFiles": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Map of file names to content encrypted with kubeseal; generates a SealedSecret instead of a Secret"
+          },
+          "sealingScope": {
+            "type": "string",
+            "enum": [
+              "strict",
+              "namespace-wide",
+              "cluster-wide"
+            ],
+            "default": "strict",
+            "description": "The kubeseal scope used to encrypt encryptedFiles"
           }
         },
         "required": [
