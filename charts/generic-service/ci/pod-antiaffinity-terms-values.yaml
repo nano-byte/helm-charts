@@ -1,0 +1,34 @@
+# Test multiple independent pod anti-affinity terms
+
+image:
+  repository: jwilder/whoami
+  tag: latest
+
+replicas: 3
+
+scheduling:
+  podAntiAffinityType: preferred
+  podAntiAffinityTerms:
+    # Soft (inherits preferred from podAntiAffinityType)
+    - topologyKey: kubernetes.io/hostname
+      labelSelector:
+        matchLabels:
+          app.kubernetes.io/name: database
+        matchExpressions:
+          - key: app.kubernetes.io/component
+            operator: In
+            values: [primary, replica]
+    # Soft with lower weight
+    - weight: 80
+      topologyKey: kubernetes.io/hostname
+      labelSelector:
+        matchLabels:
+          app.kubernetes.io/name: ingress-controller
+    # Hard (per-term override)
+    - type: required
+      topologyKey: kubernetes.io/hostname
+      labelSelector:
+        matchExpressions:
+          - key: app.kubernetes.io/name
+            operator: In
+            values: [message-broker]

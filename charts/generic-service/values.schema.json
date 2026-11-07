@@ -595,6 +595,15 @@
           },
           "description": "Labels to select other pods this service must not share nodes with"
         },
+        "podAntiAffinityType": {
+          "type": "string",
+          "enum": [
+            "required",
+            "preferred"
+          ],
+          "default": "required",
+          "description": "Whether podAntiAffinity and podAntiAffinityExpressions are a hard requirement or a soft preference"
+        },
         "podAntiAffinityExpressions": {
           "type": "array",
           "items": {
@@ -625,6 +634,37 @@
             ]
           },
           "description": "Label match expressions to select other pods this service must not share nodes with"
+        },
+        "podAntiAffinityTerms": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "required",
+                  "preferred"
+                ]
+              },
+              "weight": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100
+              },
+              "topologyKey": {
+                "type": "string"
+              },
+              "labelSelector": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "topologyKey",
+              "labelSelector"
+            ]
+          },
+          "description": "Additional independent anti-affinity terms (Kubernetes PodAffinityTerm plus optional type and weight)"
         },
         "replicaSpread": {
           "type": "string",

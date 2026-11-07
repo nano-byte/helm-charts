@@ -91,7 +91,9 @@ scheduling:
   tolerations: []
   podAffinity: {}
   podAntiAffinity: {}
+  podAntiAffinityType: required
   podAntiAffinityExpressions: []
+  podAntiAffinityTerms: []
   replicaSpread: BestEffort
   minAvailable: 1
 

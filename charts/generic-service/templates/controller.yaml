@@ -212,7 +212,7 @@ spec:
             - {{ if eq .Values.rollout.controller "Deployment" }}pod-template-hash{{ else if eq .Values.rollout.controller "ArgoRollout" }}rollouts-pod-template-hash{{ else }}controller-revision-hash{{ end }}
       {{- end }}
 
-      {{- if or .Values.scheduling.podAffinity .Values.scheduling.podAntiAffinity .Values.scheduling.podAntiAffinityExpressions .Values.scheduling.nodePreferences .Values.scheduling.nodeRequirements .Values.scheduling.nodeExclusions }}
+      {{- if or .Values.scheduling.podAffinity .Values.scheduling.podAntiAffinity .Values.scheduling.podAntiAffinityExpressions .Values.scheduling.podAntiAffinityTerms .Values.scheduling.nodePreferences .Values.scheduling.nodeRequirements .Values.scheduling.nodeExclusions }}
       affinity:
         {{- with .Values.scheduling.podAffinity }}
         podAffinity:
@@ -227,9 +227,34 @@ spec:
                   {{- end }}
         {{- end }}
 
-        {{- if or .Values.scheduling.podAntiAffinity .Values.scheduling.podAntiAffinityExpressions }}
+        {{- /* podAntiAffinityTerms entries follow the K8s-native PodAffinityTerm shape (labelSelector + topologyKey), with chart-internal `type` and `weight` overrides that get stripped before rendering. `type` defaults to the global podAntiAffinityType. */ -}}
+        {{- range $i, $t := (.Values.scheduling.podAntiAffinityTerms | default list) -}}
+          {{- if not (or (and $t.labelSelector $t.labelSelector.matchLabels) (and $t.labelSelector $t.labelSelector.matchExpressions)) -}}
+            {{- fail (printf "scheduling.podAntiAffinityTerms[%d]: labelSelector must define matchLabels and/or matchExpressions (an empty selector would repel from all pods)" $i) -}}
+          {{- end -}}
+          {{- if and (hasKey $t "type") (not (has $t.type (list "required" "preferred"))) -}}
+            {{- fail (printf "scheduling.podAntiAffinityTerms[%d]: type must be \"required\" or \"preferred\" (got %q)" $i $t.type) -}}
+          {{- end -}}
+          {{- if and (eq ($t.type | default $.Values.scheduling.podAntiAffinityType) "required") (hasKey $t "weight") -}}
+            {{- fail (printf "scheduling.podAntiAffinityTerms[%d]: weight is only valid for preferred terms (required terms ignore it)" $i) -}}
+          {{- end -}}
+        {{- end -}}
+        {{- $requiredTerms := list -}}
+        {{- $preferredTerms := list -}}
+        {{- range (.Values.scheduling.podAntiAffinityTerms | default list) -}}
+          {{- if eq (.type | default $.Values.scheduling.podAntiAffinityType) "required" -}}
+            {{- $requiredTerms = append $requiredTerms . -}}
+          {{- else -}}
+            {{- $preferredTerms = append $preferredTerms . -}}
+          {{- end -}}
+        {{- end -}}
+        {{- $hasRequiredSingle := and (eq .Values.scheduling.podAntiAffinityType "required") (or .Values.scheduling.podAntiAffinity .Values.scheduling.podAntiAffinityExpressions) -}}
+        {{- $hasPreferredSingle := and (eq .Values.scheduling.podAntiAffinityType "preferred") (or .Values.scheduling.podAntiAffinity .Values.scheduling.podAntiAffinityExpressions) -}}
+        {{- if or $hasRequiredSingle $hasPreferredSingle $requiredTerms $preferredTerms }}
         podAntiAffinity:
+          {{- if or $hasRequiredSingle $requiredTerms }}
           requiredDuringSchedulingIgnoredDuringExecution:
+            {{- if $hasRequiredSingle }}
             - topologyKey: kubernetes.io/hostname
               labelSelector:
                 {{- if .Values.scheduling.podAntiAffinity }}
@@ -248,6 +273,42 @@ spec:
                   {{- end }}
                 {{- end }}
                 {{- end }}
+            {{- end }}
+            {{- range $requiredTerms }}
+            {{- $clean := omit . "type" "weight" }}
+            {{- toYaml (list $clean) | nindent 12 }}
+            {{- end }}
+          {{- end }}
+          {{- if or $hasPreferredSingle $preferredTerms }}
+          preferredDuringSchedulingIgnoredDuringExecution:
+            {{- if $hasPreferredSingle }}
+            - weight: 100
+              podAffinityTerm:
+                topologyKey: kubernetes.io/hostname
+                labelSelector:
+                  {{- if .Values.scheduling.podAntiAffinity }}
+                  matchLabels:
+                  {{- range $key, $value := .Values.scheduling.podAntiAffinity }}
+                    {{ $key }}: {{ tpl $value $ | quote }}
+                  {{- end }}
+                  {{- end }}
+                  {{- if .Values.scheduling.podAntiAffinityExpressions }}
+                  matchExpressions:
+                  {{- range .Values.scheduling.podAntiAffinityExpressions }}
+                  - key: {{ .key | quote }}
+                    operator: {{ .operator | quote }}
+                    {{- if .values }}
+                    values: {{- .values | toYaml | nindent 20 }}
+                    {{- end }}
+                  {{- end }}
+                  {{- end }}
+            {{- end }}
+            {{- range $preferredTerms }}
+            - weight: {{ .weight | default 100 }}
+              podAffinityTerm:
+                {{- toYaml (omit . "type" "weight") | nindent 16 }}
+            {{- end }}
+          {{- end }}
         {{- end }}
 
         {{- if or .Values.scheduling.nodePreferences .Values.scheduling.nodeRequirements .Values.scheduling.nodeExclusions }}
