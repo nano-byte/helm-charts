@@ -12,3 +12,8 @@ rollout:
   controller: ArgoRollout
   strategy: BlueGreen
   autoPromotion: true
+
+replicas: 2
+
+alerting:
+  enabled: true

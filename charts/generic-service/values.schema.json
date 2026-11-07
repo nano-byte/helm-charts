@@ -1641,6 +1641,31 @@
             }
           }
         },
+        "rollout": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": true,
+              "description": "Deploys Prometheus alert rule for aborted Argo Rollouts (only if rollout.controller is ArgoRollout)"
+            }
+          }
+        },
+        "autoscaling": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": true,
+              "description": "Deploys Prometheus alert rule for autoscaling reaching autoscaling.maxReplicas (only if autoscaling.enabled)"
+            },
+            "maxedOutFor": {
+              "type": "string",
+              "default": "15m",
+              "description": "How long autoscaling has to stay at autoscaling.maxReplicas before triggering an alert"
+            }
+          }
+        },
         "memory": {
           "type": "object",
           "properties": {

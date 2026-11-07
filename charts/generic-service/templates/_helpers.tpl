@@ -114,6 +114,14 @@ allowCredentials: {{ .Values.ingress.cors.allowCredentials }}
 {{- end }}
 
 
+{{/* Selects an Argo Rollouts controller metric for this Rollout. Call with (list . "metric_name" ", optional=\"matchers\"").
+     The controller's metrics carry the Rollout's namespace as exported_namespace unless scraped with honorLabels, so match both. */}}
+{{ define "generic-service.argo-rollout-metric" -}}
+{{- $ctx := index . 0 }}{{ $metric := index . 1 }}{{ $extra := "" }}{{ if gt (len .) 2 }}{{ $extra = index . 2 }}{{ end -}}
+({{ $metric }}{exported_namespace="{{ $ctx.Release.Namespace }}", name="{{ include "generic-service.fullname" $ctx }}"{{ $extra }}} or {{ $metric }}{namespace="{{ $ctx.Release.Namespace }}", name="{{ include "generic-service.fullname" $ctx }}"{{ $extra }}})
+{{- end }}
+
+
 {{ define "generic-service.request-count-metric" -}}
 {{- if .Values.ingress.istio.enabled -}}
 istio_requests_total{destination_service_namespace="{{ .Release.Namespace }}", destination_service_name="{{ include "generic-service.fullname" . }}", reporter="source"}

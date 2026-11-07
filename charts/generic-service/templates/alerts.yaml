@@ -11,13 +11,20 @@ spec:
   groups:
     - name: {{ include "generic-service.fullname" . }}.rules
       rules:
-      {{- if ne .Values.rollout.controller "ArgoRollout" }}
+      {{- $controller := .Values.rollout.controller | lower }}
+      {{- $name := include "generic-service.fullname" . }}
         {{- if gt .Values.replicas 0.0 }}
         - alert: Down
           expr: |
-            kube_{{ .Values.rollout.controller | lower }}_status_{{ if eq .Values.rollout.controller "DaemonSet" }}number{{ else }}replicas{{ end }}_ready{namespace="{{ .Release.Namespace }}", {{ .Values.rollout.controller | lower }}="{{ include "generic-service.fullname" . }}"} == 0
+            {{- if eq .Values.rollout.controller "ArgoRollout" }}
+            {{ include "generic-service.argo-rollout-metric" (list . "rollout_info_replicas_available") }} == 0
             unless on()
-            time() - kube_{{ .Values.rollout.controller | lower }}_created{namespace="{{ .Release.Namespace }}", {{ .Values.rollout.controller | lower }}="{{ include "generic-service.fullname" . }}"} < {{ .Values.alerting.pod.maxStartupSeconds | int }}
+            time() - min(kube_replicaset_created{namespace="{{ .Release.Namespace }}", replicaset=~"{{ $name }}-[0-9a-z]+"}) < {{ .Values.alerting.pod.maxStartupSeconds | int }}
+            {{- else }}
+            kube_{{ $controller }}_status_{{ if eq .Values.rollout.controller "DaemonSet" }}number{{ else }}replicas{{ end }}_ready{namespace="{{ .Release.Namespace }}", {{ $controller }}="{{ $name }}"} == 0
+            unless on()
+            time() - kube_{{ $controller }}_created{namespace="{{ .Release.Namespace }}", {{ $controller }}="{{ $name }}"} < {{ .Values.alerting.pod.maxStartupSeconds | int }}
+            {{- end }}
           for: '
             {{- if and (eq .Values.replicas 1.0) (or (eq .Values.rollout.strategy "Recreate") (eq .Values.rollout.controller "StatefulSet")) -}}
               {{ .Values.alerting.pod.maxStartupSeconds | int }}s
@@ -29,23 +36,48 @@ spec:
           labels: {{- include "generic-service.alert-labels" . | nindent 12 }} critical
             topic: availability
           annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} down
-            description: 'All replicas for {{ include "generic-service.fullname" . }} are down.'
+            description: 'All replicas for {{ $name }} are down.'
         {{- end }}
 
         {{- if or (gt .Values.replicas 1.0) (eq .Values.rollout.controller "DaemonSet") }}
         - alert: ReplicasDown
           expr: |
             {{- if eq .Values.rollout.controller "StatefulSet" }}
-            kube_statefulset_status_replicas{namespace="{{ .Release.Namespace }}", statefulset="{{ include "generic-service.fullname" . }}"} - kube_statefulset_status_replicas_ready{namespace="{{ .Release.Namespace }}", statefulset="{{ include "generic-service.fullname" . }}"} > 0
+            kube_statefulset_status_replicas{namespace="{{ .Release.Namespace }}", statefulset="{{ $name }}"} - kube_statefulset_status_replicas_ready{namespace="{{ .Release.Namespace }}", statefulset="{{ $name }}"} > 0
+            {{- else if eq .Values.rollout.controller "ArgoRollout" }}
+            max({{ include "generic-service.argo-rollout-metric" (list . "rollout_info_replicas_desired") }}) - max({{ include "generic-service.argo-rollout-metric" (list . "rollout_info_replicas_available") }}) > 0
             {{- else }}
-            kube_{{ .Values.rollout.controller | lower }}_status_{{ if eq .Values.rollout.controller "DaemonSet" }}number{{ else }}replicas{{ end }}_unavailable{namespace="{{ .Release.Namespace }}", {{ .Values.rollout.controller | lower }}="{{ include "generic-service.fullname" . }}"} > 0
+            kube_{{ $controller }}_status_{{ if eq .Values.rollout.controller "DaemonSet" }}number{{ else }}replicas{{ end }}_unavailable{namespace="{{ .Release.Namespace }}", {{ $controller }}="{{ $name }}"} > 0
             {{- end }}
           for: {{ mul .Values.alerting.pod.maxStartupSeconds .Values.replicas | int }}s
           labels: {{- include "generic-service.alert-labels" . | nindent 12 }} warning
             topic: availability
           annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} replicas down
-            description: '{{"{{ $value }}"}} replicas for {{ include "generic-service.fullname" . }} are down.'
+            description: '{{"{{ $value }}"}} replicas for {{ $name }} are down.'
         {{- end }}
+
+      {{- if and (eq .Values.rollout.controller "ArgoRollout") .Values.alerting.rollout.enabled }}
+        - alert: RolloutAborted
+          expr: |
+            {{ include "generic-service.argo-rollout-metric" (list . "rollout_info" ", phase=\"Abort\"") }}
+          labels: {{- include "generic-service.alert-labels" . | nindent 12 }} warning
+            topic: availability
+          annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} rollout aborted
+            description: 'The rollout of {{ $name }} was aborted and rolled back to the previous version.'
+      {{- end }}
+
+      {{- if and .Values.autoscaling.enabled .Values.alerting.autoscaling.enabled }}
+        {{- $hpa := printf "%s%s" (ternary "keda-hpa-" "" (eq .Values.autoscaling.type "keda")) $name }}
+        - alert: AutoscalingMaxedOut
+          expr: |
+            kube_horizontalpodautoscaler_status_current_replicas{namespace="{{ .Release.Namespace }}", horizontalpodautoscaler="{{ $hpa }}"}
+            >=
+            kube_horizontalpodautoscaler_spec_max_replicas{namespace="{{ .Release.Namespace }}", horizontalpodautoscaler="{{ $hpa }}"}
+          for: {{ .Values.alerting.autoscaling.maxedOutFor }}
+          labels: {{- include "generic-service.alert-labels" . | nindent 12 }} warning
+            topic: resources
+          annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} autoscaling maxed out
+            description: '{{ $name }} has been running at the maximum number of replicas ({{ .Values.autoscaling.maxReplicas }}) for at least {{ .Values.alerting.autoscaling.maxedOutFor }} and cannot scale out further.'
       {{- end }}
 
       {{- if .Values.alerting.restarts.enabled }}

@@ -42,3 +42,6 @@ autoscaling:
       topic: my-topic
       lagThreshold: 10
       tls: enable
+
+alerting:
+  enabled: true

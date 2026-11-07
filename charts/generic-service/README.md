@@ -217,6 +217,9 @@ app:
 | `alerting.pod.maxStartupSeconds`                | `120`                       | The maximum amount of time a Pod is allowed to take for startup                                          |
 | `alerting.pod.maxAgeSeconds`                    |                             | The maximum allowed age of a `Pod` in seconds (useful to ensure regular deployments)                     |
 | `alerting.restarts.enabled`                     | `true`                      | Deploys Prometheus alert rule for unexpected container restarts                                          |
+| `alerting.rollout.enabled`                      | `true`                      | Deploys Prometheus alert rule for aborted Argo Rollouts (if `rollout.controller` is `ArgoRollout`)       |
+| `alerting.autoscaling.enabled`                  | `true`                      | Deploys Prometheus alert rule for autoscaling reaching `maxReplicas` (if `autoscaling.enabled`)          |
+| `alerting.autoscaling.maxedOutFor`              | `15m`                       | How long autoscaling has to stay at `autoscaling.maxReplicas` before triggering an alert                 |
 | `alerting.memory.enabled`                       | `true`                      | Enables alerts relating to memory usage                                                                  |
 | `alerting.memory.maxUsageFactor`                | `0.9`                       | The maximum usage factor of the memory limit (between `0` and `1`)                                       |
 | `alerting.memory.quotaBufferFactor`             | `1.0`                       | Multiplied with `resources.*.memory` to determine minimum allowed unused memory quota in namespace       |
