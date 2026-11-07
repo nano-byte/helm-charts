@@ -159,6 +159,82 @@
       "default": "/secrets/secret.json",
       "description": "The file path in the container to mount the data from secretConfig into (exposed via $CONFIG_FILE)"
     },
+    "secretConfigOptional": {
+      "type": "boolean",
+      "default": false,
+      "description": "Start the container even if the Secret for secretConfigEncrypted or secretConfigExternal does not exist (yet)"
+    },
+    "secretConfigEncrypted": {
+      "type": "string",
+      "description": "JSON configuration encrypted with kubeseal (key secret.json); generates a SealedSecret instead of a Secret (mutually exclusive with secretConfig and secretConfigExternal)"
+    },
+    "secretConfigSealingScope": {
+      "type": "string",
+      "enum": [
+        "strict",
+        "namespace-wide",
+        "cluster-wide"
+      ],
+      "default": "strict",
+      "description": "The kubeseal scope used to encrypt secretConfigEncrypted"
+    },
+    "secretConfigExternal": {
+      "anyOf": [
+        {
+          "type": "string",
+          "description": "The key of the remote secret in the external store (supports templating)"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "key": {
+              "type": "string",
+              "description": "The key of the remote secret in the external store (supports templating)"
+            },
+            "property": {
+              "type": "string",
+              "description": "The property (e.g., JSON field) of the remote secret to use"
+            },
+            "version": {
+              "type": "string",
+              "description": "The version of the remote secret to use"
+            }
+          },
+          "required": [
+            "key"
+          ],
+          "additionalProperties": false
+        }
+      ],
+      "description": "Remote secret containing JSON configuration; generates an ExternalSecret instead of a Secret (mutually exclusive with secretConfig and secretConfigEncrypted)"
+    },
+    "secretConfigExternalStore": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the SecretStore or ClusterSecretStore"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "SecretStore",
+            "ClusterSecretStore"
+          ],
+          "default": "SecretStore",
+          "description": "The kind of the store"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "secretConfigExternalRefreshInterval": {
+      "type": "string",
+      "default": "1h",
+      "description": "How often to refresh the ExternalSecret for secretConfigExternal from the store"
+    },
     "dnsConfig": {
       "type": "object",
       "properties": {

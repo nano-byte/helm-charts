@@ -241,3 +241,10 @@ haproxy.org/backend-config-snippet: {{ $configSnippet | toYaml }}
           - matchPattern: '*'
 {{- end }}
 {{- end -}}
+
+
+{{ define "generic-service.secret-config-enabled" -}}
+  {{- if or .Values.secretConfig .Values.secretConfigEncrypted .Values.secretConfigExternal -}}
+    true
+  {{- end -}}
+{{- end }}

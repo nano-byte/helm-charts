@@ -58,6 +58,13 @@ app:
 | `additionalConfigs`                             | `[]`                        | Additional `ConfigMap`s with key named `data.yaml` to be mounted (paths appended to `$CONFIG_FILE`)      |
 | `secretConfig`                                  | `{}`                        | YAML/JSON configuration to be stored in a `Secret` and mounted as a JSON file in the container           |
 | `secretConfigMountPath`                         | `/secrets/secret.json`      | The file path in the container to mount the data from `secretConfig` into (exposed via `$CONFIG_FILE`)   |
+| `secretConfigOptional`                          | `false`                     | Start the container even if the `Secret` for `secretConfigEncrypted`/`secretConfigExternal` is missing   |
+| `secretConfigEncrypted`                         |                             | `kubeseal`-encrypted JSON (key `secret.json`) used instead of `secretConfig`; creates `SealedSecret`     |
+| `secretConfigSealingScope`                      | `strict`                    | The `kubeseal --scope` used for `secretConfigEncrypted` (`strict`, `namespace-wide` or `cluster-wide`)   |
+| `secretConfigExternal`                          |                             | Remote secret `key` (with optional `property`/`version`) holding JSON config; creates `ExternalSecret`   |
+| `secretConfigExternalStore.name`                | __required if external__    | The name of the `SecretStore` to read `secretConfigExternal` from                                        |
+| `secretConfigExternalStore.kind`                | `SecretStore`               | The kind of the store (`SecretStore` or `ClusterSecretStore`)                                            |
+| `secretConfigExternalRefreshInterval`           | `1h`                        | How often to refresh the `ExternalSecret` for `secretConfigExternal` from the store                      |
 | `dnsConfig`                                     |                             | [DNS config for the pod](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/)       |
 | `startupProbe`                                  |                             | Probe that waits for the service to initially start up                                                   |
 | `livenessProbe`                                 |                             | Probe that causes the service to be restarted when failing                                               |
@@ -344,10 +351,10 @@ Created if `netpol.enabled` is `true` and `netpol.ingressEndpoints`, `netpol.egr
 Created if `secretConfig` is not empty and once for every entry in `secrets` with `files` but no `encryptedFiles`, `externalFiles` or `externalDataFrom`.
 
 **SealedSecret**  
-Created once for every entry in `secrets` with `encryptedFiles`.
+Created if `secretConfigEncrypted` is not empty and once for every entry in `secrets` with `encryptedFiles`.
 
 **ExternalSecret**  
-Created once for every entry in `secrets` with `externalFiles` or `externalDataFrom`.
+Created if `secretConfigExternal` is not empty and once for every entry in `secrets` with `externalFiles` or `externalDataFrom`.
 
 **PodMonitor**  
 Created if `monitoring.enabled` is `true`.
