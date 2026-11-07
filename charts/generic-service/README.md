@@ -5,6 +5,7 @@ This Helm chart simplifies deploying a typical "80% case" service on Kubernetes.
 - [nginx Ingress Controller](https://kubernetes.github.io/ingress-nginx/), [HAProxy Ingress Controller](https://www.haproxy.com/documentation/kubernetes-ingress/), [Contour](https://projectcontour.io/) or [Istio](https://istio.io/) for routing
 - [Cilium](https://cilium.io/) for network policies with DNS-based egress rules
 - [Sealed Secrets](https://github.com/bitnami-labs/sealed-secrets) for encrypted secrets
+- [KEDA](https://keda.sh/) for event-driven autoscaling
 - [Prometheus Operator](https://github.com/prometheus-operator/prometheus-operator) for monitoring
 - [Loki Rule Operator](https://github.com/opsgy/loki-rule-operator) or Loki sidecar for logging-based alerting
 - [OpenTelemetry Operator](https://github.com/open-telemetry/opentelemetry-operator) or [Jaeger Operator](https://www.jaegertracing.io/docs/latest/operator/) for tracing
@@ -86,14 +87,42 @@ app:
 | `rollout.analysisUnsuccessfulRunHistoryLimit`   |                             | Number of unsuccessful `AnalysisRun`s and `Experiment`s to retain (`ArgoRollout` only)                   |
 | `replicas`                                      | `1`                         | The number of instances of the service to run                                                            |
 | `autoscaling.enabled`                           | `false`                     | Enables automatic starting of additional instances                                                       |
+| `autoscaling.type`                              | `hpa`                       | The type of autoscaler to use (`hpa` for `HorizontalPodAutoscaler` or `keda` for KEDA `ScaledObject`)    |
 | `autoscaling.maxReplicas`                       | `3`                         | The maximum number of instances to run (must be larger than `replicas`)                                  |
-| `autoscaling.metric.type`                       | `Resource`                  | The type of metric to use for scaling (`Resource`, `Pods`, `Object` or `External`)                       |
-| `autoscaling.metric.name`                       | `cpu`                       | The name of the metric to use for scaling                                                                |
-| `autoscaling.metric.object`                     | req. if `type` = `Object`   | Reference to the Kubernetes object the metric describes                                                  |
-| `autoscaling.metric.selector`                   | `{}`                        | Labels for selecting the metric as a key-value map                                                       |
-| `autoscaling.targetValue`                       | `80`                        | The desired value of the metric to achieve through scaling (e.g., CPU utilization in percent)            |
-| `autoscaling.metrics`                           | `[]`                        | Custom metrics array (when set, `metric.*` and `targetValue` are ignored); HPA only                      |
+| `autoscaling.metric.type`                       | `Resource`                  | The type of metric to use for scaling (`Resource`, `Pods`, `Object` or `External`) (HPA only)            |
+| `autoscaling.metric.name`                       | `cpu`                       | The name of the metric to use for scaling (HPA only)                                                     |
+| `autoscaling.metric.object`                     | req. if `type` = `Object`   | Reference to the Kubernetes object the metric describes (HPA only)                                       |
+| `autoscaling.metric.selector`                   | `{}`                        | Labels for selecting the metric as a key-value map (HPA only)                                            |
+| `autoscaling.targetValue`                       | `80`                        | The desired value of the metric to achieve through scaling (e.g., CPU utilization in percent) (HPA only) |
+| `autoscaling.metrics`                           | `[]`                        | Custom metrics array (when set, `metric.*` and `targetValue` are ignored) (HPA only)                     |
 | `autoscaling.behavior`                          | `{}`                        | Scaling behavior configuration (see `HorizontalPodAutoscalerBehavior`)                                   |
+| `autoscaling.pollingInterval`                   |                             | Number of seconds between checks of the triggers (KEDA only)                                             |
+| `autoscaling.cooldownPeriod`                    |                             | Number of seconds to wait after the last active trigger before scaling to `idleReplicaCount`             |
+| `autoscaling.idleReplicaCount`                  |                             | Number of replicas to scale to when no triggers are active, e.g., `0` (KEDA only)                        |
+| `autoscaling.fallback.enabled`                  | `true`                      | Scale to `fallback.replicas` when triggers fail (KEDA only; requires a non-cpu/memory trigger)           |
+| `autoscaling.fallback.failureThreshold`         | `3`                         | Number of consecutive trigger failures before falling back                                               |
+| `autoscaling.fallback.replicas`                 | same as `maxReplicas`       | Number of replicas to scale to when falling back                                                         |
+| `autoscaling.fallback.behavior`                 | `static`                    | How to determine replicas when falling back (`static`, `currentReplicas`, `currentReplicasIfHigher`...)  |
+| `autoscaling.triggers.*.type`                   | __required if used__        | The type of KEDA scaler (`cpu`, `memory`, `rabbitmq`, `prometheus` or `kafka`)                           |
+| `autoscaling.triggers.*.disabled`               | `false`                     | Ignore this trigger (useful to disable triggers inherited from other values files)                       |
+| `autoscaling.triggers.*.value`                  | __required if used__        | The target value (`cpu`, `memory`, `rabbitmq`) or threshold (`prometheus`) of the metric                 |
+| `autoscaling.triggers.*.metricType`             | see description             | `Utilization` for `cpu` and `memory`, otherwise `AverageValue`; can also be set to `Value`               |
+| `autoscaling.triggers.*.useCachedMetrics`       | `true`                      | Use metrics cached from the last polling interval (not applicable to `cpu` and `memory`)                 |
+| `autoscaling.triggers.*.authenticationRef`      |                             | Reference (`name`, `kind`) to a KEDA `TriggerAuthentication` or `ClusterTriggerAuthentication`           |
+| `autoscaling.triggers.*.containerName`          |                             | Only use the resource usage of this container (`cpu` and `memory`)                                       |
+| `autoscaling.triggers.*.host`                   | req. if no auth reference   | The RabbitMQ AMQP/HTTP URL (`rabbitmq`)                                                                  |
+| `autoscaling.triggers.*.protocol`               |                             | The RabbitMQ protocol (`auto`, `amqp` or `http`) (`rabbitmq`)                                            |
+| `autoscaling.triggers.*.vhostName`              |                             | The RabbitMQ vhost, overriding the one from `host` (`rabbitmq`)                                          |
+| `autoscaling.triggers.*.queueName`              | __required if used__        | The name of the RabbitMQ queue (`rabbitmq`)                                                              |
+| `autoscaling.triggers.*.mode`                   | `QueueLength`               | The RabbitMQ metric to scale on (`QueueLength` or `MessageRate`) (`rabbitmq`)                            |
+| `autoscaling.triggers.*.serverAddress`          | __required if used__        | The URL of the Prometheus server (`prometheus`)                                                          |
+| `autoscaling.triggers.*.query`                  | __required if used__        | The PromQL query to evaluate; supports templating (`prometheus`)                                         |
+| `autoscaling.triggers.*.bootstrapServers`       | __required if used__        | Comma-separated list of Kafka brokers (`kafka`)                                                          |
+| `autoscaling.triggers.*.consumerGroup`          | __required if used__        | The Kafka consumer group (`kafka`)                                                                       |
+| `autoscaling.triggers.*.topic`                  |                             | The Kafka topic; leave empty for all topics of the consumer group (`kafka`)                              |
+| `autoscaling.triggers.*.lagThreshold`           | __required if used__        | The target average consumer lag per replica (`kafka`)                                                    |
+| `autoscaling.triggers.*.offsetResetPolicy`      |                             | The Kafka offset reset policy (`latest` or `earliest`) (`kafka`)                                         |
+| `autoscaling.triggers.*.tls`                    |                             | Use TLS for connecting to Kafka (`enable` or `disable`) (`kafka`)                                        |
 | `scheduling.priority`                           |                             | The name of the `PriorityClass` to use for scheduling this service                                       |
 | `scheduling.nodeSelector`                       | `{}`                        | Labels to select nodes this service may be run on                                                        |
 | `scheduling.nodePeferences`                     | `{}`                        | Sets of label values to select nodes this service should be run on if possible                           |
@@ -330,4 +359,7 @@ Created once for every entry in `rbac.clusterRoles`.
 Created if `replicas` is greater than `1`.
 
 **HorizontalPodAutoscaler**  
-Created if `autoscaling.enabled` is `true`.
+Created if `autoscaling.enabled` is `true` and `autoscaling.type` is `hpa`.
+
+**ScaledObject**  
+Created if `autoscaling.enabled` is `true` and `autoscaling.type` is `keda`.

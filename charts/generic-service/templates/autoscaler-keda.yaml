@@ -1,0 +1,114 @@
+{{- if and .Values.autoscaling.enabled (eq .Values.autoscaling.type "keda") }}
+{{- $hasActiveTrigger := false }}
+{{- $hasFallbackTrigger := false }}
+
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: {{ include "generic-service.fullname" . }}
+  labels: {{- include "generic-service.top-level-labels" . | nindent 4 }}
+
+spec:
+  scaleTargetRef:
+    {{- if eq .Values.rollout.controller "ArgoRollout" }}
+    apiVersion: argoproj.io/v1alpha1
+    kind: Rollout
+    {{- else }}
+    apiVersion: apps/v1
+    kind: {{ .Values.rollout.controller }}
+    {{- end }}
+    name: {{ include "generic-service.fullname" . }}
+  minReplicaCount: {{ .Values.replicas | int }}
+  maxReplicaCount: {{ .Values.autoscaling.maxReplicas | int }}
+  {{- if (ne .Values.autoscaling.pollingInterval nil) }}
+  pollingInterval: {{ .Values.autoscaling.pollingInterval | int }}
+  {{- end }}
+  {{- if (ne .Values.autoscaling.cooldownPeriod nil) }}
+  cooldownPeriod: {{ .Values.autoscaling.cooldownPeriod | int }}
+  {{- end }}
+  {{- if (ne .Values.autoscaling.idleReplicaCount nil) }}
+  idleReplicaCount: {{ .Values.autoscaling.idleReplicaCount | int }}
+  {{- end }}
+  {{- if .Values.autoscaling.fallback.enabled }}
+  fallback:
+    failureThreshold: {{ .Values.autoscaling.fallback.failureThreshold | int }}
+    replicas: {{ .Values.autoscaling.fallback.replicas | default .Values.autoscaling.maxReplicas | int }}
+    {{- with .Values.autoscaling.fallback.behavior }}
+    behavior: {{ . }}
+    {{- end }}
+  {{- end }}
+  {{- with .Values.autoscaling.behavior }}
+  advanced:
+    horizontalPodAutoscalerConfig:
+      behavior: {{- . | toYaml | nindent 8 }}
+  {{- end }}
+  triggers:
+  {{- range $name, $trigger := .Values.autoscaling.triggers }}
+  {{- if not $trigger.disabled }}
+  {{- $hasActiveTrigger = true }}
+  {{- $resource := has $trigger.type (list "cpu" "memory") }}
+  {{- $metricType := $trigger.metricType | default (ternary "Utilization" "AverageValue" $resource) }}
+  {{- if and (not $resource) (eq $metricType "AverageValue") }}
+  {{- $hasFallbackTrigger = true }}
+  {{- end }}
+    - name: {{ $name }}
+      type: {{ $trigger.type }}
+      metricType: {{ $metricType }}
+      metadata:
+        {{- if $resource }}
+        value: {{ $trigger.value | required (printf "autoscaling.triggers.%s.value is required" $name) | quote }}
+        {{- with $trigger.containerName }}
+        containerName: {{ . | quote }}
+        {{- end }}
+        {{- else if eq $trigger.type "rabbitmq" }}
+        {{- if not (or $trigger.host $trigger.authenticationRef) }}
+          {{- fail (printf "autoscaling.triggers.%s.host or autoscaling.triggers.%s.authenticationRef is required for rabbitmq triggers" $name $name) }}
+        {{- end }}
+        {{- with $trigger.host }}
+        host: {{ . | quote }}
+        {{- end }}
+        {{- with $trigger.protocol }}
+        protocol: {{ . }}
+        {{- end }}
+        {{- with $trigger.vhostName }}
+        vhostName: {{ . | quote }}
+        {{- end }}
+        queueName: {{ $trigger.queueName | required (printf "autoscaling.triggers.%s.queueName is required" $name) | quote }}
+        mode: {{ $trigger.mode | default "QueueLength" }}
+        value: {{ $trigger.value | required (printf "autoscaling.triggers.%s.value is required" $name) | quote }}
+        {{- else if eq $trigger.type "prometheus" }}
+        serverAddress: {{ $trigger.serverAddress | required (printf "autoscaling.triggers.%s.serverAddress is required" $name) | quote }}
+        query: {{ tpl ($trigger.query | required (printf "autoscaling.triggers.%s.query is required" $name)) $ | quote }}
+        threshold: {{ $trigger.value | required (printf "autoscaling.triggers.%s.value is required" $name) | quote }}
+        {{- else if eq $trigger.type "kafka" }}
+        bootstrapServers: {{ $trigger.bootstrapServers | required (printf "autoscaling.triggers.%s.bootstrapServers is required" $name) | quote }}
+        consumerGroup: {{ $trigger.consumerGroup | required (printf "autoscaling.triggers.%s.consumerGroup is required" $name) | quote }}
+        {{- with $trigger.topic }}
+        topic: {{ . | quote }}
+        {{- end }}
+        lagThreshold: {{ $trigger.lagThreshold | required (printf "autoscaling.triggers.%s.lagThreshold is required" $name) | quote }}
+        {{- with $trigger.offsetResetPolicy }}
+        offsetResetPolicy: {{ . }}
+        {{- end }}
+        {{- with $trigger.tls }}
+        tls: {{ . }}
+        {{- end }}
+        {{- else }}
+          {{- fail (printf "autoscaling.triggers.%s.type must be cpu, memory, rabbitmq, prometheus or kafka" $name) }}
+        {{- end }}
+      {{- if not $resource }}
+      useCachedMetrics: {{ ternary $trigger.useCachedMetrics true (hasKey $trigger "useCachedMetrics") }}
+      {{- end }}
+      {{- with $trigger.authenticationRef }}
+      authenticationRef: {{- . | toYaml | nindent 8 }}
+      {{- end }}
+  {{- end }}
+  {{- end }}
+
+{{- if not $hasActiveTrigger }}
+  {{- fail "autoscaling.triggers must contain at least one trigger if autoscaling.type is keda" }}
+{{- end }}
+{{- if and .Values.autoscaling.fallback.enabled (not $hasFallbackTrigger) }}
+  {{- fail "autoscaling.fallback.enabled requires at least one trigger other than cpu or memory with metricType AverageValue; add one or set autoscaling.fallback.enabled to false" }}
+{{- end }}
+{{- end }}

@@ -526,6 +526,15 @@
           "default": false,
           "description": "Enables automatic starting of additional instances"
         },
+        "type": {
+          "type": "string",
+          "enum": [
+            "hpa",
+            "keda"
+          ],
+          "default": "hpa",
+          "description": "The type of autoscaler to use (hpa for HorizontalPodAutoscaler or keda for KEDA ScaledObject)"
+        },
         "maxReplicas": {
           "type": "integer",
           "default": 3,
@@ -595,6 +604,190 @@
         "behavior": {
           "type": "object",
           "description": "Scaling behavior configuration (see HorizontalPodAutoscalerBehavior)"
+        },
+        "pollingInterval": {
+          "type": ["integer", "null"],
+          "description": "Number of seconds between checks of the KEDA triggers (KEDA only)"
+        },
+        "cooldownPeriod": {
+          "type": ["integer", "null"],
+          "description": "Number of seconds to wait after the last active trigger before scaling to idleReplicaCount (KEDA only)"
+        },
+        "idleReplicaCount": {
+          "type": ["integer", "null"],
+          "description": "Number of replicas to scale to when no triggers are active, e.g. 0 (KEDA only)"
+        },
+        "fallback": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": true,
+              "description": "Scale to fallback replicas when triggers fail (KEDA only)"
+            },
+            "failureThreshold": {
+              "type": "integer",
+              "default": 3,
+              "description": "Number of consecutive trigger failures before falling back"
+            },
+            "replicas": {
+              "type": ["integer", "null"],
+              "description": "Number of replicas to scale to when falling back (defaults to autoscaling.maxReplicas)"
+            },
+            "behavior": {
+              "type": ["string", "null"],
+              "enum": [
+                "static",
+                "currentReplicas",
+                "currentReplicasIfHigher",
+                "currentReplicasIfLower",
+                null
+              ],
+              "description": "How to determine the number of replicas when falling back"
+            }
+          },
+          "additionalProperties": false
+        },
+        "triggers": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "cpu",
+                  "memory",
+                  "rabbitmq",
+                  "prometheus",
+                  "kafka"
+                ],
+                "description": "The type of KEDA scaler"
+              },
+              "disabled": {
+                "type": "boolean",
+                "default": false,
+                "description": "Ignore this trigger (useful to disable triggers inherited from other values files)"
+              },
+              "value": {
+                "type": ["string", "integer", "number"],
+                "description": "The target value (cpu, memory, rabbitmq) or threshold (prometheus) of the metric"
+              },
+              "metricType": {
+                "type": "string",
+                "enum": [
+                  "AverageValue",
+                  "Value",
+                  "Utilization"
+                ],
+                "description": "How to compare the metric to the target value"
+              },
+              "useCachedMetrics": {
+                "type": "boolean",
+                "default": true,
+                "description": "Use metrics cached from the last polling interval (not applicable to cpu and memory)"
+              },
+              "authenticationRef": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "TriggerAuthentication",
+                      "ClusterTriggerAuthentication"
+                    ]
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false,
+                "description": "Reference to a KEDA TriggerAuthentication or ClusterTriggerAuthentication"
+              },
+              "containerName": {
+                "type": "string",
+                "description": "Only use the resource usage of this container (cpu and memory)"
+              },
+              "host": {
+                "type": "string",
+                "description": "The RabbitMQ AMQP/HTTP URL (rabbitmq; alternatively provided via authenticationRef)"
+              },
+              "protocol": {
+                "type": "string",
+                "enum": [
+                  "auto",
+                  "amqp",
+                  "http"
+                ],
+                "description": "The RabbitMQ protocol (rabbitmq)"
+              },
+              "vhostName": {
+                "type": "string",
+                "description": "The RabbitMQ vhost, overriding the one from host (rabbitmq)"
+              },
+              "queueName": {
+                "type": "string",
+                "description": "The name of the RabbitMQ queue (rabbitmq)"
+              },
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "QueueLength",
+                  "MessageRate"
+                ],
+                "default": "QueueLength",
+                "description": "The RabbitMQ metric to scale on (rabbitmq)"
+              },
+              "serverAddress": {
+                "type": "string",
+                "description": "The URL of the Prometheus server (prometheus)"
+              },
+              "query": {
+                "type": "string",
+                "description": "The PromQL query to evaluate, supports templating (prometheus)"
+              },
+              "bootstrapServers": {
+                "type": "string",
+                "description": "Comma-separated list of Kafka brokers (kafka)"
+              },
+              "consumerGroup": {
+                "type": "string",
+                "description": "The Kafka consumer group (kafka)"
+              },
+              "topic": {
+                "type": "string",
+                "description": "The Kafka topic; leave empty for all topics of the consumer group (kafka)"
+              },
+              "lagThreshold": {
+                "type": ["string", "integer"],
+                "description": "The target average consumer lag per replica (kafka)"
+              },
+              "offsetResetPolicy": {
+                "type": "string",
+                "enum": [
+                  "latest",
+                  "earliest"
+                ],
+                "description": "The Kafka offset reset policy (kafka)"
+              },
+              "tls": {
+                "type": "string",
+                "enum": [
+                  "enable",
+                  "disable"
+                ],
+                "description": "Use TLS for connecting to Kafka (kafka)"
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "additionalProperties": false
+          },
+          "description": "KEDA triggers to scale on (KEDA only)"
         }
       },
       "additionalProperties": false

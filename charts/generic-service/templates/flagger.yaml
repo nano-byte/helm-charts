@@ -24,8 +24,13 @@ spec:
 
   {{- if .Values.autoscaling.enabled }}
   autoscalerRef:
+    {{- if eq .Values.autoscaling.type "keda" }}
+    apiVersion: keda.sh/v1alpha1
+    kind: ScaledObject
+    {{- else }}
     apiVersion: autoscaling/v2
     kind: HorizontalPodAutoscaler
+    {{- end }}
     name: {{ include "generic-service.fullname" . }}
   {{- end }}
 

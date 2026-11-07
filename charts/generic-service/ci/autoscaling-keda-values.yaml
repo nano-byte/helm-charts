@@ -1,0 +1,44 @@
+# KEDA autoscaling test
+
+image:
+  repository: jwilder/whoami
+  tag: latest
+
+autoscaling:
+  enabled: true
+  type: keda
+  pollingInterval: 30
+  cooldownPeriod: 300
+  fallback:
+    failureThreshold: 2
+    replicas: 2
+    behavior: currentReplicasIfHigher
+  triggers:
+    queue:
+      type: rabbitmq
+      host: amqp://rabbitmq.messaging:5672/vhost
+      queueName: input
+      value: 10
+      authenticationRef:
+        kind: ClusterTriggerAuthentication
+        name: rabbitmq-credentials
+    requests:
+      type: prometheus
+      serverAddress: http://prometheus.monitoring:9090
+      query: sum(rate(http_requests_total{service="{{ .Release.Name }}"}[2m]))
+      value: 100
+      useCachedMetrics: false
+    cpu:
+      type: cpu
+      value: 80
+    memory:
+      type: memory
+      value: 80
+      disabled: true
+    lag:
+      type: kafka
+      bootstrapServers: kafka-bootstrap.kafka:9093
+      consumerGroup: my-consumer-group
+      topic: my-topic
+      lagThreshold: 10
+      tls: enable

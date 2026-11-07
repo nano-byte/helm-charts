@@ -88,6 +88,7 @@ replicas: 1
 
 autoscaling:
   enabled: false
+  type: hpa
   maxReplicas: 3
   metric:
     type: Resource
@@ -97,6 +98,15 @@ autoscaling:
   targetValue: 80
   metrics: []
   behavior: {}
+  pollingInterval: null
+  cooldownPeriod: null
+  idleReplicaCount: null
+  fallback:
+    enabled: true
+    failureThreshold: 3
+    replicas: null
+    behavior: null
+  triggers: {}
 
 scheduling:
   priority: ''
