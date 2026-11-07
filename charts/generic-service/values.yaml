@@ -96,6 +96,7 @@ scheduling:
   podAntiAffinityTerms: []
   replicaSpread: BestEffort
   minAvailable: 1
+  maxUnavailable: null
 
 persistence:
   enabled: false

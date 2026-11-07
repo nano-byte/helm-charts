@@ -680,6 +680,11 @@
           "type": ["integer", "string"],
           "default": 1,
           "description": "Min pods to keep during disruptions (supports integers and percentages); only if replicas > 1 "
+        },
+        "maxUnavailable": {
+          "type": ["integer", "string", "null"],
+          "default": null,
+          "description": "Max pods that may be unavailable during disruptions (supports integers and percentages); only if replicas > 1; takes precedence over minAvailable"
         }
       },
       "additionalProperties": false

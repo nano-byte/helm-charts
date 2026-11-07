@@ -92,6 +92,7 @@ app:
 | `scheduling.podAntiAffinityTerms`               | `[]`                        | Additional `PodAffinityTerm`s to avoid; optional `type` (defaults to `podAntiAffinityType`) and `weight` |
 | `scheduling.replicaSpread`                      | `BestEffort`                | How to spread replicas across nodes (`BestEffort`, `Strict`, `None`)                                     |
 | `scheduling.minAvailable`                       | `1`                         | Min pods to keep during disruptions (supports integers and percentages); only if replicas > 1            |
+| `scheduling.maxUnavailable`                     |                             | Max pods unavailable during disruptions (integer or percentage); takes precedence over `minAvailable`    |
 | `persistence.enabled`                           | `false`                     | Enables persistent storage for the service                                                               |
 | `persistence.storageClass`                      |                             | The type of disk to use for storage instead of the cluster default                                       |
 | `persistence.accessModes`                       | `[ReadWriteOnce]`           | The support access modes the volume can be mounted with                                                  |
