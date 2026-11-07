@@ -7,6 +7,7 @@ image:
 env:
   SOME_KEY: some-value
   SOME_NUMERIC_KEY: 1234
+  SOME_TEMPLATED_KEY: '{{ .Release.Name }}-value'
 
 config:
   some-key: some-value

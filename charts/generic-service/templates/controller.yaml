@@ -461,8 +461,8 @@ spec:
             {{- end }}
 
             {{- range $key, $val := .Values.env }}
-            - name: {{ $key | quote }}
-              {{ if $val }}value: {{ $val | quote }}{{ end }}
+            - name: {{ tpl $key $ | quote }}
+              {{ if $val }}value: {{ tpl (toString $val) $ | quote }}{{ end }}
             {{- end }}
 
           {{- if and .Values.ingress.enabled .Values.ingress.shutdownDelaySeconds }}
