@@ -1,4 +1,4 @@
-{{- if and (and .Values.ingress.enabled .Values.ingress.extra) (not .Values.ingress.istio.enabled) }}
+{{- if and (and .Values.ingress.enabled .Values.ingress.extra) (not (or .Values.ingress.istio.enabled .Values.ingress.gateway.enabled)) }}
 {{- range $name, $extra := .Values.ingress.extra }}
 {{- if $extra.domains }}
 {{- /* get properties and fall back to main ingress properties */}}

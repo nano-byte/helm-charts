@@ -1,0 +1,60 @@
+{{- if and .Values.ingress.enabled .Values.ingress.gateway.enabled }}
+{{- if .Values.ingress.istio.enabled }}
+  {{- fail "ingress.gateway.enabled and ingress.istio.enabled are mutually exclusive" }}
+{{- end }}
+{{- if .Values.ingress.cors.enabled }}
+  {{- fail "ingress.cors is not supported with ingress.gateway.enabled" }}
+{{- end }}
+{{- if not .Values.ingress.gateway.parentRefs }}
+  {{- fail "ingress.gateway.parentRefs must not be empty if ingress.gateway.enabled is true" }}
+{{- end }}
+
+{{- /* main route */}}
+{{- include "generic-service.gateway-route" (dict
+  "ctx" .
+  "name" (include "generic-service.fullname" .)
+  "label" "ingress"
+  "protocol" .Values.ingress.protocol
+  "port" 80
+  "domains" .Values.ingress.domains
+  "paths" .Values.ingress.paths
+  "pathType" .Values.ingress.pathType
+  "timeoutSeconds" .Values.ingress.timeoutSeconds
+  "parentRefs" .Values.ingress.gateway.parentRefs
+  "annotations" .Values.ingress.annotations
+  "backendRefs" .Values.ingress.gateway.backendRefs
+  "sessionPersistence" .Values.ingress.gateway.sessionPersistence) }}
+
+{{- /* routes for extra ports */}}
+{{- range $name, $extra := .Values.ingress.extra }}
+{{- if $extra.domains }}
+{{- $protocol := $.Values.ingress.protocol }}
+{{- $port := 80 }}
+{{- if $extra.port }}
+  {{- $protocol = $extra.protocol | default "http" }}
+  {{- $port = $extra.port }}
+{{- else if $extra.portRef }}
+  {{- $ref := get $.Values.ingress.extra $extra.portRef }}
+  {{- $protocol = $ref.protocol | default "http" }}
+  {{- $port = $ref.port }}
+{{- end }}
+{{- $annotations := dict }}
+{{- range $key, $value := deepCopy ($.Values.ingress.annotations | default dict) | mustMerge ($extra.annotations | default dict) }}
+  {{- if ne $value "nil" }}{{ $_ := set $annotations $key $value }}{{ end }}
+{{- end }}
+---
+{{- include "generic-service.gateway-route" (dict
+  "ctx" $
+  "name" (printf "%s-%s" (include "generic-service.fullname" $) $name)
+  "label" (printf "ingress.extra.%s" $name)
+  "protocol" $protocol
+  "port" $port
+  "domains" $extra.domains
+  "paths" $extra.paths
+  "pathType" ($extra.pathType | default $.Values.ingress.pathType)
+  "timeoutSeconds" ($extra.timeoutSeconds | default $.Values.ingress.timeoutSeconds)
+  "parentRefs" ($extra.parentRefs | default $.Values.ingress.gateway.parentRefs)
+  "annotations" $annotations) }}
+{{- end }}
+{{- end }}
+{{- end }}

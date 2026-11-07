@@ -1,4 +1,4 @@
-{{- if and (and .Values.ingress.enabled .Values.ingress.domains) (not .Values.ingress.istio.enabled) }}
+{{- if and (and .Values.ingress.enabled .Values.ingress.domains) (not (or .Values.ingress.istio.enabled .Values.ingress.gateway.enabled)) }}
 
 apiVersion: networking.k8s.io/v1
 kind: Ingress

@@ -83,6 +83,61 @@ summary: {{ .Release.Namespace }}/{{ include "generic-service.fullname" . }}
 {{- end }}
 
 
+{{/* Renders a Gateway API HTTPRoute or GRPCRoute (depending on the protocol) for a Service port.
+     Call with a dict containing ctx, name, label (for error messages), protocol, port, domains, paths, pathType,
+     timeoutSeconds, parentRefs, annotations and optionally backendRefs and sessionPersistence. */}}
+{{ define "generic-service.gateway-route" -}}
+{{- $ctx := .ctx }}
+{{- $grpc := has .protocol (list "grpc" "grpcs") }}
+{{- if and $grpc .paths }}
+  {{- fail (printf "%s.paths is not supported for gRPC with ingress.gateway.enabled" .label) }}
+{{- end }}
+{{- if and .paths (not (has .pathType (list "Prefix" "Exact"))) }}
+  {{- fail (printf "%s.pathType must be Prefix or Exact with ingress.gateway.enabled" .label) }}
+{{- end }}
+apiVersion: gateway.networking.k8s.io/v1
+kind: {{ if $grpc }}GRPCRoute{{ else }}HTTPRoute{{ end }}
+metadata:
+  name: {{ .name }}
+  labels: {{- include "generic-service.top-level-labels" $ctx | nindent 4 }}
+  {{- with .annotations }}
+  annotations: {{- toYaml . | nindent 4 }}
+  {{- end }}
+
+spec:
+  parentRefs: {{- toYaml .parentRefs | nindent 4 }}
+  {{- with .domains }}
+  hostnames:
+    {{- range . }}
+    - {{ tpl . $ctx | quote }}
+    {{- end }}
+  {{- end }}
+  rules:
+    - backendRefs:
+        {{- with .backendRefs }}
+        {{- tpl (toYaml .) $ctx | nindent 8 }}
+        {{- else }}
+        - name: {{ include "generic-service.fullname" $ctx }}
+          port: {{ .port }}
+        {{- end }}
+      {{- with .paths }}
+      matches:
+        {{- range . }}
+        - path:
+            type: {{ if eq $.pathType "Exact" }}Exact{{ else }}PathPrefix{{ end }}
+            value: {{ . | quote }}
+        {{- end }}
+      {{- end }}
+      {{- if and (not $grpc) .timeoutSeconds }}
+      timeouts:
+        request: {{ if eq (int .timeoutSeconds) -1 }}0s{{ else }}{{ .timeoutSeconds | int }}s{{ end }}
+      {{- end }}
+      {{- with .sessionPersistence }}
+      sessionPersistence: {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}
+
+
 {{ define "generic-service.istio" -}}
 
 {{- with .Values.ingress.istio.gateways }}

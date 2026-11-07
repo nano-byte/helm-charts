@@ -1,0 +1,37 @@
+# Gateway API routes test
+
+image:
+  repository: jwilder/whoami
+  tag: latest
+
+ingress:
+  enabled: true
+  port: 8000
+  domains: ['{{ .Release.Name }}.example.com']
+  paths: [/api, /health]
+  timeoutSeconds: 30
+  annotations:
+    some-annotation: some-value
+  gateway:
+    enabled: true
+    parentRefs:
+      - name: some-gateway
+        namespace: gateway-system
+  extra:
+    grpc:
+      port: 9000
+      protocol: grpc
+      domains: [grpc.example.com]
+      parentRefs:
+        - name: other-gateway
+          sectionName: grpc
+      annotations:
+        some-annotation: nil
+    grpc-shared:
+      portRef: grpc
+      domains: [grpc-shared.example.com]
+    exact:
+      domains: [exact.example.com]
+      pathType: Exact
+      paths: [/login]
+      timeoutSeconds: -1

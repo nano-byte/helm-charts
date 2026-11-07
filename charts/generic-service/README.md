@@ -2,7 +2,7 @@
 
 This Helm chart simplifies deploying a typical "80% case" service on Kubernetes. It takes care of creating common [Resources](#resources) such as `Deployment`, `Service` and `Ingress`. It also provides optional support for:
 
-- [nginx Ingress Controller](https://kubernetes.github.io/ingress-nginx/), [HAProxy Ingress Controller](https://www.haproxy.com/documentation/kubernetes-ingress/), [Contour](https://projectcontour.io/) or [Istio](https://istio.io/) for routing
+- [nginx Ingress Controller](https://kubernetes.github.io/ingress-nginx/), [HAProxy Ingress Controller](https://www.haproxy.com/documentation/kubernetes-ingress/), [Contour](https://projectcontour.io/), [Istio](https://istio.io/) or [Gateway API](https://gateway-api.sigs.k8s.io/) for routing
 - [Cilium](https://cilium.io/) for network policies with DNS-based egress rules
 - [Sealed Secrets](https://github.com/bitnami-labs/sealed-secrets) for encrypted secrets
 - [External Secrets Operator](https://external-secrets.io/) for secrets from external stores (e.g., Vault or AWS Secrets Manager)
@@ -176,8 +176,8 @@ app:
 | `ingress.domains`                               | `[]`                        | The public domain names under which the service is exposed (leave empty for cluster-internal only)       |
 | `ingress.pathType`                              | `Prefix`                    | Path matching algorithm (`Prefix`, `Exact`, or `ImplementationSpecific`)                                 |
 | `ingress.paths`                                 | `[]`                        | HTTP path prefixes to accept ingress traffic for (leave empty to accept traffic for any path)            |
-| `ingress.tls.enabled`                           | `false`                     | Enables TLS termination at the ingress (not applicable if `ingress.istio.enabled`)                       |
-| `ingress.tls.secret`                            | `{{ .Release.Name }}-tls`   | The name of the `Secret` holding the TLS private key (not applicable if `ingress.istio.enabled`)         |
+| `ingress.tls.enabled`                           | `false`                     | Enables TLS termination at the ingress (not applicable if `ingress.istio/gateway.enabled`)               |
+| `ingress.tls.secret`                            | `{{ .Release.Name }}-tls`   | The name of the `Secret` holding the TLS private key (not applicable if `ingress.istio/gateway.enabled`) |
 | `ingress.tls.secretNamespace`                   |                             | The Kubernetes namespace containing the `Secret` (only applicable if `ingress.class` is `contour`)       |
 | `ingress.cors.enabled`                          | `false`                     | Enables CORS (supports nginx, HAProxy, and Istio)                                                        |
 | `ingress.cors.allowOrigin`                      | `[]`                        | List of origins allowed to access the ingress via CORS; leave empty to allow any                         |
@@ -186,17 +186,21 @@ app:
 | `ingress.cors.allowCredentials`                 | `true`                      | Indicates whether the caller is allowed to send the actual request (not the preflight) using credentials |
 | `ingress.cors.exposeHeaders`                    | `[]`                        | List of HTTP headers that the browsers are allowed to access                                             |
 | `ingress.cors.maxAge`                           | `1728000`                   | Number of seconds clients may cache CORS headers                                                         |
-| `ingress.class`                                 |                             | The ingress controller to use (not applicable if `ingress.istio.enabled`)                                |
+| `ingress.class`                                 |                             | The ingress controller to use (not applicable if `ingress.istio/gateway.enabled`)                        |
 | `ingress.annotations`                           | `{}`                        | Annotations for `Ingress` or `VirtualService` resource                                                   |
 | `ingress.headless`                              | `false`                     | Creates an additional `Service` with the suffix `-headless` that directly exposes Pod IPs                |
 | `ingress.headlessExposesAll`                    | `false`                     | Exposes all replicas, including unready ones, via the `-headless` `Service`                              |
 | `ingress.nodeLocal`                             | `false`                     | Creates an additional `Service` with the suffix `-local` that only routes to pods on the same node       |
 | `ingress.additionalSelectors`                   | `{}`                        | Additional label selectors used to restrict the `Pod`s selected by the `Service`                         |
+| `ingress.gateway.enabled`                       | `false`                     | Use Gateway API `HTTPRoute`/`GRPCRoute` (by `ingress.protocol`) instead of Kubernetes `Ingress`          |
+| `ingress.gateway.parentRefs`                    | __required if enabled__     | The `Gateway`s the routes attach to (list of `name`, `namespace`, `sectionName`, `port`)                 |
+| `ingress.gateway.backendRefs`                   | `[]`                        | Custom backends for the main route (e.g., `weight`ed traffic splitting; supports templating)             |
+| `ingress.gateway.sessionPersistence`            |                             | Session persistence for the main route (requires Gateway API experimental channel)                       |
 | `ingress.istio.enabled`                         | `false`                     | Use Istio `VirtualService` instead of Kubernetes `Ingress` resource                                      |
 | `ingress.istio.gateways`                        | `[]`                        | The names of the Istio `Gateway`s to use                                                                 |
 | `ingress.istio.httpHeaders`                     | `{}`                        | Custom HTTP response headers                                                                             |
 | `ingress.istio.retries`                         | `{}`                        | [Istio retry policy](https://istio.io/docs/reference/config/networking/virtual-service/#HTTPRetry)       |
-| `ingress.extra.*.class`                         | same as `ingress.class`     | Additional ingress controller to use (not applicable if `ingress.istio.enabled`)                         |
+| `ingress.extra.*.class`                         | same as `ingress.class`     | Additional ingress controller to use (not applicable if `ingress.istio/gateway.enabled`)                 |
 | `ingress.extra.*.port`                          | same as `ingress.port`      | Additional container port ingress traffic is routed to (not applicable if `ingress.istio.enabled`)       |
 | `ingress.extra.*.portRef`                       |                             | Reference to the name of another extra ingress to share its container port                               |
 | `ingress.extra.*.protocol`                      | `http`                      | The protocol used for the port (e.g., `http`, `https`, `h2c`, `grpc`, `http2`/`h2` or `grpcs`)           |
@@ -208,6 +212,7 @@ app:
 | `ingress.extra.*.tls.secret`                    | Release Name + `*` + `-tls` | The name of the `Secret` holding the TLS private key (supports templating)                               |
 | `ingress.extra.*.tls.secretNamespace`           |                             | The Kubernetes namespace containing the `Secret` (only applicable if `class` is `contour`)               |
 | `ingress.extra.*.annotations`                   | `{}`                        | Additional annotations, merged with `ingress.annotations` (use string `nil` to unset existing values)    |
+| `ingress.extra.*.parentRefs`                    | same as `ingress.gateway.*` | The `Gateway`s the route attaches to (only applicable if `ingress.gateway.enabled`)                      |
 | `netpol.enabled`                                | `false`                     | Apply network policies for the `Pod`s                                                                    |
 | `netpol.ingress`                                | Allow from same namespace   | Ingress network policy rules to apply                                                                    |
 | `netpol.egress`                                 | `[]`                        | Egress network policy rules to apply                                                                     |
@@ -336,10 +341,13 @@ Instructs Kubernetes to create a certain number of `Pod`s (`replicas`) running a
 Created if `ingress.enabled` or `monitoring.enabled` is `true`.
 
 **Ingress**  
-Created if `ingress.enabled` is `true`, `ingress.domains` is not empty and `ingress.istio.enabled` is `false`.
+Created if `ingress.enabled` is `true`, `ingress.domains` is not empty and `ingress.istio.enabled` and `ingress.gateway.enabled` are `false`.
 
 **VirtualService**  
 Created if `ingress.enabled` and `ingress.istio.enabled` are both `true`.
+
+**HTTPRoute** / **GRPCRoute**  
+Created if `ingress.enabled` and `ingress.gateway.enabled` are both `true` (`GRPCRoute` if `ingress.protocol` is `grpc` or `grpcs`), and once for every entry in `ingress.extra` with `domains`.
 
 **NetworkPolicy**  
 Created if `netpol.enabled` is `true` (unless only Cilium-specific rules are set).

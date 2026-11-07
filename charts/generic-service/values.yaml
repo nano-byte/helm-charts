@@ -164,6 +164,11 @@ ingress:
   headlessExposesAll: false
   nodeLocal: false
   additionalSelectors: {}
+  gateway:
+    enabled: false
+    parentRefs: []
+    backendRefs: []
+    sessionPersistence: null
   istio:
     enabled: false
     gateways: []

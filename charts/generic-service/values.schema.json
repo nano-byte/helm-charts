@@ -1424,6 +1424,87 @@
           },
           "description": "Additional label selectors used to restrict the Pods selected by the Service."
         },
+        "gateway": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false,
+              "description": "Use Gateway API HTTPRoute/GRPCRoute (depending on ingress.protocol) instead of Kubernetes Ingress resource"
+            },
+            "parentRefs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The name of the Gateway"
+                  },
+                  "namespace": {
+                    "type": "string",
+                    "description": "The namespace of the Gateway (defaults to the namespace of the route)"
+                  },
+                  "sectionName": {
+                    "type": "string",
+                    "description": "The name of a specific listener of the Gateway"
+                  },
+                  "port": {
+                    "type": "integer",
+                    "description": "The port of a specific listener of the Gateway"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": true
+              },
+              "description": "The Gateways the route attaches to",
+              "default": []
+            },
+            "backendRefs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "port": {
+                    "type": "integer"
+                  },
+                  "weight": {
+                    "type": "integer"
+                  },
+                  "group": {
+                    "type": "string"
+                  },
+                  "kind": {
+                    "type": "string"
+                  },
+                  "namespace": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              },
+              "default": [],
+              "description": "Custom backends for the main route (e.g., for weighted traffic splitting; supports templating); leave empty to route to the service"
+            },
+            "sessionPersistence": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "default": null,
+              "description": "Session persistence configuration for the main route (e.g., cookie-based; requires Gateway API experimental channel)"
+            }
+          },
+          "additionalProperties": false
+        },
         "istio": {
           "type": "object",
           "properties": {
@@ -1527,6 +1608,36 @@
                     "description": "The Kubernetes namespace containing the Secret (only applicable if class is contour)"
                   }
                 }
+              },
+              "parentRefs": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "The name of the Gateway"
+                    },
+                    "namespace": {
+                      "type": "string",
+                      "description": "The namespace of the Gateway (defaults to the namespace of the route)"
+                    },
+                    "sectionName": {
+                      "type": "string",
+                      "description": "The name of a specific listener of the Gateway"
+                    },
+                    "port": {
+                      "type": "integer",
+                      "description": "The port of a specific listener of the Gateway"
+                    }
+                  },
+                  "required": [
+                    "name"
+                  ],
+                  "additionalProperties": true
+                },
+                "description": "The Gateways the route attaches to (defaults to ingress.gateway.parentRefs; only if ingress.gateway.enabled)",
+                "default": []
               },
               "annotations": {
                 "type": "object",
