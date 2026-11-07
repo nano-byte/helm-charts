@@ -1,0 +1,13 @@
+# Rolling update parameters test
+
+image:
+  repository: jwilder/whoami
+  tag: latest
+
+replicas: 2
+
+rollout:
+  maxSurge: 25%
+  maxUnavailable: 0
+  progressDeadlineSeconds: 300
+  minReadySeconds: 5

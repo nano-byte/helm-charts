@@ -442,12 +442,73 @@
         "analysis": {
           "description": "Flagger or Argo Rollouts analysis for automatic Canary or BlueGreen promotion"
         },
+        "canary": {
+          "type": "object",
+          "properties": {
+            "steps": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "default": [],
+              "description": "Argo Rollouts canary steps (e.g., setWeight, pause, analysis); makes rollout.analysis optional"
+            }
+          },
+          "additionalProperties": false
+        },
+        "blueGreen": {
+          "type": "object",
+          "properties": {
+            "postPromotionAnalysis": {
+              "type": ["object", "null"],
+              "description": "Argo Rollouts analysis to run after promoting a BlueGreen rollout"
+            },
+            "scaleDownDelaySeconds": {
+              "type": ["integer", "null"],
+              "description": "Number of seconds to wait before scaling down the previous ReplicaSet after a BlueGreen promotion"
+            }
+          },
+          "additionalProperties": false
+        },
         "revisionHistoryLimit": {
           "type": [
             "integer",
             "null"
           ],
           "description": "Number of old ReplicaSets to retain (rollout.controller must be Deployment or ArgoRollout)"
+        },
+        "progressDeadlineSeconds": {
+          "type": ["integer", "null"],
+          "description": "Number of seconds for a rollout to make progress before it is considered failed (rollout.controller must be Deployment or ArgoRollout)"
+        },
+        "progressDeadlineAbort": {
+          "type": "boolean",
+          "default": false,
+          "description": "Abort the rollout when progressDeadlineSeconds is exceeded (rollout.controller must be ArgoRollout)"
+        },
+        "minReadySeconds": {
+          "type": ["integer", "null"],
+          "description": "Number of seconds a new Pod must be ready before it is considered available"
+        },
+        "maxSurge": {
+          "type": ["integer", "string", "null"],
+          "description": "Number or percentage of Pods that can be created above replicas during a rollout (RollingUpdate or Canary)"
+        },
+        "maxUnavailable": {
+          "type": ["integer", "string", "null"],
+          "description": "Number or percentage of Pods that can be unavailable during a rollout (RollingUpdate or Canary)"
+        },
+        "rollbackWindow": {
+          "type": ["integer", "null"],
+          "description": "Number of recent revisions that can be rolled back to immediately, skipping analysis and steps (rollout.controller must be ArgoRollout)"
+        },
+        "analysisSuccessfulRunHistoryLimit": {
+          "type": ["integer", "null"],
+          "description": "Number of successful AnalysisRuns and Experiments to retain (rollout.controller must be ArgoRollout)"
+        },
+        "analysisUnsuccessfulRunHistoryLimit": {
+          "type": ["integer", "null"],
+          "description": "Number of unsuccessful AnalysisRuns and Experiments to retain (rollout.controller must be ArgoRollout)"
         }
       },
       "additionalProperties": false

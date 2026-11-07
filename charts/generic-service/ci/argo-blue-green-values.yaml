@@ -1,0 +1,22 @@
+# Argo Rollout blue-green with analysis test
+
+image:
+  repository: jwilder/whoami
+  tag: latest
+
+ingress:
+  enabled: true
+  port: 8000
+
+rollout:
+  controller: ArgoRollout
+  strategy: BlueGreen
+  autoPromotion: false
+  analysis:
+    templates:
+      - templateName: smoke-test
+  blueGreen:
+    postPromotionAnalysis:
+      templates:
+        - templateName: success-rate
+    scaleDownDelaySeconds: 60

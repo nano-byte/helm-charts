@@ -72,7 +72,18 @@ app:
 | `rollout.autoPromotion`                         | `true`                      | Automatically promote rollouts (if `rollout.strategy` is `BlueGreen` and `rollout.flagger` if `false`)   |
 | `rollout.flagger`                               | `false`                     | Use Flagger to control rollouts (`rollout.controller` must be `Deployment` or `StatefulSet`)             |
 | `rollout.analysis`                              | req. for Canary or Flagger  | Flagger or Argo Rollouts analysis for automatic `Canary` or `BlueGreen` promotion                        |
+| `rollout.canary.steps`                          | `[]`                        | Argo Rollouts canary steps (e.g., `setWeight`, `pause`); makes `rollout.analysis` optional               |
+| `rollout.blueGreen.postPromotionAnalysis`       |                             | Argo Rollouts analysis to run after promoting a `BlueGreen` rollout                                      |
+| `rollout.blueGreen.scaleDownDelaySeconds`       |                             | Seconds to wait before scaling down the previous ReplicaSet after a `BlueGreen` promotion                |
 | `rollout.revisionHistoryLimit`                  | `null`                      | Number of old ReplicaSets to retain (`rollout.controller` must be `Deployment` or `ArgoRollout`)         |
+| `rollout.progressDeadlineSeconds`               |                             | Seconds to make progress before rollout is considered failed (`Deployment` or `ArgoRollout` only)        |
+| `rollout.progressDeadlineAbort`                 | `false`                     | Abort the rollout when `rollout.progressDeadlineSeconds` is exceeded (`ArgoRollout` only)                |
+| `rollout.minReadySeconds`                       |                             | Number of seconds a new `Pod` must be ready before it is considered available                            |
+| `rollout.maxSurge`                              |                             | Number/percentage of `Pod`s that can be created above `replicas` during `RollingUpdate` or `Canary`      |
+| `rollout.maxUnavailable`                        |                             | Number/percentage of `Pod`s that can be unavailable during `RollingUpdate` or `Canary`                   |
+| `rollout.rollbackWindow`                        |                             | Number of recent revisions to roll back to immediately, skipping analysis and steps (`ArgoRollout` only) |
+| `rollout.analysisSuccessfulRunHistoryLimit`     |                             | Number of successful `AnalysisRun`s and `Experiment`s to retain (`ArgoRollout` only)                     |
+| `rollout.analysisUnsuccessfulRunHistoryLimit`   |                             | Number of unsuccessful `AnalysisRun`s and `Experiment`s to retain (`ArgoRollout` only)                   |
 | `replicas`                                      | `1`                         | The number of instances of the service to run                                                            |
 | `autoscaling.enabled`                           | `false`                     | Enables automatic starting of additional instances                                                       |
 | `autoscaling.maxReplicas`                       | `3`                         | The maximum number of instances to run (must be larger than `replicas`)                                  |

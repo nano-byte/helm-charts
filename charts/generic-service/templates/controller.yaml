@@ -29,12 +29,66 @@ spec:
   revisionHistoryLimit: {{ .Values.rollout.revisionHistoryLimit | int }}
   {{- end }}
 
+  {{- if (ne .Values.rollout.progressDeadlineSeconds nil) }}
+  {{- if (and (ne .Values.rollout.controller "Deployment") (ne .Values.rollout.controller "ArgoRollout")) }}
+    {{ fail "rollout.progressDeadlineSeconds cannot be non-null if rollout.controller is not Deployment or ArgoRollout" }}
+  {{- end }}
+  progressDeadlineSeconds: {{ .Values.rollout.progressDeadlineSeconds | int }}
+  {{- end }}
+
+  {{- if (ne .Values.rollout.minReadySeconds nil) }}
+  minReadySeconds: {{ .Values.rollout.minReadySeconds | int }}
+  {{- end }}
+
+  {{- if eq .Values.rollout.controller "ArgoRollout" }}
+  {{- if .Values.rollout.progressDeadlineAbort }}
+  progressDeadlineAbort: true
+  {{- end }}
+  {{- if (ne .Values.rollout.rollbackWindow nil) }}
+  rollbackWindow:
+    revisions: {{ .Values.rollout.rollbackWindow | int }}
+  {{- end }}
+  {{- if or (ne .Values.rollout.analysisSuccessfulRunHistoryLimit nil) (ne .Values.rollout.analysisUnsuccessfulRunHistoryLimit nil) }}
+  analysis:
+    {{- if (ne .Values.rollout.analysisSuccessfulRunHistoryLimit nil) }}
+    successfulRunHistoryLimit: {{ .Values.rollout.analysisSuccessfulRunHistoryLimit | int }}
+    {{- end }}
+    {{- if (ne .Values.rollout.analysisUnsuccessfulRunHistoryLimit nil) }}
+    unsuccessfulRunHistoryLimit: {{ .Values.rollout.analysisUnsuccessfulRunHistoryLimit | int }}
+    {{- end }}
+  {{- end }}
+  {{- else if or .Values.rollout.progressDeadlineAbort (ne .Values.rollout.rollbackWindow nil) (ne .Values.rollout.analysisSuccessfulRunHistoryLimit nil) (ne .Values.rollout.analysisUnsuccessfulRunHistoryLimit nil) }}
+    {{ fail "rollout.progressDeadlineAbort, rollout.rollbackWindow and rollout.analysis*RunHistoryLimit require rollout.controller to be ArgoRollout" }}
+  {{- end }}
+
+  {{- $rollingParams := or (ne .Values.rollout.maxSurge nil) (ne .Values.rollout.maxUnavailable nil) }}
+  {{- if and $rollingParams (not (or (and (eq .Values.rollout.controller "Deployment") (eq .Values.rollout.strategy "RollingUpdate")) (and (eq .Values.rollout.controller "ArgoRollout") (eq .Values.rollout.strategy "Canary")))) }}
+    {{ fail "rollout.maxSurge and rollout.maxUnavailable require rollout.controller Deployment with rollout.strategy RollingUpdate or rollout.controller ArgoRollout with rollout.strategy Canary" }}
+  {{- end }}
+  {{- if and .Values.rollout.canary.steps (or (ne .Values.rollout.controller "ArgoRollout") (ne .Values.rollout.strategy "Canary")) }}
+    {{ fail "rollout.canary.steps requires rollout.controller ArgoRollout and rollout.strategy Canary" }}
+  {{- end }}
+  {{- if and (or .Values.rollout.blueGreen.postPromotionAnalysis (ne .Values.rollout.blueGreen.scaleDownDelaySeconds nil)) (or (ne .Values.rollout.controller "ArgoRollout") (ne .Values.rollout.strategy "BlueGreen")) }}
+    {{ fail "rollout.blueGreen.* requires rollout.controller ArgoRollout and rollout.strategy BlueGreen" }}
+  {{- end }}
+
   selector:
     matchLabels: {{- include "generic-service.selector-labels" . | nindent 6 }}
 
   {{- if eq .Values.rollout.strategy "RollingUpdate" }}
     {{- if eq .Values.rollout.controller "ArgoRollout" }}
       {{ fail "rollout.strategy cannot be RollingUpdate if rollout.controller is ArgoRollout, must be Canary or BlueGreen" }}
+    {{- end }}
+    {{- if $rollingParams }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      {{- if (ne .Values.rollout.maxSurge nil) }}
+      maxSurge: {{ .Values.rollout.maxSurge }}
+      {{- end }}
+      {{- if (ne .Values.rollout.maxUnavailable nil) }}
+      maxUnavailable: {{ .Values.rollout.maxUnavailable }}
+      {{- end }}
     {{- end }}
   {{- else if eq .Values.rollout.strategy "Recreate" }}
     {{- if or (eq .Values.rollout.controller "StatefulSet") (eq .Values.rollout.controller "DaemonSet") }}
@@ -69,7 +123,20 @@ spec:
       canaryMetadata:
         labels:
           role: preview
-      analysis: {{- .Values.rollout.analysis | required "rollout.analysis is required if rollout.strategy is Canary" | toYaml |  nindent 8 }}
+      {{- if (ne .Values.rollout.maxSurge nil) }}
+      maxSurge: {{ .Values.rollout.maxSurge }}
+      {{- end }}
+      {{- if (ne .Values.rollout.maxUnavailable nil) }}
+      maxUnavailable: {{ .Values.rollout.maxUnavailable }}
+      {{- end }}
+      {{- if .Values.rollout.canary.steps }}
+      steps: {{- .Values.rollout.canary.steps | toYaml | nindent 8 }}
+      {{- with .Values.rollout.analysis }}
+      analysis: {{- . | toYaml | nindent 8 }}
+      {{- end }}
+      {{- else }}
+      analysis: {{- .Values.rollout.analysis | required "rollout.analysis is required if rollout.strategy is Canary and rollout.canary.steps is empty" | toYaml |  nindent 8 }}
+      {{- end }}
       trafficRouting:
         {{- if .Values.ingress.istio.enabled }}
         istio:
@@ -102,6 +169,12 @@ spec:
       autoPromotionEnabled: {{ .Values.rollout.autoPromotion }}
       {{- if .Values.rollout.analysis }}
       prePromotionAnalysis: {{- .Values.rollout.analysis | toYaml | nindent 8 }}
+      {{- end }}
+      {{- with .Values.rollout.blueGreen.postPromotionAnalysis }}
+      postPromotionAnalysis: {{- . | toYaml | nindent 8 }}
+      {{- end }}
+      {{- if (ne .Values.rollout.blueGreen.scaleDownDelaySeconds nil) }}
+      scaleDownDelaySeconds: {{ .Values.rollout.blueGreen.scaleDownDelaySeconds | int }}
       {{- end }}
     {{- else if not .Values.rollout.flagger }}
       {{ fail "rollout.flagger must be true or rollout.controller must be ArgoRollout if rollout.strategy is BlueGreen" }}

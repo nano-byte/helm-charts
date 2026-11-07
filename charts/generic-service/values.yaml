@@ -69,7 +69,20 @@ rollout:
   autoPromotion: true
   flagger: false
   analysis: null
+  canary:
+    steps: []
+  blueGreen:
+    postPromotionAnalysis: null
+    scaleDownDelaySeconds: null
   revisionHistoryLimit: null
+  progressDeadlineSeconds: null
+  progressDeadlineAbort: false
+  minReadySeconds: null
+  maxSurge: null
+  maxUnavailable: null
+  rollbackWindow: null
+  analysisSuccessfulRunHistoryLimit: null
+  analysisUnsuccessfulRunHistoryLimit: null
 
 replicas: 1
 

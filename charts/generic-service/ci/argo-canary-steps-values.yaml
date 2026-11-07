@@ -1,0 +1,30 @@
+# Argo Rollout canary with steps test
+
+image:
+  repository: jwilder/whoami
+  tag: latest
+
+ingress:
+  enabled: true
+  port: 8000
+  domains: [example.com]
+  istio:
+    enabled: true
+
+rollout:
+  controller: ArgoRollout
+  strategy: Canary
+  canary:
+    steps:
+      - setWeight: 20
+      - pause: {duration: 1m}
+      - setWeight: 50
+      - pause: {}
+  maxSurge: 1
+  maxUnavailable: 0
+  progressDeadlineSeconds: 600
+  progressDeadlineAbort: true
+  minReadySeconds: 10
+  rollbackWindow: 3
+  analysisSuccessfulRunHistoryLimit: 5
+  analysisUnsuccessfulRunHistoryLimit: 5
