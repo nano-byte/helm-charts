@@ -469,8 +469,8 @@ spec:
           # Delay shutdown to give ingress controller time to reroute traffic
           lifecycle:
             preStop:
-              exec:
-                command: ["sleep", "{{ .Values.ingress.shutdownDelaySeconds }}"]
+              sleep:
+                seconds: {{ .Values.ingress.shutdownDelaySeconds | int }}
           {{- end }}
 
       {{- if not .Values.launchSidecarFirst }}
