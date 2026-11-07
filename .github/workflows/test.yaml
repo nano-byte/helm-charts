@@ -32,5 +32,6 @@ jobs:
           kubectl create -f https://raw.githubusercontent.com/opsgy/loki-rule-operator/main/chart/crds/logging.opsgy.com_lokirules.yaml
           kubectl create -f https://raw.githubusercontent.com/istio/istio/master/manifests/charts/base/files/crd-all.gen.yaml
           kubectl create -f https://raw.githubusercontent.com/argoproj/argo-rollouts/master/manifests/crds/rollout-crd.yaml
+          kubectl create -f https://raw.githubusercontent.com/cilium/cilium/main/pkg/k8s/apis/cilium.io/client/crds/v2/ciliumnetworkpolicies.yaml
       - name: Install charts
         run: ct install --all

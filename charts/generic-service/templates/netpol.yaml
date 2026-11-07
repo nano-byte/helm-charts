@@ -1,4 +1,13 @@
-{{- if .Values.netpol.enabled }}
+{{- $cilium := or .Values.netpol.ingressEndpoints .Values.netpol.egressEndpoints .Values.netpol.egressFQDNs }}
+{{- if and .Values.netpol.enabled (or .Values.netpol.ingress .Values.netpol.egress .Values.netpol.ingressNamespaces .Values.netpol.egressNamespaces (not $cilium)) }}
+{{- $ingress := .Values.netpol.ingress | default list }}
+{{- with .Values.netpol.ingressNamespaces }}
+{{- $ingress = append $ingress (dict "from" (list (dict "namespaceSelector" (dict "matchExpressions" (list (dict "key" "kubernetes.io/metadata.name" "operator" "In" "values" .)))))) }}
+{{- end }}
+{{- $egress := .Values.netpol.egress | default list }}
+{{- with .Values.netpol.egressNamespaces }}
+{{- $egress = append $egress (dict "to" (list (dict "namespaceSelector" (dict "matchExpressions" (list (dict "key" "kubernetes.io/metadata.name" "operator" "In" "values" .)))))) }}
+{{- end }}
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
@@ -8,6 +17,6 @@ metadata:
 spec:
   podSelector:
     matchLabels: {{- include "generic-service.selector-labels" . | nindent 6 }}
-  ingress: {{- .Values.netpol.ingress | toYaml | nindent 4 }}
-  egress: {{- .Values.netpol.egress | toYaml | nindent 4 }}
+  ingress: {{- $ingress | toYaml | nindent 4 }}
+  egress: {{- $egress | toYaml | nindent 4 }}
 {{- end }}

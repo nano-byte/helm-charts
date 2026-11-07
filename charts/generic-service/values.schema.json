@@ -1121,6 +1121,147 @@
             "type": "object"
           },
           "description": "Egress network policy rules to apply"
+        },
+        "ingressNamespaces": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Kubernetes namespaces that are allowed to make requests to the service"
+        },
+        "egressNamespaces": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Kubernetes namespaces the service is allowed to make requests to"
+        },
+        "ingressEndpoints": {
+          "type": "object",
+          "properties": {
+            "labels": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "ports": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "port": {
+                    "type": ["integer", "string"]
+                  },
+                  "protocol": {
+                    "type": "string",
+                    "enum": [
+                      "TCP",
+                      "UDP",
+                      "SCTP",
+                      "ANY"
+                    ],
+                    "default": "TCP"
+                  }
+                },
+                "required": [
+                  "port"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false,
+          "description": "Labels of Cilium endpoints allowed to make requests to the service and the ports they may use"
+        },
+        "egressEndpoints": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "labels": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "ports": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "port": {
+                      "type": ["integer", "string"]
+                    },
+                    "protocol": {
+                      "type": "string",
+                      "enum": [
+                        "TCP",
+                        "UDP",
+                        "SCTP",
+                        "ANY"
+                      ],
+                      "default": "TCP"
+                    }
+                  },
+                  "required": [
+                    "port"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "additionalProperties": false
+          },
+          "description": "Labels of Cilium endpoints the service is allowed to make requests to and the ports it may use"
+        },
+        "egressFQDNs": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "pattern": {
+                    "type": "string"
+                  },
+                  "ports": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "port": {
+                          "type": ["integer", "string"]
+                        },
+                        "protocol": {
+                          "type": "string",
+                          "enum": [
+                            "TCP",
+                            "UDP",
+                            "SCTP",
+                            "ANY"
+                          ],
+                          "default": "TCP"
+                        }
+                      },
+                      "required": [
+                        "port"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "additionalProperties": false
+              }
+            ]
+          },
+          "description": "Domain names the service is allowed to make requests to (bare names allow HTTPS; objects with name or pattern and ports)"
         }
       },
       "additionalProperties": false

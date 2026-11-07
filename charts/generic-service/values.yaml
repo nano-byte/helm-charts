@@ -151,6 +151,11 @@ netpol:
     # Allow from same namespace
     - from: [podSelector: {}]
   egress: []
+  ingressNamespaces: []
+  egressNamespaces: []
+  ingressEndpoints: {}
+  egressEndpoints: []
+  egressFQDNs: []
 
 tracing:
   enabled: false

@@ -185,3 +185,51 @@ haproxy.org/timeout-server: '{{ if eq (int .) -1 }}0{{ else }}{{ . }}s{{ end }}'
 haproxy.org/backend-config-snippet: {{ $configSnippet | toYaml }}
 {{- end }}
 {{- end }}
+
+{{- define "generic-service.cnp-egress-rules" -}}
+{{- range .Values.netpol.egressFQDNs }}
+{{- if kindIs "string" . }}
+- toFQDNs:
+    - matchName: "{{ . }}"
+  toPorts:
+    - ports:
+        - port: "443"
+          protocol: TCP
+{{- else }}
+- toFQDNs:
+    {{- if .pattern }}
+    - matchPattern: "{{ .pattern }}"
+    {{- else }}
+    - matchName: "{{ .name }}"
+    {{- end }}
+  toPorts:
+    - ports:
+        {{- range .ports }}
+        - port: {{ .port | quote }}
+          protocol: "{{ .protocol | default "TCP" }}"
+        {{- end }}
+{{- end }}
+{{- end }}
+{{- range .Values.netpol.egressEndpoints }}
+- toEndpoints:
+    - matchLabels:
+        {{- range $key, $value := .labels }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
+  toPorts:
+    - ports:
+        {{- range .ports }}
+        - port: {{ .port | quote }}
+          protocol: "{{ .protocol | default "TCP" }}"
+        {{- end }}
+{{- end }}
+{{- if .Values.netpol.egressFQDNs }}
+- toPorts:
+    - ports:
+        - port: '53'
+          protocol: ANY
+      rules:
+        dns:
+          - matchPattern: '*'
+{{- end }}
+{{- end -}}

@@ -3,6 +3,7 @@
 This Helm chart simplifies deploying a typical "80% case" service on Kubernetes. It takes care of creating common [Resources](#resources) such as `Deployment`, `Service` and `Ingress`. It also provides optional support for:
 
 - [nginx Ingress Controller](https://kubernetes.github.io/ingress-nginx/), [HAProxy Ingress Controller](https://www.haproxy.com/documentation/kubernetes-ingress/), [Contour](https://projectcontour.io/) or [Istio](https://istio.io/) for routing
+- [Cilium](https://cilium.io/) for network policies with DNS-based egress rules
 - [Prometheus Operator](https://github.com/prometheus-operator/prometheus-operator) for monitoring
 - [Loki Rule Operator](https://github.com/opsgy/loki-rule-operator) or Loki sidecar for logging-based alerting
 - [OpenTelemetry Operator](https://github.com/open-telemetry/opentelemetry-operator) or [Jaeger Operator](https://www.jaegertracing.io/docs/latest/operator/) for tracing
@@ -148,6 +149,16 @@ app:
 | `netpol.enabled`                                | `false`                     | Apply network policies for the `Pod`s                                                                    |
 | `netpol.ingress`                                | Allow from same namespace   | Ingress network policy rules to apply                                                                    |
 | `netpol.egress`                                 | `[]`                        | Egress network policy rules to apply                                                                     |
+| `netpol.ingressNamespaces`                      | `[]`                        | Kubernetes namespaces that are allowed to make requests to the service                                   |
+| `netpol.egressNamespaces`                       | `[]`                        | Kubernetes namespaces the service is allowed to make requests to                                         |
+| `netpol.ingressEndpoints.labels`                | `{}`                        | Labels of Cilium endpoints that are allowed to make requests to the service                              |
+| `netpol.ingressEndpoints.ports`                 | `[]`                        | Ports (`port`, `protocol`) the Cilium endpoints from `netpol.ingressEndpoints.labels` may access         |
+| `netpol.egressEndpoints[].labels`               | __required if used__        | Labels of Cilium endpoints the service is allowed to make requests to                                    |
+| `netpol.egressEndpoints[].ports`                | __required if used__        | Ports (`port`, `protocol`) the service may access on the matched Cilium endpoints                        |
+| `netpol.egressFQDNs`                            | `[]`                        | Domain names the service is allowed to make requests to (bare strings allow HTTPS; also allows DNS)      |
+| `netpol.egressFQDNs[].name`                     |                             | Exact domain name the service is allowed to make requests to (alternative to bare string)                |
+| `netpol.egressFQDNs[].pattern`                  |                             | Domain name pattern (`*` matches a single DNS label) the service is allowed to make requests to          |
+| `netpol.egressFQDNs[].ports`                    | __required if used__        | Ports (`port`, `protocol`) the service may access on the matched domains                                 |
 | `tracing.enabled`                               | `false`                     | Enables tracing with OpenTelemetry or Jaeger agent (injected as sidecar)                                 |
 | `tracing.probability`                           | `1`                         | Probability of any single trace being sampled; can be overridden for incoming requests e.g. via Istio    |
 | `tracing.class`                                 |                             | Custom value to set for tracing sidecar injection annotations                                            |
@@ -264,6 +275,12 @@ Created if `ingress.enabled` is `true`, `ingress.domains` is not empty and `ingr
 
 **VirtualService**  
 Created if `ingress.enabled` and `ingress.istio.enabled` are both `true`.
+
+**NetworkPolicy**  
+Created if `netpol.enabled` is `true` (unless only Cilium-specific rules are set).
+
+**CiliumNetworkPolicy**  
+Created if `netpol.enabled` is `true` and `netpol.ingressEndpoints`, `netpol.egressEndpoints` or `netpol.egressFQDNs` is not empty.
 
 **PodMonitor**  
 Created if `monitoring.enabled` is `true`.
