@@ -1301,6 +1301,10 @@
                 "type": "string",
                 "description": "An expression that triggers the alert when the metric fulfills it"
               },
+              "for": {
+                "type": "string",
+                "description": "How long the predicate has to be fulfilled before triggering the alert (e.g., 5m)"
+              },
               "severity": {
                 "type": "string",
                 "default": "warning",

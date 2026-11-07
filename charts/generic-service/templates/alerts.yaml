@@ -262,6 +262,9 @@ spec:
               {{- if $props.round }}){{ end }}
             )
             {{ $props.predicate | required "alert predicate required" }}
+          {{- with $props.for }}
+          for: {{ . }}
+          {{- end }}
           labels: {{- include "generic-service.alert-labels" $ | nindent 12 }} {{ $props.severity | default "warning" }}
           {{- if $props.topic }}
             topic: {{ $props.topic }}

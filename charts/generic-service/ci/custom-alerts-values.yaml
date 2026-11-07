@@ -15,6 +15,7 @@ alerting:
       labelMatchers: some_key="some_value"
       aggregate: sum
       predicate: '> 100'
+      for: 5m
       summary: some metric too high
       description: Some metric is {{ $value }}, which is too high.
   logs:

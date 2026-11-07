@@ -183,6 +183,7 @@ app:
 | `alerting.custom.*.averageOver`                 |                             | A sliding window in which to calculate the average value of the metric (e.g., `10m`)                     |
 | `alerting.custom.*.round`                       | `false`                     | Round the result before evaluating the predicate                                                         |
 | `alerting.custom.*.predicate`                   | __required if used__        | An expression that triggers the alert when the metric fulfills it                                        |
+| `alerting.custom.*.for`                         |                             | How long the predicate has to be fulfilled before triggering the alert (e.g., `5m`)                      |
 | `alerting.custom.*.severity`                    | `warning`                   | The severity of the alert                                                                                |
 | `alerting.custom.*.topic`                       |                             | The `topic` label for the alert                                                                          |
 | `alerting.custom.*.summary`                     | __required if used__        | A short summary of the alert                                                                             |
