@@ -1046,6 +1046,11 @@
             "type": "string",
             "description": "The path of a single file in the Secret to mount; leave empty to mount all files"
           },
+          "optional": {
+            "type": "boolean",
+            "default": false,
+            "description": "Start the container even if the Secret does not exist (yet)"
+          },
           "files": {
             "type": "object",
             "additionalProperties": {

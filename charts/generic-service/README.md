@@ -147,6 +147,7 @@ app:
 | `persistence.mountPath`                         | __required if enabled__     | The mount path for the storage inside the container                                                      |
 | `secrets.SECRET_NAME.mountPath`                 | __required if used__        | The mount path for the `Secret` named `SECRET_NAME` (supports templating) inside the container           |
 | `secrets.SECRET_NAME.subPath`                   |                             | The path of a single file in the `Secret` named `SECRET_NAME` to mount; leave empty to mount all files   |
+| `secrets.SECRET_NAME.optional`                  | `false`                     | Start the container even if the `Secret` named `SECRET_NAME` does not exist (yet)                        |
 | `secrets.SECRET_NAME.files`                     |                             | Map of file names to base64-encoded content; leave empty to reference existing `Secret`                  |
 | `secrets.SECRET_NAME.stringData`                | `false`                     | Interpret `secrets.SECRET_NAME.files` as plain-text content instead of base64-encoded                    |
 | `secrets.SECRET_NAME.encryptedFiles`            |                             | Map of file names to `kubeseal`-encrypted content; creates `SealedSecret` (`files` added unencrypted)    |
