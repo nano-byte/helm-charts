@@ -263,7 +263,7 @@ spec:
             secretName: {{ tpl $name $ }}
         {{- end }}
         {{- range $_, $volume := .Values.additionalMounts }}
-        - {{ tpl ($volume | toYaml) $ | nindent 10 }}
+        - {{ tpl (omit $volume "subPath" "readOnly" | toYaml) $ | nindent 10 }}
         {{- end }}
 
       {{- with .Values.image.pullSecret }}
@@ -497,6 +497,12 @@ spec:
             {{- if ne $path "_" }}
             - name: {{ tpl $volume.name $ }}
               mountPath: {{ $path }}
+              {{- with $volume.subPath }}
+              subPath: {{ tpl . $ }}
+              {{- end }}
+              {{- if $volume.readOnly }}
+              readOnly: true
+              {{- end }}
             {{- end }}
             {{- end }}
           {{- end }}

@@ -1090,6 +1090,15 @@
           "name": {
             "type": "string",
             "description": "The name of the volume"
+          },
+          "subPath": {
+            "type": "string",
+            "description": "The path of a single file or directory in the volume to mount"
+          },
+          "readOnly": {
+            "type": "boolean",
+            "default": false,
+            "description": "Mount the volume read-only"
           }
         },
         "required": [

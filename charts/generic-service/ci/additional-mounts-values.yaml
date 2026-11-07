@@ -8,3 +8,8 @@ additionalMounts:
   /tmp:
     name: temp
     emptyDir: {}
+  /readonly:
+    name: readonly
+    subPath: some-dir
+    readOnly: true
+    emptyDir: {}

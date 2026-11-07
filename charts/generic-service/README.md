@@ -151,6 +151,8 @@ app:
 | `secrets.SECRET_NAME.encryptedFiles`            |                             | Map of file names to `kubeseal`-encrypted content; creates `SealedSecret` (`files` added unencrypted)    |
 | `secrets.SECRET_NAME.sealingScope`              | `strict`                    | The `kubeseal --scope` used for `encryptedFiles` (`strict`, `namespace-wide` or `cluster-wide`)          |
 | `additionalMounts.PATH.name`                    | __required if used__        | The name of an additional volume to be mounted at `PATH` inside the container                            |
+| `additionalMounts.PATH.subPath`                 |                             | The path of a single file or directory in the volume to mount at `PATH`                                  |
+| `additionalMounts.PATH.readOnly`                | `false`                     | Mount the volume at `PATH` read-only                                                                     |
 | `additionalMounts.PATH.*`                       | __required if used__        | The configuration for the additional volume (e.g., `emptyDir: {}`)                                       |
 | `ingress.enabled`                               | `false`                     | Enables ingress into the service (either cluster-internal or public)                                     |
 | `ingress.shutdownDelaySeconds`                  | `5`                         | The number of seconds to delay shutting down the container once no new requests are being routed to it   |
