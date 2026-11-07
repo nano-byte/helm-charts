@@ -84,7 +84,7 @@ app:
 | `scheduling.nodePeferences`                     | `{}`                        | Sets of label values to select nodes this service should be run on if possible                           |
 | `scheduling.nodeExclusions`                     | `{}`                        | Sets of label values to select nodes this service must not run on                                        |
 | `scheduling.nodeRequirements`                   | `[]`                        | Array of objects describing complex affinity rules (multi-value, and/or) to select nodes                 |
-| `scheduling.tolerations`                        | `[]`                        | Taints on nodes this service can tolerate                                                                |
+| `scheduling.tolerations`                        | `[]`                        | Taints on nodes this service can tolerate (taint keys or `Toleration` objects)                           |
 | `scheduling.podAffinity`                        | `{}`                        | Labels to select other pods this service should share nodes with if possible                             |
 | `scheduling.podAntiAffinity`                    | `{}`                        | Labels to select other pods this service must not share nodes with                                       |
 | `scheduling.podAntiAffinityType`                | `required`                  | Whether `podAntiAffinity(Expressions)` is a hard requirement (`required`) or soft (`preferred`)          |

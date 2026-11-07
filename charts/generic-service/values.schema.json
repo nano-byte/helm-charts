@@ -577,9 +577,45 @@
         "tolerations": {
           "type": "array",
           "items": {
-            "type": "string"
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "The key of a taint to tolerate (regardless of value and effect)"
+              },
+              {
+                "type": "object",
+                "description": "A Kubernetes Toleration",
+                "properties": {
+                  "key": {
+                    "type": "string"
+                  },
+                  "operator": {
+                    "type": "string",
+                    "enum": [
+                      "Exists",
+                      "Equal"
+                    ]
+                  },
+                  "value": {
+                    "type": "string"
+                  },
+                  "effect": {
+                    "type": "string",
+                    "enum": [
+                      "NoSchedule",
+                      "PreferNoSchedule",
+                      "NoExecute"
+                    ]
+                  },
+                  "tolerationSeconds": {
+                    "type": "integer"
+                  }
+                },
+                "additionalProperties": false
+              }
+            ]
           },
-          "description": "Taints on nodes this service can tolerate"
+          "description": "Taints on nodes this service can tolerate (taint keys or Toleration objects)"
         },
         "podAffinity": {
           "type": "object",

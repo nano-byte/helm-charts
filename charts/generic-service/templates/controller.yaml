@@ -359,9 +359,13 @@ spec:
 
       {{- with .Values.scheduling.tolerations }}
       tolerations:
-        {{- range $key:= . }}
-        - key: {{ $key | quote }}
+        {{- range . }}
+        {{- if kindIs "string" . }}
+        - key: {{ . | quote }}
           operator: Exists
+        {{- else }}
+        - {{ toYaml . | nindent 10 | trim }}
+        {{- end }}
         {{- end }}
       {{- end }}
 
