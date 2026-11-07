@@ -52,7 +52,7 @@ spec:
           expr: |
             increase(kube_pod_container_status_restarts_total{namespace="{{ .Release.Namespace }}", container="{{ include "generic-service.fullname" . }}"}[6m]) > 0
             and on (pod)
-            time() - kube_pod_created{namespace="{{ .Release.Namespace }}", pod=~"{{ .Release.Name }}-[0-9a-f]+(-[0-9a-z]{5})?"} > {{ .Values.alerting.pod.maxStartupSeconds | int }}
+            time() - kube_pod_created{namespace="{{ .Release.Namespace }}", pod=~"{{ .Release.Name }}-[0-9a-z]+(-[0-9a-z]{5})?"} > {{ .Values.alerting.pod.maxStartupSeconds | int }}
           labels: {{- include "generic-service.alert-labels" . | nindent 12 }} warning
             topic: availability
           annotations: {{- include "generic-service.alert-annotations" . | nindent 12 }} crash/restart
@@ -62,7 +62,7 @@ spec:
       {{- if .Values.alerting.pod.maxAgeSeconds }}
         - alert: PodTooOld
           expr: |
-            time() - kube_pod_created{namespace="{{ .Release.Namespace }}", pod=~"{{ .Release.Name }}-[0-9a-f]+(-[0-9a-z]{5})?"}
+            time() - kube_pod_created{namespace="{{ .Release.Namespace }}", pod=~"{{ .Release.Name }}-[0-9a-z]+(-[0-9a-z]{5})?"}
             > {{ .Values.alerting.pod.maxAgeSeconds | int }}
           labels: {{- include "generic-service.alert-labels" . | nindent 12 }} warning
             topic: updates
