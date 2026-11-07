@@ -1074,6 +1074,74 @@
             ],
             "default": "strict",
             "description": "The kubeseal scope used to encrypt encryptedFiles"
+          },
+          "externalFiles": {
+            "type": "object",
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "description": "The key of the remote secret in the external store (supports templating)"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "description": "The key of the remote secret in the external store (supports templating)"
+                    },
+                    "property": {
+                      "type": "string",
+                      "description": "The property (e.g., JSON field) of the remote secret to use"
+                    },
+                    "version": {
+                      "type": "string",
+                      "description": "The version of the remote secret to use"
+                    }
+                  },
+                  "required": [
+                    "key"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "description": "Map of file names to remote secrets; generates an ExternalSecret instead of a Secret (files added as-is)"
+          },
+          "externalDataFrom": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "External Secrets Operator dataFrom entries (e.g., extract or find) for bulk-importing remote secrets (supports templating)"
+          },
+          "externalStore": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "The name of the SecretStore or ClusterSecretStore"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "SecretStore",
+                  "ClusterSecretStore"
+                ],
+                "default": "SecretStore",
+                "description": "The kind of the store"
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "additionalProperties": false,
+            "description": "The External Secrets Operator store to read externalFiles and externalDataFrom from"
+          },
+          "externalRefreshInterval": {
+            "type": "string",
+            "default": "1h",
+            "description": "How often to refresh the secret from the external store"
           }
         },
         "required": [

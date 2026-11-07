@@ -5,6 +5,7 @@ This Helm chart simplifies deploying a typical "80% case" service on Kubernetes.
 - [nginx Ingress Controller](https://kubernetes.github.io/ingress-nginx/), [HAProxy Ingress Controller](https://www.haproxy.com/documentation/kubernetes-ingress/), [Contour](https://projectcontour.io/) or [Istio](https://istio.io/) for routing
 - [Cilium](https://cilium.io/) for network policies with DNS-based egress rules
 - [Sealed Secrets](https://github.com/bitnami-labs/sealed-secrets) for encrypted secrets
+- [External Secrets Operator](https://external-secrets.io/) for secrets from external stores (e.g., Vault or AWS Secrets Manager)
 - [KEDA](https://keda.sh/) for event-driven autoscaling
 - [Prometheus Operator](https://github.com/prometheus-operator/prometheus-operator) for monitoring
 - [Loki Rule Operator](https://github.com/opsgy/loki-rule-operator) or Loki sidecar for logging-based alerting
@@ -150,6 +151,11 @@ app:
 | `secrets.SECRET_NAME.stringData`                | `false`                     | Interpret `secrets.SECRET_NAME.files` as plain-text content instead of base64-encoded                    |
 | `secrets.SECRET_NAME.encryptedFiles`            |                             | Map of file names to `kubeseal`-encrypted content; creates `SealedSecret` (`files` added unencrypted)    |
 | `secrets.SECRET_NAME.sealingScope`              | `strict`                    | The `kubeseal --scope` used for `encryptedFiles` (`strict`, `namespace-wide` or `cluster-wide`)          |
+| `secrets.SECRET_NAME.externalFiles.FILE`        |                             | Remote secret `key` (with optional `property`/`version`) for `FILE`; creates `ExternalSecret`            |
+| `secrets.SECRET_NAME.externalDataFrom`          |                             | External Secrets Operator `dataFrom` entries (e.g., `extract`); creates `ExternalSecret`                 |
+| `secrets.SECRET_NAME.externalStore.name`        | __required if external__    | The name of the `SecretStore` to read `externalFiles` and `externalDataFrom` from                        |
+| `secrets.SECRET_NAME.externalStore.kind`        | `SecretStore`               | The kind of the store (`SecretStore` or `ClusterSecretStore`)                                            |
+| `secrets.SECRET_NAME.externalRefreshInterval`   | `1h`                        | How often to refresh the `ExternalSecret` from the store (`files` are added as-is)                       |
 | `additionalMounts.PATH.name`                    | __required if used__        | The name of an additional volume to be mounted at `PATH` inside the container                            |
 | `additionalMounts.PATH.subPath`                 |                             | The path of a single file or directory in the volume to mount at `PATH`                                  |
 | `additionalMounts.PATH.readOnly`                | `false`                     | Mount the volume at `PATH` read-only                                                                     |
@@ -334,10 +340,13 @@ Created if `netpol.enabled` is `true` (unless only Cilium-specific rules are set
 Created if `netpol.enabled` is `true` and `netpol.ingressEndpoints`, `netpol.egressEndpoints` or `netpol.egressFQDNs` is not empty.
 
 **Secret**  
-Created if `secretConfig` is not empty and once for every entry in `secrets` with `files` but no `encryptedFiles`.
+Created if `secretConfig` is not empty and once for every entry in `secrets` with `files` but no `encryptedFiles`, `externalFiles` or `externalDataFrom`.
 
 **SealedSecret**  
 Created once for every entry in `secrets` with `encryptedFiles`.
+
+**ExternalSecret**  
+Created once for every entry in `secrets` with `externalFiles` or `externalDataFrom`.
 
 **PodMonitor**  
 Created if `monitoring.enabled` is `true`.
