@@ -403,6 +403,11 @@ spec:
                 fieldRef:
                   fieldPath: spec.nodeName
 
+            {{- if or .Values.version (not (hasPrefix "@" .Values.image.tag)) }}
+            - name: APP_VERSION
+              value: {{ .Values.version | default .Values.image.tag | quote }}
+            {{- end }}
+
             {{- if not .Values.autoscaling.enabled }}
             - name: REPLICAS
               value: {{ .Values.replicas | quote }}
