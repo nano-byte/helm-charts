@@ -202,8 +202,8 @@ spec:
 
       {{- if ne .Values.scheduling.replicaSpread "None" }}
       topologySpreadConstraints:
-        - maxSkew: 1
-          topologyKey: kubernetes.io/hostname
+        - maxSkew: {{ .Values.scheduling.replicaSpreadMaxSkew | int }}
+          topologyKey: {{ .Values.scheduling.replicaSpreadTopologyKey }}
           whenUnsatisfiable: {{ if eq .Values.scheduling.replicaSpread "Strict" }}DoNotSchedule{{ else }}ScheduleAnyway{{ end }}
           labelSelector:
             matchLabels: {{- include "generic-service.selector-labels" . | nindent 14 }}

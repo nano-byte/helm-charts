@@ -95,6 +95,8 @@ scheduling:
   podAntiAffinityExpressions: []
   podAntiAffinityTerms: []
   replicaSpread: BestEffort
+  replicaSpreadMaxSkew: 1
+  replicaSpreadTopologyKey: kubernetes.io/hostname
   minAvailable: 1
   maxUnavailable: null
 

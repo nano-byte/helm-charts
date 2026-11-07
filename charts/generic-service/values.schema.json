@@ -676,6 +676,17 @@
           "default": "BestEffort",
           "description": "How to spread replicas across nodes"
         },
+        "replicaSpreadMaxSkew": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "description": "The maximum allowed difference in the number of replicas between topology domains"
+        },
+        "replicaSpreadTopologyKey": {
+          "type": "string",
+          "default": "kubernetes.io/hostname",
+          "description": "The node label defining the topology domains to spread replicas across"
+        },
         "minAvailable": {
           "type": ["integer", "string"],
           "default": 1,

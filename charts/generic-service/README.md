@@ -91,6 +91,8 @@ app:
 | `scheduling.podAntiAffinityExpressions`         | `[]`                        | Label match expressions to select other pods this service must not share nodes with                      |
 | `scheduling.podAntiAffinityTerms`               | `[]`                        | Additional `PodAffinityTerm`s to avoid; optional `type` (defaults to `podAntiAffinityType`) and `weight` |
 | `scheduling.replicaSpread`                      | `BestEffort`                | How to spread replicas across nodes (`BestEffort`, `Strict`, `None`)                                     |
+| `scheduling.replicaSpreadMaxSkew`               | `1`                         | The maximum allowed difference in the number of replicas between topology domains                        |
+| `scheduling.replicaSpreadTopologyKey`           | `kubernetes.io/hostname`    | Node label defining the domains to spread replicas across (e.g., `topology.kubernetes.io/zone`)          |
 | `scheduling.minAvailable`                       | `1`                         | Min pods to keep during disruptions (supports integers and percentages); only if replicas > 1            |
 | `scheduling.maxUnavailable`                     |                             | Max pods unavailable during disruptions (integer or percentage); takes precedence over `minAvailable`    |
 | `persistence.enabled`                           | `false`                     | Enables persistent storage for the service                                                               |
